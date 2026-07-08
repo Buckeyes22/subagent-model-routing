@@ -1,0 +1,27 @@
+{
+  "name": "subagent-model-routing-local",
+  "owner": {
+    "name": "Buckeyes22"
+  },
+  "metadata": {
+    "description": "Local subagent-model-routing plugins for GitHub Copilot CLI and VS Code agent plugins.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "subagent-model-routing-copilot",
+      "description": "Copilot-compatible model routing workflow for flat external-model dispatch and dependency workflows over local codex/opencode shims.",
+      "version": "0.1.0",
+      "source": "plugins/subagent-model-routing-copilot",
+      "category": "Productivity",
+      "keywords": [
+        "subagent-model-routing",
+        "copilot",
+        "codex",
+        "opencode",
+        "shims",
+        "external-models"
+      ]
+    }
+  ]
+}

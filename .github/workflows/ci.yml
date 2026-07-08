@@ -1,0 +1,219 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+
+      - name: Check shell script syntax
+        run: |
+          set -euo pipefail
+          for s in scripts/*.sh; do
+            bash -n "$s"
+          done
+
+      - name: Check shim usage-error sentinels
+        run: |
+          set -euo pipefail
+          [ "$(bash scripts/codex-shim.sh 2>&1 | tail -1)" = "SHIM-DONE exit=64" ]
+          [ "$(bash scripts/opencode-shim.sh 2>&1 | tail -1)" = "SHIM-DONE exit=64" ]
+
+      - name: Compile stop hooks
+        run: |
+          set -euo pipefail
+          python3 -m py_compile plugins/subagent-model-routing-claude/hooks/dag-tripwire.py
+          python3 -m py_compile plugins/subagent-model-routing-claude/hooks/ledger-tripwire.py
+
+      - name: Validate manifests
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, sys
+          manifests = [
+              ".claude-plugin/marketplace.json",
+              ".agents/plugins/marketplace.json",
+              ".github/plugin/marketplace.json",
+              "plugins/subagent-model-routing-claude/.claude-plugin/plugin.json",
+              "plugins/subagent-model-routing-codex/.codex-plugin/plugin.json",
+              "plugins/subagent-model-routing-copilot/plugin.json",
+              "plugins/subagent-model-routing-claude/hooks/hooks.json",
+          ]
+          for m in manifests:
+              with open(m, encoding="utf-8") as f:
+                  json.load(f)
+          print(f"all {len(manifests)} manifests valid")
+          PY
+
+      - name: Run hook pipe tests
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, subprocess, sys, tempfile
+
+          DAG = "plugins/subagent-model-routing-claude/hooks/dag-tripwire.py"
+          LEDGER = "plugins/subagent-model-routing-claude/hooks/ledger-tripwire.py"
+
+          def run_hook(hook, stdin_data, transcript_entries):
+              with tempfile.NamedTemporaryFile("w", suffix=".jsonl", delete=False) as f:
+                  for e in transcript_entries:
+                      f.write(json.dumps(e) + "\n")
+                  tp = f.name
+              try:
+                  if isinstance(stdin_data, dict):
+                      data = dict(stdin_data)
+                      data["transcript_path"] = tp
+                      input_text = json.dumps(data)
+                  else:
+                      input_text = stdin_data
+                  result = subprocess.run(
+                      [sys.executable, hook],
+                      input=input_text,
+                      capture_output=True,
+                      text=True,
+                      timeout=30,
+                  )
+              finally:
+                  os.unlink(tp)
+              return result
+
+          def user_entry(text):
+              return {"type": "user", "message": {"content": text}}
+
+          def bash_tool(command):
+              return {
+                  "type": "assistant",
+                  "message": {
+                      "content": [
+                          {"type": "tool_use", "name": "Bash", "input": {"command": command}}
+                      ]
+                  },
+              }
+
+          def agent_tool(subagent_type):
+              return {
+                  "type": "assistant",
+                  "message": {
+                      "content": [
+                          {"type": "tool_use", "name": "Agent", "input": {"subagent_type": subagent_type}}
+                      ]
+                  },
+              }
+
+          def workflow_tool():
+              return {
+                  "type": "assistant",
+                  "message": {
+                      "content": [
+                          {"type": "tool_use", "name": "Workflow", "input": {}}
+                      ]
+                  },
+              }
+
+          def assert_block(result, should_block, label):
+              if result.returncode != 0:
+                  print(f"FAIL {label}: returncode={result.returncode}\nstderr: {result.stderr}")
+                  return False
+              has_block = '"decision": "block"' in result.stdout
+              if should_block and not has_block:
+                  print(f"FAIL {label}: expected block but got:\n{result.stdout}")
+                  return False
+              if not should_block and has_block:
+                  print(f"FAIL {label}: expected silent but got:\n{result.stdout}")
+                  return False
+              print(f"PASS {label}")
+              return True
+
+          ok = True
+          base = {"stop_hook_active": False}
+
+          # (a) ledger: dispatch without ledger -> block
+          ok &= assert_block(
+              run_hook(LEDGER, base, [
+                  user_entry("run shim"),
+                  bash_tool("scripts/codex-shim.sh prompt.md"),
+              ]),
+              True,
+              "ledger dispatch-without-ledger blocks",
+          )
+
+          # (b) ledger: >> append satisfies the tripwire
+          ok &= assert_block(
+              run_hook(LEDGER, base, [
+                  user_entry("run shim"),
+                  bash_tool("scripts/codex-shim.sh prompt.md"),
+                  bash_tool("echo note >> ~/.claude/subagent-model-routing/ledger/observations.jsonl"),
+              ]),
+              False,
+              "ledger >> append silences",
+          )
+
+          # (c) dag: grep-only mention of a shim is not a dispatch
+          ok &= assert_block(
+              run_hook(DAG, base, [
+                  user_entry("command-name>/subagent-model-routing-claude:dag-routing check"),
+                  bash_tool("grep codex-shim scripts.txt"),
+              ]),
+              False,
+              "dag grep-only mention silent",
+          )
+
+          # (d) dag: namespaced command + control-flow-wrapped dispatch, no Workflow -> block
+          ok &= assert_block(
+              run_hook(DAG, base, [
+                  user_entry("command-name>/subagent-model-routing-claude:dag-routing run"),
+                  bash_tool("bash -lc 'if true; then scripts/codex-shim.sh -; fi'"),
+              ]),
+              True,
+              "dag control-flow dispatch blocks",
+          )
+
+          # (e) dag: Workflow present satisfies the tripwire
+          ok &= assert_block(
+              run_hook(DAG, base, [
+                  user_entry("command-name>/subagent-model-routing-claude:dag-routing run"),
+                  bash_tool("scripts/codex-shim.sh prompt.md"),
+                  workflow_tool(),
+              ]),
+              False,
+              "dag Workflow present silent",
+          )
+
+          # (f) stop_hook_active disables both hooks
+          ok &= assert_block(
+              run_hook(LEDGER, {"stop_hook_active": True}, [
+                  user_entry("run shim"),
+                  bash_tool("scripts/codex-shim.sh prompt.md"),
+              ]),
+              False,
+              "ledger stop_hook_active silent",
+          )
+          ok &= assert_block(
+              run_hook(DAG, {"stop_hook_active": True}, [
+                  user_entry("command-name>/subagent-model-routing-claude:dag-routing run"),
+                  bash_tool("scripts/codex-shim.sh prompt.md"),
+              ]),
+              False,
+              "dag stop_hook_active silent",
+          )
+
+          # (g) garbage stdin exits 0
+          for hook in (LEDGER, DAG):
+              result = run_hook(hook, "not-json", [])
+              if result.returncode != 0:
+                  print(f"FAIL {hook} garbage stdin exit 0: returncode={result.returncode}")
+                  ok = False
+              else:
+                  print(f"PASS {hook} garbage stdin exit 0")
+
+          if not ok:
+              sys.exit(1)
+          print("all hook pipe tests passed")
+          PY

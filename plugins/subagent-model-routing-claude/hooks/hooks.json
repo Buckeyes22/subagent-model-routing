@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/dag-tripwire.py\"",
+            "statusMessage": "dag-routing tripwire"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/ledger-tripwire.py\"",
+            "statusMessage": "subagent-model-routing ledger tripwire"
+          }
+        ]
+      }
+    ]
+  }
+}

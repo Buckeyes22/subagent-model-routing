@@ -1,0 +1,7 @@
+{
+  "name": "subagent-model-routing-claude",
+  "version": "0.2.0",
+  "author": { "name": "Buckeyes22" },
+  "description": "Claude Code package for routing work to non-Claude models: flat one-shot dispatch and dependency-ordered Workflow DAGs over the bundled codex/opencode transport shims (scripts/, installed via scripts/install.sh)",
+  "keywords": ["subagent-model-routing","claude","subagents","workflow","dag","codex","opencode","shim"]
+}

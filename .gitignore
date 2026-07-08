@@ -1,0 +1,42 @@
+.DS_Store
+__pycache__/
+*.pyc
+.serena/
+
+# Local code-intelligence tool indexes / generated artifacts
+.mcp.json
+.graphifyignore
+.repomixignore
+.codegraph/
+.repowise/
+.potpie/
+graphify-out/
+.code-intel-eval/local-code-intel-env.sh
+.code-intel-eval/local-openai-router.py
+.code-intel-eval/repomix-profiles/
+.code-intel-eval/repomix-output/
+.code-intel-eval/repomix-skill/
+.code-intel-eval/*.json
+.code-intel-eval/*.jsonl
+.code-intel-eval/*.log
+.code-intel-eval/*.pid
+.code-intel-eval/__pycache__/
+repomix-output.*
+index.scip
+**/*.tsbuildinfo
+
+# Generated/editor integrations from code-intel tools
+.codex/config.toml
+.codex/hooks.json
+.vscode/mcp.json
+.vscode/extensions.json
+
+# Local secret/env files
+.env
+.env.local
+.env.*.local
+.npmrc
+cc.env
+*.secrets.env
+.dev.vars
+.dev.vars.*

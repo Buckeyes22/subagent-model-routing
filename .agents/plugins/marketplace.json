@@ -1,0 +1,20 @@
+{
+  "name": "subagent-model-routing-local",
+  "interface": {
+    "displayName": "Model Routing Local"
+  },
+  "plugins": [
+    {
+      "name": "subagent-model-routing-codex",
+      "source": {
+        "source": "local",
+        "path": "./plugins/subagent-model-routing-codex"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
