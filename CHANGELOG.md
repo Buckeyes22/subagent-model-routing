@@ -5,12 +5,17 @@ All notable changes to this project will be documented in this file.
 The project adheres to **semantic versioning intent** with the following public contract. The items below are considered the stable public API and will only change in a **MAJOR** release:
 
 - The `SHIM-DONE` sentinel format emitted by the transport shims.
-- The shim environment variable names: `SHIM_TIMEOUT_SECS`, `SUBAGENT_MODEL_ROUTING_UNRESTRICTED`, and `SUBAGENT_MODEL_ROUTING_LEDGER`.
+- The shim environment variable names: `SHIM_TIMEOUT_SECS`, `SHIM_RESULT`, `SUBAGENT_MODEL_ROUTING_UNRESTRICTED`, and `SUBAGENT_MODEL_ROUTING_LEDGER`.
 - The namespaced agent types used for routing.
 
 New capabilities bump the **MINOR** version; fixes bump the **PATCH** version.
 
 ## [Unreleased]
+
+### Added
+- Optional `SHIM_RESULT=1` transport receipts, emitted as the exact finished ledger record immediately before the final `SHIM-DONE` sentinel.
+- `scripts/parse-shim-result.py`, a reference parser that ignores spoofed child output and validates the trailing receipt/sentinel exit codes.
+- Per-dispatch IDs and active execution-policy profiles in routing-ledger records.
 
 ## [0.2.0] - 2026-07-08
 

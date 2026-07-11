@@ -13,6 +13,7 @@
 #
 # Env:
 #   SHIM_TIMEOUT_SECS           child wall ceiling (default 1140, about 19 min)
+#   SHIM_RESULT                 1 = emit a machine-readable SHIM-RESULT receipt before SHIM-DONE
 #   SUBAGENT_MODEL_ROUTING_UNRESTRICTED  1 (default) = bypass codex sandbox/approvals
 #                               (see README security note); 0 = --sandbox workspace-write
 #   SUBAGENT_MODEL_ROUTING_LEDGER        default ~/.claude/subagent-model-routing/ledger/observations.jsonl
@@ -29,6 +30,7 @@ SOURCE="$1"
 shift
 
 TIMEOUT_SECS="${SHIM_TIMEOUT_SECS:-1140}"
+RESULT_ENABLED="${SHIM_RESULT:-0}"
 UNRESTRICTED="${SUBAGENT_MODEL_ROUTING_UNRESTRICTED:-1}"
 LEDGER="${SUBAGENT_MODEL_ROUTING_LEDGER:-$HOME/.claude/subagent-model-routing/ledger/observations.jsonl}"
 
@@ -61,6 +63,9 @@ json_escape() {
   value=${1//$'\r'/ }
   value=${value//$'\n'/ }
   value=${value//\\/\\\\}
+  value=${value//$'\b'/\\b}
+  value=${value//$'\f'/\\f}
+  value=${value//$'\t'/\\t}
   value=${value//\"/\\\"}
   printf '%s' "$value"
 }
@@ -69,8 +74,10 @@ MODEL_JSON="$(json_escape "$MODEL")"
 
 ARGS=(exec --skip-git-repo-check)
 if [ "$UNRESTRICTED" = "1" ]; then
+  PROFILE="unrestricted"
   ARGS+=(--dangerously-bypass-approvals-and-sandbox)
 else
+  PROFILE="cli-policy"
   ARGS+=(--sandbox workspace-write)
 fi
 
@@ -81,7 +88,8 @@ ledger_append() {
 }
 
 t0=$(date +%s)
-ledger_append "{\"ts\":\"$(now)\",\"shim\":\"codex\",\"model\":\"$MODEL_JSON\",\"event\":\"started\",\"source\":\"shim\"}"
+DISPATCH_ID="codex-$t0-$$"
+ledger_append "{\"ts\":\"$(now)\",\"dispatch_id\":\"$DISPATCH_ID\",\"shim\":\"codex\",\"model\":\"$MODEL_JSON\",\"event\":\"started\",\"profile\":\"$PROFILE\",\"source\":\"shim\"}"
 
 if [ "$SOURCE" = "-" ]; then
   "$TIMEOUT_BIN" "$TIMEOUT_SECS" codex "${ARGS[@]}" "$@"
@@ -101,6 +109,12 @@ wall=$(( $(date +%s) - t0 ))
 outcome="ok"
 [ "$rc" -eq 124 ] && outcome="timeout"
 [ "$rc" -ne 0 ] && [ "$rc" -ne 124 ] && outcome="error"
-ledger_append "{\"ts\":\"$(now)\",\"shim\":\"codex\",\"model\":\"$MODEL_JSON\",\"event\":\"finished\",\"exit\":$rc,\"wall_s\":$wall,\"outcome\":\"$outcome\",\"source\":\"shim\"}"
-printf '\nSHIM-DONE exit=%s\n' "$rc"
+finished="{\"ts\":\"$(now)\",\"dispatch_id\":\"$DISPATCH_ID\",\"shim\":\"codex\",\"model\":\"$MODEL_JSON\",\"event\":\"finished\",\"exit\":$rc,\"wall_s\":$wall,\"outcome\":\"$outcome\",\"profile\":\"$PROFILE\",\"source\":\"shim\"}"
+ledger_append "$finished"
+if [ "$RESULT_ENABLED" = "1" ]; then
+  printf '\nSHIM-RESULT %s\n' "$finished"
+else
+  printf '\n'
+fi
+printf 'SHIM-DONE exit=%s\n' "$rc"
 exit "$rc"

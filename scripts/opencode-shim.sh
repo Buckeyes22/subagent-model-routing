@@ -14,6 +14,7 @@
 #
 # Env:
 #   SHIM_TIMEOUT_SECS           child wall ceiling (default 1140, about 19 min)
+#   SHIM_RESULT                 1 = emit a machine-readable SHIM-RESULT receipt before SHIM-DONE
 #   SUBAGENT_MODEL_ROUTING_UNRESTRICTED  1 (default) = allow opencode to run without prompts
 #   SUBAGENT_MODEL_ROUTING_LEDGER        default ~/.claude/subagent-model-routing/ledger/observations.jsonl
 #   OPENCODE_BIN                optional opencode executable override
@@ -31,6 +32,7 @@ SOURCE="$2"
 shift 2
 
 TIMEOUT_SECS="${SHIM_TIMEOUT_SECS:-1140}"
+RESULT_ENABLED="${SHIM_RESULT:-0}"
 UNRESTRICTED="${SUBAGENT_MODEL_ROUTING_UNRESTRICTED:-1}"
 LEDGER="${SUBAGENT_MODEL_ROUTING_LEDGER:-$HOME/.claude/subagent-model-routing/ledger/observations.jsonl}"
 
@@ -39,6 +41,9 @@ json_escape() {
   value=${1//$'\r'/ }
   value=${value//$'\n'/ }
   value=${value//\\/\\\\}
+  value=${value//$'\b'/\\b}
+  value=${value//$'\f'/\\f}
+  value=${value//$'\t'/\\t}
   value=${value//\"/\\\"}
   printf '%s' "$value"
 }
@@ -76,11 +81,15 @@ fi
 
 PERM_FLAG=""
 if [ "$UNRESTRICTED" = "1" ]; then
+  PROFILE="unrestricted"
   HELP="$("$OPENCODE_BIN_RESOLVED" run --help 2>&1 || true)"
   case "$HELP" in
     *--dangerously-skip-permissions*) PERM_FLAG="--dangerously-skip-permissions" ;;
     *--auto*) PERM_FLAG="--auto" ;;
   esac
+  [ -n "$PERM_FLAG" ] || PROFILE="cli-policy"
+else
+  PROFILE="cli-policy"
 fi
 
 # Optional observability: when the user points opencode at an OTLP collector,
@@ -93,7 +102,8 @@ if [ -n "${OPENCODE_OTLP_ENDPOINT:-}" ]; then
 fi
 
 t0=$(date +%s)
-ledger_append "{\"ts\":\"$(now)\",\"shim\":\"opencode\",\"model\":\"$MODEL_JSON\",\"event\":\"started\",\"source\":\"shim\"}"
+DISPATCH_ID="opencode-$t0-$$"
+ledger_append "{\"ts\":\"$(now)\",\"dispatch_id\":\"$DISPATCH_ID\",\"shim\":\"opencode\",\"model\":\"$MODEL_JSON\",\"event\":\"started\",\"profile\":\"$PROFILE\",\"source\":\"shim\"}"
 
 if [ "$SOURCE" = "-" ]; then
   "$TIMEOUT_BIN" "$TIMEOUT_SECS" "$OPENCODE_BIN_RESOLVED" run -m "$MODEL" ${PERM_FLAG:+"$PERM_FLAG"} "$@"
@@ -113,6 +123,12 @@ wall=$(( $(date +%s) - t0 ))
 outcome="ok"
 [ "$rc" -eq 124 ] && outcome="timeout"
 [ "$rc" -ne 0 ] && [ "$rc" -ne 124 ] && outcome="error"
-ledger_append "{\"ts\":\"$(now)\",\"shim\":\"opencode\",\"model\":\"$MODEL_JSON\",\"event\":\"finished\",\"exit\":$rc,\"wall_s\":$wall,\"outcome\":\"$outcome\",\"source\":\"shim\"}"
-printf '\nSHIM-DONE exit=%s\n' "$rc"
+finished="{\"ts\":\"$(now)\",\"dispatch_id\":\"$DISPATCH_ID\",\"shim\":\"opencode\",\"model\":\"$MODEL_JSON\",\"event\":\"finished\",\"exit\":$rc,\"wall_s\":$wall,\"outcome\":\"$outcome\",\"profile\":\"$PROFILE\",\"source\":\"shim\"}"
+ledger_append "$finished"
+if [ "$RESULT_ENABLED" = "1" ]; then
+  printf '\nSHIM-RESULT %s\n' "$finished"
+else
+  printf '\n'
+fi
+printf 'SHIM-DONE exit=%s\n' "$rc"
 exit "$rc"
