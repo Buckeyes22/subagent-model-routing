@@ -31,6 +31,10 @@ jobs:
           set -euo pipefail
           python3 -m py_compile plugins/subagent-model-routing-claude/hooks/dag-tripwire.py
           python3 -m py_compile plugins/subagent-model-routing-claude/hooks/ledger-tripwire.py
+          python3 -m py_compile scripts/parse-shim-result.py
+
+      - name: Check machine-readable shim receipts
+        run: bash tests/test_shim_result.sh
 
       - name: Validate manifests
         run: |

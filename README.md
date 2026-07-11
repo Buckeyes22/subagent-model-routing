@@ -139,6 +139,28 @@ SHIM-DONE exit=0
 
 The `SHIM-DONE exit=<n>` line is the tripwire: if it is missing or reports a nonzero exit, the dispatch failed and the skill will not treat the output as successful.
 
+For machine-readable transport metadata, opt in with `SHIM_RESULT=1`:
+
+```bash
+printf 'Reply with exactly: pong\n' | SHIM_RESULT=1 ~/.claude/scripts/opencode-shim.sh <provider/model> -
+```
+
+A completed child run then ends with this pair:
+
+```text
+SHIM-RESULT {"ts":"...","dispatch_id":"opencode-...","shim":"opencode","model":"...","event":"finished","exit":0,"wall_s":2,"outcome":"ok","profile":"unrestricted","source":"shim"}
+SHIM-DONE exit=0
+```
+
+Only a `SHIM-RESULT` line immediately before the final `SHIM-DONE` is authoritative; a child process can print lookalike lines earlier in its output. Parse the pair safely with the bundled reference parser:
+
+```bash
+SHIM_RESULT=1 opencode-shim.sh <provider/model> prompt.md | tee /tmp/shim.out
+python3 "${SUBAGENT_MODEL_ROUTING_HOME:-$HOME/.local/share/subagent-model-routing}/scripts/parse-shim-result.py" </tmp/shim.out
+```
+
+The receipt is the exact finished JSONL ledger record for that `dispatch_id`. It proves transport completion and reports the active CLI policy profile; it does **not** prove that requested files are correct or that project checks passed. Pre-dispatch failures continue to emit only `SHIM-DONE`.
+
 ### 2. First routed dispatch from Claude Code
 
 With the Claude Code plugin installed, ask in natural language:
@@ -243,6 +265,7 @@ rm -rf ~/.local/share/subagent-model-routing
 | Variable | Default | Purpose |
 |----------|---------|---------|
 | `SHIM_TIMEOUT_SECS` | `1140` (~19 min) | per-dispatch wall ceiling enforced with `timeout(1)`; raise deliberately for long jobs |
+| `SHIM_RESULT` | `0` | `1` emits the finished ledger record as `SHIM-RESULT <json>` immediately before `SHIM-DONE` |
 | `SUBAGENT_MODEL_ROUTING_UNRESTRICTED` | `1` | `1` = bypass the child CLI's sandbox/approval prompts (unattended dispatch); `0` = keep the CLI's own policy |
 | `SUBAGENT_MODEL_ROUTING_LEDGER` | `~/.claude/subagent-model-routing/ledger/observations.jsonl` | where quantitative dispatch records append |
 | `OPENCODE_BIN` | auto-detected | explicit path to the opencode binary |
@@ -273,7 +296,7 @@ The shims default to `SUBAGENT_MODEL_ROUTING_UNRESTRICTED=1`, which bypasses the
 
 ## Observability
 
-The built-in, always-on layer is the ledger JSONL (`~/.claude/subagent-model-routing/ledger/observations.jsonl`), where `started` records mark the beginning of dispatch and `finished` records carry `wall_s`, `exit`, and `outcome`.
+The built-in, always-on layer is the ledger JSONL (`~/.claude/subagent-model-routing/ledger/observations.jsonl`), where `started` records mark the beginning of dispatch and `finished` records carry `dispatch_id`, `wall_s`, `exit`, `outcome`, and `profile`. Set `SHIM_RESULT=1` when a caller also needs the exact finished record on stdout.
 
 For OpenCode spans, export `OPENCODE_OTLP_ENDPOINT` before dispatch and the shim fills the companion telemetry variables:
 
@@ -322,7 +345,7 @@ prompting/                              # model-specific prompt guidance
 
 ## Project status
 
-This is an early-stage project at v0.2.0, built and maintained by a single maintainer. Issues and pull requests are welcome, with best-effort response times. The public contract — the `SHIM-DONE` sentinel, the shim environment-variable names, and the namespaced agent types — is stable and versioned per [CHANGELOG.md](CHANGELOG.md). Expect the rough edges of a young project, and please report them.
+This is an early-stage project at v0.2.0, built and maintained by a single maintainer. Issues and pull requests are welcome, with best-effort response times. The public contract — the `SHIM-DONE` sentinel, the opt-in `SHIM-RESULT` receipt, the shim environment-variable names, and the namespaced agent types — is stable and versioned per [CHANGELOG.md](CHANGELOG.md). Expect the rough edges of a young project, and please report them.
 
 ## License
 
