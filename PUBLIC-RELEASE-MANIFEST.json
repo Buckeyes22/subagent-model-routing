@@ -26,10 +26,10 @@
       "sha256": "0aac5a754b71f532cde1fd0d0c5501c012015e0849b8187f9a4a2eedd394d380"
     },
     {
-      "bytes": 27992,
+      "bytes": 28503,
       "executable": false,
       "path": ".github/workflows/ci.yml",
-      "sha256": "828e7a4d74fc81f9bd14c4c752ded21c1f85937bc6438d4cddefea1471f247db"
+      "sha256": "c20396984161b6049b96af9f56090ae09b3a4964599f11cd75e693aa90740009"
     },
     {
       "bytes": 776,
