@@ -23,6 +23,7 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+          cache-dependency-path: requirements-dev.lock
       - name: Install hash-locked development checks
         run: python -m pip install --require-hashes --requirement requirements-dev.lock
       - name: Build and validate the public allowlist
@@ -54,6 +55,7 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+          cache-dependency-path: requirements-dev.lock
 
       - name: Install development checks
         run: python -m pip install --require-hashes --requirement requirements-dev.lock
