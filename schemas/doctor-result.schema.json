@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Buckeyes22/subagent-model-routing/schemas/doctor-result.schema.json",
+  "title": "Subagent model-routing doctor report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "tool", "generatedAt", "modes", "status", "summary", "checks"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "tool": { "const": "subagent-model-routing doctor" },
+    "generatedAt": { "type": "string" },
+    "modes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["installationOnly", "liveAuth", "discoverModels", "providerFilter"],
+      "properties": {
+        "installationOnly": { "type": "boolean" },
+        "liveAuth": { "type": "boolean" },
+        "discoverModels": { "type": "boolean" },
+        "providerFilter": { "enum": ["codex", "claude", "grok", "opencode", null] }
+      }
+    },
+    "status": { "enum": ["pass", "warn", "fail"] },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pass", "warn", "fail", "skip"],
+      "properties": {
+        "pass": { "type": "integer", "minimum": 0 },
+        "warn": { "type": "integer", "minimum": 0 },
+        "fail": { "type": "integer", "minimum": 0 },
+        "skip": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "category", "status", "summary"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "category": { "enum": ["runtime", "provider", "plugin", "security"] },
+          "status": { "enum": ["PASS", "WARN", "FAIL", "SKIP"] },
+          "summary": { "type": "string", "minLength": 1 },
+          "remediation": { "type": "string", "minLength": 1 },
+          "provider": { "enum": ["codex", "claude", "grok", "opencode"] },
+          "details": { "type": "object" }
+        }
+      }
+    }
+  }
+}

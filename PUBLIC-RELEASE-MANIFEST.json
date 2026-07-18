@@ -1,0 +1,948 @@
+{
+  "fileCount": 157,
+  "files": [
+    {
+      "bytes": 433,
+      "executable": false,
+      "path": ".agents/plugins/marketplace.json",
+      "sha256": "a0b54e2fe4d238ce6b24572ae324e62df6b67588ca30a6f31be2ebf40115eaa3"
+    },
+    {
+      "bytes": 490,
+      "executable": false,
+      "path": ".claude-plugin/marketplace.json",
+      "sha256": "1910d2ed27e8ec337817f5910d9b3d2f3979e52d25579700975fcbb8d6671df0"
+    },
+    {
+      "bytes": 193,
+      "executable": false,
+      "path": ".github/dependabot.yml",
+      "sha256": "408abbeb3fb78cce167b200431268e3cc47b40b7b6ba0f158c9a819a571bde99"
+    },
+    {
+      "bytes": 880,
+      "executable": false,
+      "path": ".github/plugin/marketplace.json",
+      "sha256": "0aac5a754b71f532cde1fd0d0c5501c012015e0849b8187f9a4a2eedd394d380"
+    },
+    {
+      "bytes": 28503,
+      "executable": false,
+      "path": ".github/workflows/ci.yml",
+      "sha256": "c20396984161b6049b96af9f56090ae09b3a4964599f11cd75e693aa90740009"
+    },
+    {
+      "bytes": 776,
+      "executable": false,
+      "path": ".gitignore",
+      "sha256": "65b61abcf8de34ac1b16debf8957f62940c6384d5b6cb3e1baef52a14054d264"
+    },
+    {
+      "bytes": 8178,
+      "executable": false,
+      "path": "CHANGELOG.md",
+      "sha256": "fc210b60ddd73f14b58bc8a9513d823753327ae4df10bb034fe07f889c06fcee"
+    },
+    {
+      "bytes": 3724,
+      "executable": false,
+      "path": "CONTRIBUTING.md",
+      "sha256": "7dc9d33c33c99206d596c5ff3a80fb51b9a9993463bfc03770d1eb5ad3835294"
+    },
+    {
+      "bytes": 1067,
+      "executable": false,
+      "path": "LICENSE",
+      "sha256": "6dbcffa626ac1a9f885fa1b022690d2632c6727ec87bc417486d665011a57ce9"
+    },
+    {
+      "bytes": 32776,
+      "executable": false,
+      "path": "README.md",
+      "sha256": "470e921243b07e07148d09682b35050e676f59a4bddb42c8e45fe06d5bdcc6f0"
+    },
+    {
+      "bytes": 8174,
+      "executable": false,
+      "path": "SECURITY.md",
+      "sha256": "658c3eb74023430c3d4a5d37273190d82661791db9e9958e7919f3d6ddc741d7"
+    },
+    {
+      "bytes": 3373,
+      "executable": false,
+      "path": "config/provider-installers.json",
+      "sha256": "e6d0e8bd287019bd57f11d850020c5dbdb8b5186fe0b803a9eb5cd6cd98f5bb9"
+    },
+    {
+      "bytes": 9677,
+      "executable": false,
+      "path": "config/provider-registry.json",
+      "sha256": "2978724a88194e2cf60e1855064f7671a755e7ed823ca34a48b36be6184a8799"
+    },
+    {
+      "bytes": 1004,
+      "executable": false,
+      "path": "config/public-release-files.json",
+      "sha256": "a67d112e267a20465cbd20382145d5e8dc92b797c2a4691211a3ea00df2ae12e"
+    },
+    {
+      "bytes": 5595,
+      "executable": false,
+      "path": "docs/architecture.md",
+      "sha256": "05969532c91f9aea66cb9d81c158e440b176591290c2d7d016f76b31956e67c7"
+    },
+    {
+      "bytes": 3802,
+      "executable": false,
+      "path": "docs/doctor.md",
+      "sha256": "22db7a7df4b6c2790d7af845dbb19618529920f76119f06b59789752979a899a"
+    },
+    {
+      "bytes": 1682,
+      "executable": false,
+      "path": "docs/lifecycle-hooks.md",
+      "sha256": "62796eb49d1b312ec024afbdf6b7e8f746e263d358add040ed3cee7458d9abde"
+    },
+    {
+      "bytes": 1586,
+      "executable": false,
+      "path": "docs/migration-v0.3.md",
+      "sha256": "dbba74a5c160050b393957d28604474d67051e6d3e0e795d75331dbd79ded7b7"
+    },
+    {
+      "bytes": 1492,
+      "executable": false,
+      "path": "docs/migration-v0.4.md",
+      "sha256": "251e1638ba7172eb027899c89d34ae504c27a5b2fb1fa8c8838d4fb2809d71e0"
+    },
+    {
+      "bytes": 1534,
+      "executable": false,
+      "path": "docs/migration-v0.5.md",
+      "sha256": "de7935a7d059a21cd2c4570cdfe6cd09234dd21f15111aec74d5982c4e7ff3a5"
+    },
+    {
+      "bytes": 10011,
+      "executable": false,
+      "path": "docs/provider-cli-setup.md",
+      "sha256": "03a43822a28652d97fad584cf95488dc57330acab39c62818e0c6ebe1383e078"
+    },
+    {
+      "bytes": 2518,
+      "executable": false,
+      "path": "docs/provider-registry.md",
+      "sha256": "f9e87a36e9acb847f98d460321b48436dfc7bb387010e2dc992e3fdbebcf7199"
+    },
+    {
+      "bytes": 4195,
+      "executable": false,
+      "path": "docs/releasing.md",
+      "sha256": "6ce4cb7d0b835f859998ff1582a7eeb8449574f2a509c40860d21fdf64ce2426"
+    },
+    {
+      "bytes": 3378,
+      "executable": false,
+      "path": "docs/run-records.md",
+      "sha256": "36ab78c7ae18912452922908a52264cce096600a333cdb2ed81db05142d14786"
+    },
+    {
+      "bytes": 5489,
+      "executable": false,
+      "path": "docs/workflows.md",
+      "sha256": "a7c32cb4b4c1b83ecc43bcdfb48f1f917ea902b15abf8e77284ea73b6206070a"
+    },
+    {
+      "bytes": 3532,
+      "executable": false,
+      "path": "docs/worktree-dispatch.md",
+      "sha256": "d677b40e09c90c06c4664f3fe75dd1e387af01cf4d7909fe23dd375c64ab162e"
+    },
+    {
+      "bytes": 151,
+      "executable": false,
+      "path": "examples/README.md",
+      "sha256": "65da76b052e4b547e9bc76b01d7ca3a3df375511b9c19498cd4f152c5f8be99d"
+    },
+    {
+      "bytes": 332,
+      "executable": false,
+      "path": "examples/dependency-workflow/README.md",
+      "sha256": "be892999d25178d43cfa8c35608c52aee786d54ff535940ebdf19dfda802f4cc"
+    },
+    {
+      "bytes": 148,
+      "executable": false,
+      "path": "examples/dependency-workflow/prompts/analyze.md",
+      "sha256": "7497952729dd1081d03b19cc8c278b2524d5db2baecba18e67282dafb24be59a"
+    },
+    {
+      "bytes": 122,
+      "executable": false,
+      "path": "examples/dependency-workflow/prompts/review.md",
+      "sha256": "30869467d2f55600dda5ed9eae88ed7a46c2ace2c305a7001a4afdf78110d515"
+    },
+    {
+      "bytes": 779,
+      "executable": false,
+      "path": "examples/dependency-workflow/workflow.json",
+      "sha256": "18ff176d72ec62b940227b147f7c273a18d2675f788e12b0d19a9d769edd1bff"
+    },
+    {
+      "bytes": 674,
+      "executable": false,
+      "path": "examples/failure-and-resume/README.md",
+      "sha256": "b6b4ecd792853f15fc889fc534ae5cb471481e8abf8be726ca8e35337c109519"
+    },
+    {
+      "bytes": 1056,
+      "executable": false,
+      "path": "examples/failure-and-resume/workflow.json",
+      "sha256": "77e4bb966b755400b199d97bd9f9f8e9d4fb30e97d078707dc1b1b44f63f5dbe"
+    },
+    {
+      "bytes": 3560,
+      "executable": false,
+      "path": "examples/fan-out-review/README.md",
+      "sha256": "6d2028427264be857d6be47784210ee89fca5a39a18831c088a50050d5fba84d"
+    },
+    {
+      "bytes": 480,
+      "executable": false,
+      "path": "examples/fan-out-review/review-prompt.md",
+      "sha256": "995c9b183a62fd239475bf8b50bb451c35ae93edcc5c6d8a57f986a918d58085"
+    },
+    {
+      "bytes": 2316,
+      "executable": false,
+      "path": "examples/fan-out-review/sample/rate_limiter.py",
+      "sha256": "efcf860435eecb88c58c52c3b3961ab1845e2c0af8805840cec80175646d9f1f"
+    },
+    {
+      "bytes": 1035,
+      "executable": false,
+      "path": "examples/isolated-implementation/README.md",
+      "sha256": "60dc3a9beb8a2f98aecb7d12ef5c54c1dcee5f14ea8829ceb31a832953ea4888"
+    },
+    {
+      "bytes": 444,
+      "executable": false,
+      "path": "examples/lifecycle-hook/README.md",
+      "sha256": "d911835663dd0737f01c86d400e12b09a609d9a9e5af8cbe84e473af88e405d7"
+    },
+    {
+      "bytes": 324,
+      "executable": false,
+      "path": "examples/lifecycle-hooks.json",
+      "sha256": "11ea977b57a7aaaef630353ec12d177f232c78240b4ac2a56540b3813bc24dec"
+    },
+    {
+      "bytes": 443,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/.claude-plugin/plugin.json",
+      "sha256": "eb73461551134de144376350e884bdb881832d01f1534cde69bcd7a58b6c9af7"
+    },
+    {
+      "bytes": 5417,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/README.md",
+      "sha256": "217885f32889391e1d8b8f8ca05ab61ad2ab40acac7ec7680b6f5f84f82f8e1a"
+    },
+    {
+      "bytes": 5017,
+      "executable": true,
+      "path": "plugins/subagent-model-routing-claude/agents/codex-shim.md",
+      "sha256": "69586d2b3a30eb09c0e466bc17f61cdecd11093ed520dc6b3405b326ede5783f"
+    },
+    {
+      "bytes": 3404,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/agents/grok-shim.md",
+      "sha256": "a7e28f71efa8b3aa6e1bd0f1898d3daa01937d4accc656e69110b731d16bd8d7"
+    },
+    {
+      "bytes": 1622,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/agents/kimi-shim.md",
+      "sha256": "8ebd2add001d9ea294da3cb30b7371749d7e908f9145ba473a02da8287a88ea8"
+    },
+    {
+      "bytes": 4869,
+      "executable": true,
+      "path": "plugins/subagent-model-routing-claude/agents/opencode-shim.md",
+      "sha256": "e17bd773cc184b2cb75ec6595728b905db12685afc1a72c1ed03c84087a770b2"
+    },
+    {
+      "bytes": 1371,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/commands/dag-routing.md",
+      "sha256": "077f0ea1117b292facdd7c27825b211f91d992dcd001dc746d42151851403aad"
+    },
+    {
+      "bytes": 4131,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/commands/distill.md",
+      "sha256": "ba2a411bb56f1a21746f87b5280962c184f1aa9b6835c3c45d09daf319579e63"
+    },
+    {
+      "bytes": 11586,
+      "executable": true,
+      "path": "plugins/subagent-model-routing-claude/hooks/dag-tripwire.py",
+      "sha256": "b7759ad29847eb697c5ba5741d8a8a01393b0eb2aeca5393fc471de94d1bbbe0"
+    },
+    {
+      "bytes": 531,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/hooks/hooks.json",
+      "sha256": "54457f9df3861121a11a629d4219261318a3929b0a2cf99e785e8adf78456f2f"
+    },
+    {
+      "bytes": 8153,
+      "executable": true,
+      "path": "plugins/subagent-model-routing-claude/hooks/ledger-tripwire.py",
+      "sha256": "32a4c231c91cbdcb0376e878e3d227488d9b71ca3377d00cda929b6ddd8d6e90"
+    },
+    {
+      "bytes": 17006,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ARCHITECTURE.md",
+      "sha256": "33cfe0423a6238f603a68a09e8d1a7cea496385c5168a92d0b93d58c622c0664"
+    },
+    {
+      "bytes": 56282,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/SKILL.md",
+      "sha256": "d676bc72b522f3276e12a2876e217ece597f05ea6b91e9e39913099e062fbae7"
+    },
+    {
+      "bytes": 1448,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/claude-fable-5.md",
+      "sha256": "78b9e583647c01b3f1766ae3a1f2b936f7b77d45405b6ea482548ce876bbbc79"
+    },
+    {
+      "bytes": 1441,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/claude-opus-4.8.md",
+      "sha256": "54e128177b7e2f8800450d08b41e74da6de8c9fb0c74ba1576f4de2ec611ce69"
+    },
+    {
+      "bytes": 1299,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/claude-sonnet-5.md",
+      "sha256": "ce427b4e4d2d28148543d2fb0e2a81a9c918675c1076c4ec993e7d5e2c6a99fc"
+    },
+    {
+      "bytes": 1346,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/codex.md",
+      "sha256": "40fbd5b12161e8dcf6a599a5350de0eeac764331f7ad4fa428e9aacf907199bf"
+    },
+    {
+      "bytes": 779,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/glm.md",
+      "sha256": "2b1010d8b0020bdd881e5c9ec7fb697253d655f6f55b1166dc94817241fd33e8"
+    },
+    {
+      "bytes": 1382,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/grok.md",
+      "sha256": "e9e013f81a9f092e313f09f22244d419735e5b98e1d9f2456efb9ea3105afddd"
+    },
+    {
+      "bytes": 791,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/kimi.md",
+      "sha256": "23857dcfbbf81c3934ff9c1f63b2f78a107a27fa508ee58ece304c5d70e79bd5"
+    },
+    {
+      "bytes": 809,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/minimax.md",
+      "sha256": "c710783c6d16e1574334c5091e6ce026576a88fdf94540615258c8ebc2823a32"
+    },
+    {
+      "bytes": 929,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/qwen.md",
+      "sha256": "860dc0a6923617ca04f0d26d982b87b4d833adbcc689715c22f323686d20248f"
+    },
+    {
+      "bytes": 12206,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/references/model-prompting.md",
+      "sha256": "8e4d1ce8590c70df842cdbdfcbe4fade2ea25a468b86d7e63b3e643d59189837"
+    },
+    {
+      "bytes": 7596,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/references/provider-registry.generated.json",
+      "sha256": "481dee35b474ddafb47049794abffadfd1df518c72bbdfe5a4f3487600c601da"
+    },
+    {
+      "bytes": 1257,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/references/routes.generated.md",
+      "sha256": "ad56994b1c8a2c2a649457b2b7f75ca15fe00af5fd872d742f864f6c082255ff"
+    },
+    {
+      "bytes": 1250,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-codex/.codex-plugin/plugin.json",
+      "sha256": "5e7de37f0ebe7026253bc23b10a130eea2290d48885b782c1cb5439332d3dbaa"
+    },
+    {
+      "bytes": 4448,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-codex/README.md",
+      "sha256": "807014d262616cb4baecb0652f0cb4bfd1b9ba696edf819cb78e4c7c991c9a97"
+    },
+    {
+      "bytes": 14369,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-codex/skills/subagent-model-routing/SKILL.md",
+      "sha256": "513fb7413fe136bfa1842f07e7c674bc85e25263536e7c0e0472ec60bd7ce953"
+    },
+    {
+      "bytes": 12206,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-codex/skills/subagent-model-routing/references/model-prompting.md",
+      "sha256": "8e4d1ce8590c70df842cdbdfcbe4fade2ea25a468b86d7e63b3e643d59189837"
+    },
+    {
+      "bytes": 7500,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-codex/skills/subagent-model-routing/references/provider-registry.generated.json",
+      "sha256": "cda7d753c817d4140716b5a1fff75c633c15a7eef44980868673b8fea0370284"
+    },
+    {
+      "bytes": 1287,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-codex/skills/subagent-model-routing/references/routes.generated.md",
+      "sha256": "797e5a0929c03338fb38e741574e555587e3a8702dcac2991bbae2fd871a2e52"
+    },
+    {
+      "bytes": 3943,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-copilot/README.md",
+      "sha256": "e2b6cbe3c7e64ff5d430b5e5332503aaaaa7b34f096f8e4d795614aca7287842"
+    },
+    {
+      "bytes": 548,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-copilot/plugin.json",
+      "sha256": "d1e18e9d0a59da014f9d11273f2114f929d75890368cc93bfb3d97de9d429270"
+    },
+    {
+      "bytes": 15221,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-copilot/skills/subagent-model-routing/SKILL.md",
+      "sha256": "c0f4754aa95a72d8018a9d98389bfc4b133265d941c6c6401f3bf1c938681f8a"
+    },
+    {
+      "bytes": 12206,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-copilot/skills/subagent-model-routing/references/model-prompting.md",
+      "sha256": "8e4d1ce8590c70df842cdbdfcbe4fade2ea25a468b86d7e63b3e643d59189837"
+    },
+    {
+      "bytes": 10219,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-copilot/skills/subagent-model-routing/references/provider-registry.generated.json",
+      "sha256": "909fa8ab1076cc9a2b595f8aaa7804ace8b3d0fc829719b2421e4c3d6f962c87"
+    },
+    {
+      "bytes": 1546,
+      "executable": false,
+      "path": "plugins/subagent-model-routing-copilot/skills/subagent-model-routing/references/routes.generated.md",
+      "sha256": "91394f742c7857db2d761f16d518c28ecf939e86598d63b2002abbec846c63be"
+    },
+    {
+      "bytes": 15204,
+      "executable": false,
+      "path": "prompting/00-prompt-reference-index.md",
+      "sha256": "8f6bc5766f415aef080e91dc6bbecc5ed7d031ddcf52c67b60c1cb6a0e8834de"
+    },
+    {
+      "bytes": 5024,
+      "executable": false,
+      "path": "prompting/anthropic-claude-code-prompting-reference.md",
+      "sha256": "4e78310f3bf79b6388bb682e55df15f04a0ad3cbcad3ae7f01206b6dee342621"
+    },
+    {
+      "bytes": 5333,
+      "executable": false,
+      "path": "prompting/anthropic-claude-fable-5-prompting-reference.md",
+      "sha256": "d5b560e56a241be32d91b475cffa72c04f024845ad3d0630e02c4179f35064de"
+    },
+    {
+      "bytes": 5164,
+      "executable": false,
+      "path": "prompting/anthropic-claude-opus-4.8-prompting-reference.md",
+      "sha256": "36ae120d0e73c50e61a4513c625ec34a3e4c5e0a664864c3a8d4ff398700ce53"
+    },
+    {
+      "bytes": 4936,
+      "executable": false,
+      "path": "prompting/anthropic-claude-sonnet-5-prompting-reference.md",
+      "sha256": "6f6e0b0da9265049e1e2f6ab67e26d18e1f30d7a6f264ef342b04c6279b1aa65"
+    },
+    {
+      "bytes": 12039,
+      "executable": false,
+      "path": "prompting/glm-zhipu-prompting-reference.md",
+      "sha256": "922b06cc66a7b1a14a411cbea93271ea654257d630fd4d18c5b22b217a6f9a28"
+    },
+    {
+      "bytes": 11610,
+      "executable": false,
+      "path": "prompting/kimi-moonshot-prompting-reference.md",
+      "sha256": "2d2f226ad4e334e3c6c275ce711cd595903367e1fe0aeb83f767958fdce9e0fa"
+    },
+    {
+      "bytes": 9891,
+      "executable": false,
+      "path": "prompting/minimax-prompting-reference.md",
+      "sha256": "cab6d48aa599248fa58b676c4a0976f4351c4e20d842f049a3b5aa0b6f8fccca"
+    },
+    {
+      "bytes": 16318,
+      "executable": false,
+      "path": "prompting/openai-codex-gpt-prompting-reference.md",
+      "sha256": "d576c273e1807bda1f834003f773c27e94b907072d78256f4b09519f9cf9e550"
+    },
+    {
+      "bytes": 9370,
+      "executable": false,
+      "path": "prompting/qwen-alibaba-prompting-reference.md",
+      "sha256": "23142ebb6c6bc5c1a80a8a990aa45765f15b3952b968f1c141642cbeb3c2f3a7"
+    },
+    {
+      "bytes": 3611,
+      "executable": false,
+      "path": "prompting/xai-grok-prompting-reference.md",
+      "sha256": "a41478779d0e70250a6c0224207490b04d262047c5c6bd6daaca3b2857be8901"
+    },
+    {
+      "bytes": 1249,
+      "executable": false,
+      "path": "references/README.md",
+      "sha256": "a8521fec8842cab9c5359c50068b137336a47e058911bc41509f81e543a21da1"
+    },
+    {
+      "bytes": 20160,
+      "executable": false,
+      "path": "requirements-dev.lock",
+      "sha256": "afa6d94d5185509249ad4db27180a38c9789ae521def44ddbe03be2170159bf0"
+    },
+    {
+      "bytes": 45,
+      "executable": false,
+      "path": "requirements-dev.txt",
+      "sha256": "4198123e47f64c5806abaf53a88ad4bff20990479fce85084c77ece0380ea460"
+    },
+    {
+      "bytes": 186,
+      "executable": false,
+      "path": "runtime/model_routing/__init__.py",
+      "sha256": "5d90ea6fb511b546fe7249a5743862e17104f5fe40bd9f3523771981e13684b1"
+    },
+    {
+      "bytes": 13963,
+      "executable": false,
+      "path": "runtime/model_routing/cli.py",
+      "sha256": "f67b344e03bae22caea89ad653155144c6e46895e5b4e151a4ac6cd2118d13eb"
+    },
+    {
+      "bytes": 17880,
+      "executable": false,
+      "path": "runtime/model_routing/discovery.py",
+      "sha256": "6b23d799f072116affb91c26302c90b46f6ab6615aff2db1e76c7161ffa64eff"
+    },
+    {
+      "bytes": 22319,
+      "executable": false,
+      "path": "runtime/model_routing/dispatch.py",
+      "sha256": "8309a07be0f8dfde6ef486807af907f29f0f52a4f49bbd0790620e97602531cd"
+    },
+    {
+      "bytes": 66776,
+      "executable": false,
+      "path": "runtime/model_routing/doctor.py",
+      "sha256": "c156af649917ca8e96da2a575492747109df9af924bff4676a3ff95583517013"
+    },
+    {
+      "bytes": 458,
+      "executable": false,
+      "path": "runtime/model_routing/errors.py",
+      "sha256": "e879cc3ce013a1d2500d67f5395485626827c8fc563fbd324830edf87c84cc98"
+    },
+    {
+      "bytes": 1443,
+      "executable": false,
+      "path": "runtime/model_routing/events.py",
+      "sha256": "3b0dd0776e9d813feef19109776e885d79cd8d02071556ffd8a215ab7eb08bf1"
+    },
+    {
+      "bytes": 4420,
+      "executable": false,
+      "path": "runtime/model_routing/hooks.py",
+      "sha256": "c4b476dbb6581da146fa864bcffd97c768d6f742d51f3e861e74d09c3926d291"
+    },
+    {
+      "bytes": 8404,
+      "executable": false,
+      "path": "runtime/model_routing/process.py",
+      "sha256": "7612c3c18c2d2a409d85d9716cd1a5e925c4f10219caec560ef6946aff1ec5a3"
+    },
+    {
+      "bytes": 37696,
+      "executable": false,
+      "path": "runtime/model_routing/provider_setup.py",
+      "sha256": "632aa7c5836a4bcf3ede02a4ae14e384ca9a624d3607d2d86bcd4eb5c4dda533"
+    },
+    {
+      "bytes": 744,
+      "executable": false,
+      "path": "runtime/model_routing/providers/__init__.py",
+      "sha256": "f91b7d27f437f7f32740bcadaae39201db479891c610c01e0ff6ab932c95c200"
+    },
+    {
+      "bytes": 3178,
+      "executable": false,
+      "path": "runtime/model_routing/providers/base.py",
+      "sha256": "48022805dcd611facf6bfcb3291a21b14cd8a3e9164dce52e4e108421e3a6180"
+    },
+    {
+      "bytes": 2008,
+      "executable": false,
+      "path": "runtime/model_routing/providers/claude.py",
+      "sha256": "6ce34c2a91193e8f73c7cb154e7004a0f6005511dd8b7f18d5bdaba2f7f010fe"
+    },
+    {
+      "bytes": 2731,
+      "executable": false,
+      "path": "runtime/model_routing/providers/codex.py",
+      "sha256": "a233bdee708a7c98c063499ff378061b8cb142138875ea5218242e93bff1eda5"
+    },
+    {
+      "bytes": 2112,
+      "executable": false,
+      "path": "runtime/model_routing/providers/grok.py",
+      "sha256": "3192d20da4388dbbe6d38ced978ee55f0f5f9a1f18b0ffbe66295d5753fc48b5"
+    },
+    {
+      "bytes": 3437,
+      "executable": false,
+      "path": "runtime/model_routing/providers/kimi.py",
+      "sha256": "39ffba7f70233059ab11dfbc6a2deac0ba754cc218656c8a7c963ff103b0bfc2"
+    },
+    {
+      "bytes": 2980,
+      "executable": false,
+      "path": "runtime/model_routing/providers/opencode.py",
+      "sha256": "032cc8d5af804827d2779c9f01686998e3d97f0e1bcdb5d28c62a7f75189df32"
+    },
+    {
+      "bytes": 13988,
+      "executable": false,
+      "path": "runtime/model_routing/registry.py",
+      "sha256": "59e0f99fa55df315141846e025a9354130038a99aaf3b149eb87e7ba6659cebd"
+    },
+    {
+      "bytes": 5375,
+      "executable": false,
+      "path": "runtime/model_routing/result.py",
+      "sha256": "b7dd8c97402acaa4a4353f0dc8c044913ed850e4aecd4fb4be348417870d91fb"
+    },
+    {
+      "bytes": 6499,
+      "executable": false,
+      "path": "runtime/model_routing/run_store.py",
+      "sha256": "60f60c315bb5ea3e130b7bb1115154eb98923cb0e77013871f034c130c546b9f"
+    },
+    {
+      "bytes": 35334,
+      "executable": false,
+      "path": "runtime/model_routing/scheduler.py",
+      "sha256": "a82424ba1a254f2276048563617d22d711fca64afd128fbb798f07c3a35adfe3"
+    },
+    {
+      "bytes": 23029,
+      "executable": false,
+      "path": "runtime/model_routing/workflow.py",
+      "sha256": "6e1e94561b8fd9d3b9e9e100b3edce89459ae4a2237f8fe19c2d647a519a8b10"
+    },
+    {
+      "bytes": 41618,
+      "executable": false,
+      "path": "runtime/model_routing/workspace.py",
+      "sha256": "62dda7cd8adb5a0b24baad38549661ad702147f6e33dea14470d28897ce0c3bc"
+    },
+    {
+      "bytes": 3728,
+      "executable": false,
+      "path": "schemas/dispatch-result.schema.json",
+      "sha256": "7c29efd1dffdcdbb58f9caa0f193cb7e897cf2037b3a492268e54b0d6051478a"
+    },
+    {
+      "bytes": 2050,
+      "executable": false,
+      "path": "schemas/doctor-result.schema.json",
+      "sha256": "f67d2a1d8873c7c2631bee67bb0150814b4b7d6544365fa942048b0638dc01c4"
+    },
+    {
+      "bytes": 1221,
+      "executable": false,
+      "path": "schemas/lifecycle-event.schema.json",
+      "sha256": "b4afab5bac82c968ba58d755ae421d6aea98279f41026f78898b70bf68520d05"
+    },
+    {
+      "bytes": 2282,
+      "executable": false,
+      "path": "schemas/provider-installers.schema.json",
+      "sha256": "91e0a1200b3c64e5b56568aefd693d5cedb2a1e797b6ba2180d0fd3dac561c1a"
+    },
+    {
+      "bytes": 5843,
+      "executable": false,
+      "path": "schemas/provider-registry.schema.json",
+      "sha256": "791c8063f14ae6bcf97464fbaeeec56e431478610a7503ed94d0fcddd0c9c085"
+    },
+    {
+      "bytes": 3552,
+      "executable": false,
+      "path": "schemas/workflow.schema.json",
+      "sha256": "e8b3b01382fb773d58081183aa8b750490e71262e780d77d92476cd62fe5a14f"
+    },
+    {
+      "bytes": 9559,
+      "executable": true,
+      "path": "scripts/bootstrap.sh",
+      "sha256": "fd96ed49bec7fbfea8d57c628b8c483dfbf94e1a8e8c68763fb3b7c9d8399cf2"
+    },
+    {
+      "bytes": 607,
+      "executable": true,
+      "path": "scripts/claude-shim.sh",
+      "sha256": "846ab6924eb6a580fbcd801462622f5576bc8331c8c030e1f9c8760691427525"
+    },
+    {
+      "bytes": 603,
+      "executable": true,
+      "path": "scripts/codex-shim.sh",
+      "sha256": "a6c403d5a87ab98f4e839d6b8cb000eff376a95f5071cbaa450e457a72ecbe89"
+    },
+    {
+      "bytes": 599,
+      "executable": true,
+      "path": "scripts/grok-shim.sh",
+      "sha256": "0061211ed2a9ffb0408aa2d06eb7f342fbb0d0e028a31c9d86bfa0c178b7e0d2"
+    },
+    {
+      "bytes": 1866,
+      "executable": true,
+      "path": "scripts/install.sh",
+      "sha256": "e80e32d318321876831fcc400edc219fd16c1c43b4963273f13d1480604923d0"
+    },
+    {
+      "bytes": 599,
+      "executable": true,
+      "path": "scripts/kimi-shim.sh",
+      "sha256": "97e0e7f35fb82f40f5940a9d904dd501a1046c5553d3258e6c6b8bd8904a8101"
+    },
+    {
+      "bytes": 588,
+      "executable": true,
+      "path": "scripts/model-routing",
+      "sha256": "550abeb3dcbdef876f823f28921da810958e952d8a89aaf0c2906740101b8bfd"
+    },
+    {
+      "bytes": 615,
+      "executable": true,
+      "path": "scripts/opencode-shim.sh",
+      "sha256": "53334afdda2ea473ecbc4caddfd127515a232fc0d1d5c7a0055e47a02b6a23fb"
+    },
+    {
+      "bytes": 47,
+      "executable": false,
+      "path": "tests/__init__.py",
+      "sha256": "bf8866f4967f5746316336dc2d6cc78730d7a64840b99e31cf10f02b7a64afad"
+    },
+    {
+      "bytes": 2222,
+      "executable": false,
+      "path": "tests/fixtures/fake_provider.py",
+      "sha256": "4ad4adc689c38e7b260b7abf6d4e112066a0665b582daf7f5d45160fc7ac9cf6"
+    },
+    {
+      "bytes": 4122,
+      "executable": false,
+      "path": "tests/shim_test_support.py",
+      "sha256": "a4e42d32bfb604669458f12d2e70ca460f95135e0f8037599f9895cf06d2c2d7"
+    },
+    {
+      "bytes": 11949,
+      "executable": false,
+      "path": "tests/test_bootstrap.py",
+      "sha256": "00a020de4204ce4aa96c7ecaf72a69fc64a35f17885a242b1e371a339467ef7f"
+    },
+    {
+      "bytes": 2988,
+      "executable": false,
+      "path": "tests/test_claude_tripwires.py",
+      "sha256": "c9e99b619813acd379ef77edc59bf312fb822215c9f880337aabd62e38283d34"
+    },
+    {
+      "bytes": 33135,
+      "executable": false,
+      "path": "tests/test_discovery.py",
+      "sha256": "d21fff8b147679f9db50e62736855ddff5db6be230d0a8515d5c79321a0ed5e3"
+    },
+    {
+      "bytes": 15259,
+      "executable": false,
+      "path": "tests/test_dispatch_contract.py",
+      "sha256": "20ba011f9a9bd188e1cad9d5f5a61bb8098250f3698b49ba05250866e1596a0c"
+    },
+    {
+      "bytes": 10759,
+      "executable": false,
+      "path": "tests/test_doctor.py",
+      "sha256": "ac8f5c2076796b07b309c524eb2b1bd36166b86cedacb3a173dc9f1d97ee472e"
+    },
+    {
+      "bytes": 1314,
+      "executable": false,
+      "path": "tests/test_events.py",
+      "sha256": "78ac5081a2ed32135ab16997b7dee46d594f0587f6fc95df5eebae191b5fa950"
+    },
+    {
+      "bytes": 5000,
+      "executable": false,
+      "path": "tests/test_hooks.py",
+      "sha256": "a9a209b41ccf74de319f4617d313f564f9c4bf238f5535f235adfafa4484eaf0"
+    },
+    {
+      "bytes": 1979,
+      "executable": false,
+      "path": "tests/test_installer.py",
+      "sha256": "6978c20e299b6d5310cfe93a63d8f9e6aba809aaaca2ec3719ab54c3a9605877"
+    },
+    {
+      "bytes": 2450,
+      "executable": false,
+      "path": "tests/test_process.py",
+      "sha256": "88560862f0a30b2a881eb1baed80a57671822adc45f3cce39856e7e8d747ef72"
+    },
+    {
+      "bytes": 6636,
+      "executable": false,
+      "path": "tests/test_provider_adapters.py",
+      "sha256": "9e40608c4ff3dead505d2fcaedd8af1f4bfbd84570bc09e54dd60647a409618c"
+    },
+    {
+      "bytes": 26247,
+      "executable": false,
+      "path": "tests/test_provider_setup.py",
+      "sha256": "76abab865b77ed7e8a6417cffc8ac5442d2dbe56e14dd03f9d3bb7ca9fccc246"
+    },
+    {
+      "bytes": 2861,
+      "executable": false,
+      "path": "tests/test_public_release.py",
+      "sha256": "eef02c20043c4d8d178c249702ff7e44032f191b75c8fac50caa9cea125d0f02"
+    },
+    {
+      "bytes": 7116,
+      "executable": false,
+      "path": "tests/test_registry.py",
+      "sha256": "d0dfa661cbe461846facf4580eacae50250c7e7a67dff1af42d0004663a7c8f1"
+    },
+    {
+      "bytes": 2009,
+      "executable": false,
+      "path": "tests/test_result.py",
+      "sha256": "eec6d9c417932d98ce42c13ae30631bb728f6e3cec7bb880c7e7bfb2bdb031bd"
+    },
+    {
+      "bytes": 2103,
+      "executable": false,
+      "path": "tests/test_run_store.py",
+      "sha256": "9b79dccbf11a634bc7a0d82deebd26175bf6c42e251c28661c40bb6b4b2f4ebb"
+    },
+    {
+      "bytes": 20305,
+      "executable": false,
+      "path": "tests/test_scheduler.py",
+      "sha256": "c8dafd6cde360c8fc153a7b612bae2f3bdf4a5ddeb128591eb8d94a689b82093"
+    },
+    {
+      "bytes": 20702,
+      "executable": false,
+      "path": "tests/test_shim_contract.py",
+      "sha256": "732b936e4f47295a1fc80470ecba0ebecf649ba9b6ee2149e3572bef9794fda2"
+    },
+    {
+      "bytes": 55183,
+      "executable": false,
+      "path": "tests/test_workflow.py",
+      "sha256": "bb6ca1121c081a825f4bec7f00e9aa5c29e39e9299bc0c1ae5fd765d9b28df9f"
+    },
+    {
+      "bytes": 18188,
+      "executable": false,
+      "path": "tests/test_workspace.py",
+      "sha256": "452cf3f770a195f3c4bd532627b17afe3695f0a3028e29e8675b023c483a1617"
+    },
+    {
+      "bytes": 36,
+      "executable": false,
+      "path": "tools/__init__.py",
+      "sha256": "f9b6230027d36788c2743425f67dff1cefd9663ff791f6f5d470ad37594e18a0"
+    },
+    {
+      "bytes": 7728,
+      "executable": false,
+      "path": "tools/build_public_release.py",
+      "sha256": "87dcae5cc12fe7d15a9ae810cd58c0b97f79977c67974595104ab11f34f2d512"
+    },
+    {
+      "bytes": 315,
+      "executable": false,
+      "path": "tools/check_generated.py",
+      "sha256": "66fa0dc6b1a08c65f200634c945ad864a626298db535a6be3e83d94ce1acb635"
+    },
+    {
+      "bytes": 2002,
+      "executable": false,
+      "path": "tools/check_markdown_links.py",
+      "sha256": "06ac4e8598ad223a6b867e4e17db57f0017d57b1cb9945dbdf55ff82e7d5c392"
+    },
+    {
+      "bytes": 5503,
+      "executable": false,
+      "path": "tools/sync_routes.py",
+      "sha256": "2ac484471af81a0e9d6bc660747b283a146fbcca52fbb7d6d9d2324d4de943cb"
+    },
+    {
+      "bytes": 2843,
+      "executable": false,
+      "path": "tools/validate_json_schemas.py",
+      "sha256": "6f6d8d372a40be87aa4b4496742416676042abc5f3de839d510ca364cd82eca8"
+    },
+    {
+      "bytes": 3477,
+      "executable": false,
+      "path": "tools/validate_plugins.py",
+      "sha256": "3548163264773e8028416b8c872aede19f2487a8512c224bab897748ce32bea1"
+    },
+    {
+      "bytes": 809,
+      "executable": false,
+      "path": "tools/validate_registry.py",
+      "sha256": "4702c765133c8ddbe7415b232995eba487a4e271286a0b0010d7ae995975e56b"
+    }
+  ],
+  "schemaVersion": 1
+}

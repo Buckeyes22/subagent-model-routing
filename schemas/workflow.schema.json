@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Buckeyes22/subagent-model-routing/schemas/workflow.schema.json",
+  "title": "Subagent model-routing workflow document",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "name", "tasks"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "defaults": { "$ref": "#/$defs/defaults" },
+    "tasks": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$" },
+      "additionalProperties": { "$ref": "#/$defs/task" }
+    }
+  },
+  "$defs": {
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxConcurrency": { "type": "integer", "minimum": 1 },
+        "providerConcurrency": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 1 }
+        },
+        "timeoutSeconds": { "type": "number", "exclusiveMinimum": 0 },
+        "workspace": { "enum": ["shared", "isolated", "auto"] },
+        "failurePolicy": { "enum": ["fail-fast", "continue"] }
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "model"],
+      "properties": {
+        "provider": { "type": "string", "minLength": 1 },
+        "model": { "type": "string", "minLength": 1 },
+        "effort": { "type": "string", "minLength": 1 }
+      }
+    },
+    "prompt": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "maxProperties": 1,
+      "properties": {
+        "file": { "type": "string", "minLength": 1 },
+        "text": { "type": "string", "minLength": 1 }
+      }
+    },
+    "contextFromEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task", "artifact"],
+      "properties": {
+        "task": { "type": "string", "minLength": 1 },
+        "artifact": { "enum": ["stdout", "stderr", "result", "patch", "diffstat"] },
+        "maxBytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "retry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxAttempts": { "type": "integer", "minimum": 1 },
+        "backoffSeconds": { "type": "number", "minimum": 0 },
+        "on": {
+          "type": "array",
+          "items": { "enum": ["timeout", "transport-error"] },
+          "uniqueItems": true
+        }
+      }
+    },
+    "verifyCommand": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["route", "mode", "prompt"],
+      "properties": {
+        "route": { "$ref": "#/$defs/route" },
+        "mode": { "enum": ["read", "write"] },
+        "prompt": { "$ref": "#/$defs/prompt" },
+        "dependsOn": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "contextFrom": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/contextFromEntry" }
+        },
+        "timeoutSeconds": { "type": "number", "exclusiveMinimum": 0 },
+        "workspace": { "enum": ["shared", "isolated", "auto"] },
+        "retry": { "$ref": "#/$defs/retry" },
+        "verify": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/verifyCommand" }
+        }
+      }
+    }
+  }
+}

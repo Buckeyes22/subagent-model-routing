@@ -19,20 +19,20 @@ Workflow runtime  ── background task, returns runId immediately; <notificati
   │  each work node is:  agent("Run verbatim: …/codex-shim.sh <file>", { agentType: 'subagent-model-routing-claude:codex-shim', model: 'sonnet' })
   ▼
 Workflow agent  ── ONE per node. agentType resolves in the SAME registry as the Agent tool →
-  │               adopts the codex-shim / opencode-shim system prompt (Sonnet transport):
+  │               adopts the codex-shim / kimi-shim / grok-shim / opencode-shim system prompt (Sonnet transport):
   │               "find the command in the prompt, run it via Bash with timeout:1200000,
   │                return stdout verbatim." NO schema ⇒ raw stdout is the node's return value.
   ▼
-Bash tool  →  ~/.claude/scripts/{codex,opencode}-shim.sh  <provider/model?>  <prompt-file>  [flags]
+Bash tool  →  ~/.claude/scripts/{codex,kimi,opencode,grok}-shim.sh  <provider/model?>  <prompt-file>  [flags]
   ▼
 Shim layer  ── runs the CLI in plain-text mode (+ permission/sandbox bypass unless
   │                                SUBAGENT_MODEL_ROUTING_UNRESTRICTED=0); enforces SHIM_TIMEOUT_SECS; logs
   │                                `"source":"shim"` ledger records and emits the final
   │                                `SHIM-DONE exit=<n>` sentinel as the LAST stdout line
   ▼
-codex / opencode CLI  ── full agent loop: read source · write files · run gates (tsc/lint/test) · iterate
+codex / kimi / opencode / grok CLI  ── full agent loop: read source · write files · run gates (tsc/lint/test) · iterate
   ▼
-EXTERNAL MODEL  (GPT-5.x · Kimi K2.7 · GLM-5.2 · MiniMax-M3 · local/self-hosted via opencode custom provider)  ── external auth/local endpoint, OFF the token meter
+EXTERNAL MODEL  (GPT-5.x · Grok 4.5 · Kimi K2.7 · GLM-5.2 · MiniMax-M3 · local/self-hosted via opencode custom provider)  ── external auth/local endpoint, OFF the token meter
   │
    └── stdout (the CLI's plain-text output, `SHIM-DONE exit=<n>` last) ─┐
                                                                      │ returned VERBATIM up the chain
@@ -56,7 +56,7 @@ The script is plain JavaScript (NOT TypeScript), executed in a sandbox by the `W
 
 ## 3. agentType resolution — how a node becomes a model
 
-`opts.agentType` is "resolved from the same registry as the `Agent` tool." Under the plugin install the registered names are namespaced as `subagent-model-routing-claude:codex-shim` and `subagent-model-routing-claude:opencode-shim` (agent defs live in this plugin's `agents/`, Sonnet, `color:` only, no `background`). When a node sets `agentType: 'subagent-model-routing-claude:codex-shim'`:
+`opts.agentType` is "resolved from the same registry as the `Agent` tool." Under the plugin install the registered names are namespaced as `subagent-model-routing-claude:codex-shim`, `subagent-model-routing-claude:kimi-shim`, `subagent-model-routing-claude:grok-shim`, and `subagent-model-routing-claude:opencode-shim` (agent defs live in this plugin's `agents/`, Sonnet, `color:` only, no `background`). When a node sets `agentType: 'subagent-model-routing-claude:codex-shim'`:
 
 1. The workflow agent for that node is instantiated with the **codex-shim system prompt** ("find the command, run via Bash `timeout: 1200000`, return stdout verbatim, never use any tool but Bash").
 2. The node's `prompt` ("Run verbatim: ~/.claude/scripts/codex-shim.sh …") IS the command the transport agent looks for.
@@ -74,7 +74,7 @@ Composition caveat: when `agentType` is combined with `schema`, the custom agent
 | Workflow runtime | the background DAG task | — (orchestration) | `/workflows`, notification |
 | Workflow agent (per node) | the node's executor | yes — but it's a **Sonnet transport** agent, small | `/workflows` row (label/phase) |
 | Shim subagent system prompt | rides on the node agent | (same agent) | — |
-| codex/opencode CLI + external model | the actual work | **NO** — external subscription/account or local endpoint, off-meter | artifacts on disk |
+| codex/kimi/opencode/grok CLI + external model | the actual work | **NO** — external subscription/account or local endpoint, off-meter | artifacts on disk |
 
 Implication: `budget.spent()` tracks the Sonnet transport + your own tokens, **not** the external models' tokens (those are subscription, off-meter). So a shim-routed DAG is cheap on the token budget but expensive on **wall-clock** (each node is a 3-8 min CLI run) and on **provider rate-limit headroom**. Size fan-out by provider headroom, never by `budget` (`SKILL.md` §Scale).
 
@@ -137,18 +137,19 @@ subagent-model-routing Part A       ── DAG topology, node=agentType-routed-h
 subagent-model-routing Part B       ── model catalog/picking, response parsing, auth pre-flight, failure modes,
   (SKILL.md Part B (flat dispatch & shared transport substrate))       suppression-cheat, per-provider headroom, Why-Sonnet, cost/quota
         │ drives ▼
-plugins/subagent-model-routing-claude/agents/{codex,opencode}-shim.md ── the Sonnet transport agent contracts (find-command → Bash → verbatim)
+plugins/subagent-model-routing-claude/agents/{codex,kimi,opencode,grok}-shim.md ── the Sonnet transport agent contracts (find-command → Bash → verbatim)
         │ exec ▼
 ~/.claude/scripts/*-shim.sh ── thin wrappers installed by scripts/install.sh from the bundled scripts/
         │ supervise ▼
-codex / opencode CLI        ── agentic harness around the external model
+codex / kimi / opencode / grok CLI ── agentic harness around the external model
 ```
 
 The cut is clean: this skill never re-derives anything below the dashed line. If a node misbehaves because of *transport* (auth, parsing, stalls, rate), the fix is in Part B's shared transport layer; the DAG is correct once transport is.
 
 ## 11. Verified-findings log
 
-- **Pilot run** (2-node DAG, codex → kimi, fs handoff, ~39s, 2 agents): `agentType` routing inside a `Workflow` is **real** — transcripts show `codex-shim.sh …` / `opencode-shim.sh kimi-for-coding/k2p7 …` actually invoked, shim `agentType` values in `agent-*.meta.json` (namespaced as `"subagent-model-routing-claude:codex-shim"` / `"subagent-model-routing-claude:opencode-shim"`), fingerprints `gpt-5.4-mini`/`kimi-for-coding`, no default subagents. Filesystem handoff works cross-model (kimi read codex's `spec.md`, wrote `impl.js`). Mechanical-edge ordering held (`await` sequenced spec before impl). Journaling files (`journal.jsonl`, `agent-*.jsonl`, `agent-*.meta.json`) confirmed present.
+- **Historical pilot run, before the dedicated Kimi shim** (2-node DAG, codex → kimi, fs handoff, ~39s, 2 agents): `agentType` routing inside a `Workflow` is **real** — transcripts show `codex-shim.sh …` / `opencode-shim.sh kimi-for-coding/k2p7 …` actually invoked, shim `agentType` values in `agent-*.meta.json` (namespaced as `"subagent-model-routing-claude:codex-shim"` / `"subagent-model-routing-claude:opencode-shim"`), fingerprints `gpt-5.4-mini`/`kimi-for-coding`, no default subagents. Filesystem handoff works cross-model (kimi read codex's `spec.md`, wrote `impl.js`). Mechanical-edge ordering held (`await` sequenced spec before impl). Journaling files (`journal.jsonl`, `agent-*.jsonl`, `agent-*.meta.json`) confirmed present.
+- **Grok route** (2026-07-09): shim, agent type, and static Workflow wiring are covered by repository tests; a live Grok Workflow pilot remains a machine-local preflight because the Grok Build CLI and authentication are not available in this checkout.
 - **Empirical** — the export-strip/async-wrap transform (§2): confirmed by `node --check` failing raw templates ("'return' outside of function") and passing after the wrap; all `SKILL.md` scripts pass the transform-then-check gate.
 
 ## 12. File map (the DAG stack, one line each)
@@ -156,6 +157,6 @@ The cut is clean: this skill never re-derives anything below the dashed line. If
 - `plugins/subagent-model-routing-claude/skills/subagent-model-routing/SKILL.md` — operational skill (flat dispatch + DAG orchestration).
 - `plugins/subagent-model-routing-claude/skills/subagent-model-routing/ARCHITECTURE.md` — this file (DAG mechanism/internals).
 - `plugins/subagent-model-routing-claude/commands/dag-routing.md` — `/subagent-model-routing-claude:dag-routing <task>` command stub (also a Workflow opt-in).
-- `plugins/subagent-model-routing-claude/agents/{codex,opencode}-shim.md` — Sonnet transport agent contracts.
-- `~/.claude/scripts/{codex,opencode}-shim.sh` — shim wrappers installed from `scripts/` by `scripts/install.sh`.
+- `plugins/subagent-model-routing-claude/agents/{codex,kimi,opencode,grok}-shim.md` — Sonnet transport agent contracts.
+- `~/.claude/scripts/{codex,kimi,opencode,grok}-shim.sh` — shim wrappers installed from `scripts/` by `scripts/install.sh`.
 - Workflow tool — `agent()`/`pipeline()`/`parallel()`/`phase()`/`log()`/`budget`/`args`/`workflow()`, `agentType`, `resumeFromRunId`/`scriptPath`.

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    ".agents/plugins/marketplace.json",
+    ".claude-plugin/marketplace.json",
+    ".github/dependabot.yml",
+    ".github/plugin/marketplace.json",
+    ".github/workflows/ci.yml",
+    ".gitignore",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "LICENSE",
+    "README.md",
+    "SECURITY.md",
+    "docs/architecture.md",
+    "docs/doctor.md",
+    "docs/lifecycle-hooks.md",
+    "docs/migration-v0.3.md",
+    "docs/migration-v0.4.md",
+    "docs/migration-v0.5.md",
+    "docs/provider-cli-setup.md",
+    "docs/provider-registry.md",
+    "docs/releasing.md",
+    "docs/run-records.md",
+    "docs/workflows.md",
+    "docs/worktree-dispatch.md",
+    "references/README.md",
+    "requirements-dev.lock",
+    "requirements-dev.txt"
+  ],
+  "directories": [
+    "config",
+    "examples",
+    "plugins",
+    "prompting",
+    "runtime",
+    "schemas",
+    "scripts",
+    "tests",
+    "tools"
+  ],
+  "excludeGlobs": [
+    "**/__pycache__/**",
+    "**/*.pyc",
+    "**/*.pyo"
+  ]
+}

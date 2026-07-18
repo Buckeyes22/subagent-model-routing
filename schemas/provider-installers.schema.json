@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Buckeyes22/subagent-model-routing/schemas/provider-installers.schema.json",
+  "title": "Subagent model-routing provider CLI installers",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "sourceVerifiedOn", "providers"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "sourceVerifiedOn": { "type": "string", "format": "date" },
+    "providers": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^[a-z0-9-]+$" },
+      "additionalProperties": { "$ref": "#/$defs/provider" }
+    }
+  },
+  "$defs": {
+    "stringArray": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "recipe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["installerUrl", "interpreter", "sha256"],
+      "properties": {
+        "installerUrl": { "type": "string", "format": "uri", "pattern": "^https://" },
+        "interpreter": { "$ref": "#/$defs/stringArray" },
+        "sha256": {
+          "oneOf": [
+            { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "documentationUrl", "platforms", "allowedRedirectHosts", "verifyArgs", "authArgs"
+      ],
+      "properties": {
+        "documentationUrl": { "type": "string", "format": "uri", "pattern": "^https://" },
+        "platforms": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["darwin", "linux"],
+          "properties": {
+            "darwin": { "$ref": "#/$defs/recipe" },
+            "linux": { "$ref": "#/$defs/recipe" }
+          }
+        },
+        "allowedRedirectHosts": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$"
+          }
+        },
+        "verifyArgs": { "$ref": "#/$defs/stringArray" },
+        "authArgs": { "$ref": "#/$defs/stringArray" }
+      }
+    }
+  }
+}

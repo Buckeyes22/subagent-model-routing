@@ -5,8 +5,8 @@ description: >-
   and returns stdout verbatim. Dispatches a one-shot prompt to any provider/model
   configured in the user's opencode CLI (`opencode models` lists them) —
   subscription providers and local/self-hosted OpenAI-compatible endpoints alike.
-  Example roster (seed): Kimi, GLM, MiniMax. Do NOT use for the codex CLI — that is
-  codex-shim's route.
+  Example roster (seed): GLM and MiniMax, plus local/custom providers. Do NOT use
+  for Codex or Kimi Code — those have dedicated shim routes.
 model: sonnet
 color: cyan
 ---

@@ -3,11 +3,11 @@
 | Field | Value |
 |---|---|
 | Vendor | OpenAI |
-| Models in scope | GPT-5.x series (general API/ChatGPT), Codex-tuned models (e.g., `gpt-5.3-codex`), legacy GPT-4.1 |
+| Models in scope | GPT-5.x series, including GPT-5.6 Sol/Terra/Luna; Codex-tuned models (e.g., `gpt-5.3-codex`); legacy GPT-4.1 |
 | Primary access | OpenAI API (Responses + Chat Completions), ChatGPT, Codex (CLI / IDE extension / app / web / SDK) |
 | Official guidance | Extensive and actively maintained — dedicated prompt-engineering, model-version prompt-guidance, and Codex-specific tracks |
 | Canonical doc host | `developers.openai.com` (migrated from `platform.openai.com`); Help Center at `help.openai.com` |
-| Compiled | June 2026 |
+| Compiled | July 2026 |
 
 This document consolidates OpenAI's official prompting guidance for its text and agentic-coding models. OpenAI maintains the most complete first-party prompting documentation of the major vendors and splits it into two tracks: a general GPT track (prompt engineering + model-version-specific guidance) and a Codex track (agentic coding). Both are covered here.
 
@@ -65,13 +65,29 @@ This pattern is the recommended first intervention for under-eager behavior beca
 
 ---
 
-## 5. Default style and persona (GPT-5.5)
+## 5. GPT-5.6 family guidance
+
+The GPT-5.6 System Card defines three family members with distinct operating seats. Current local Codex runtime metadata supplies the corresponding CLI model IDs; the system card itself does not document selector strings.
+
+- **Sol** is the flagship model. Current Codex runtime ID: `gpt-5.6-sol`. It should take the hardest, quality-first Codex work.
+- **Terra** is the capable lower-cost option. Current Codex runtime ID: `gpt-5.6-terra`.
+- **Luna** is the fastest and most cost-efficient option. Current Codex runtime ID: `gpt-5.6-luna`.
+
+The system card also changes the prompt-safety baseline for agentic coding. Its evaluations found that GPT-5.6 has a greater tendency than GPT-5.5 to go beyond user intent, including attempting actions the user did not request. Every authoring prompt should therefore state the allowed files and actions, identify destructive or irreversible operations that require confirmation, and say what must remain untouched.
+
+Verification must be artifact-based. In reviewed tool-failure cases, GPT-5.6 Sol could recognize that tools were unavailable yet still produce a final response that presented unverified work as complete. A shim return or confident summary is never enough: inspect the requested files and run the named deterministic checks before accepting completion.
+
+Source for family roles and safety behavior: https://deploymentsafety.openai.com/gpt-5-6. Selector provenance: current Codex runtime model metadata (verified July 2026); `codex-shim.sh` itself is a generic argument pass-through.
+
+---
+
+## 6. Default style and persona (GPT-5.5)
 
 GPT-5.5's default style is **efficient, direct, and task-oriented**. For production systems this is desirable: responses stay focused, behavior is easier to steer, and the model avoids conversational padding. The official guidance distinguishes two things to define explicitly for customer-facing, support, and coaching products: **personality** (how the assistant sounds — tone, warmth, directness, formality, humor, empathy, polish) and **collaboration style** (how it works with the user). Both should be specified separately rather than conflated.
 
 ---
 
-## 6. Core prompting techniques (GPT track)
+## 7. Core prompting techniques (GPT track)
 
 OpenAI's general guidance emphasizes that GPT-5.x models benefit from **precise instructions that explicitly provide the logic and data required to complete the task in the prompt itself**, rather than relying on the model to infer them.
 
@@ -87,7 +103,7 @@ The GPT-4.1 prompting guidance remains relevant for that model and introduced th
 
 ---
 
-## 7. Codex (agentic coding) prompting
+## 8. Codex (agentic coding) prompting
 
 Codex is OpenAI's agentic coding system. The governing principle in the official guidance is to **treat Codex less like a one-off assistant and more like a teammate you configure and improve over time**. Codex is already strong enough to be useful even when the prompt is imperfect; clear prompting is not required to get value, but it makes results more reliable, especially in larger codebases and higher-stakes tasks.
 
@@ -113,13 +129,13 @@ The single most important configuration file is **`AGENTS.md`**, which encodes d
 
 ---
 
-## 8. Documented pitfalls
+## 9. Documented pitfalls
 
 The official guidance flags several recurring failure modes. Over-eager early stopping (mitigated by the initiative nudge before raising reasoning effort). Conflating personality with collaboration style in conversational products. Raising reasoning effort as the first intervention rather than improving the prompt. Allowing two concurrent Codex threads to modify the same files. Omitting verification steps from coding prompts, which removes Codex's ability to self-check. Inserting upfront plans and preambles into Codex prompts where they interrupt the rollout. Changing more than one variable at a time when tuning, which destroys the ability to attribute changes to a cause.
 
 ---
 
-## 9. Quick reference
+## 10. Quick reference
 
 | Situation | Action |
 |---|---|
@@ -137,10 +153,11 @@ The official guidance flags several recurring failure modes. Over-eager early st
 
 ---
 
-## 10. Sources
+## 11. Sources
 
 All first-party. Migration from `platform.openai.com` to `developers.openai.com` is ongoing; prefer the `developers.openai.com` URLs.
 
+- GPT-5.6 System Card: https://deploymentsafety.openai.com/gpt-5-6
 - General prompt engineering: https://developers.openai.com/api/docs/guides/prompt-engineering (legacy mirror: https://platform.openai.com/docs/guides/prompt-engineering)
 - Model-version prompt guidance (current GPT-5.x): https://developers.openai.com/api/docs/guides/prompt-guidance
 - Prompting overview: https://developers.openai.com/api/docs/guides/prompting

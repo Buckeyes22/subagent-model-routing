@@ -28,17 +28,22 @@ SKILL_ATTRIBUTIONS = {"subagent-model-routing-claude", "subagent-model-routing-c
 SHIM_TYPES = {
     "codex-shim",
     "opencode-shim",
+    "grok-shim",
+    "kimi-shim",
     "subagent-model-routing-claude:codex-shim",
     "subagent-model-routing-claude:opencode-shim",
+    "subagent-model-routing-claude:grok-shim",
+    "subagent-model-routing-claude:kimi-shim",
 }
 SHIM_INVOCATION_RE = re.compile(
     r"(?:^|[;&|(`]|\n)\s*"
     r"(?:[A-Za-z_][A-Za-z0-9_]*=\S*\s+)*"
     r"(?:(?:\S*/)?(?:bash|sh)\s+(?:-\w+\s+)*|env\s+(?:\S+\s+)*|timeout\s+\S+\s+)?"
-    r"[\"']?(?:\S*/)?(?:codex|opencode)-shim\.sh[\"']?(?:\s|$)",
+    r"[\"']?(?:\S*/)?(?:codex|opencode|grok|kimi)-shim\.sh[\"']?(?:\s|$)",
     re.IGNORECASE,
 )
-SHIM_BASENAME_RE = re.compile(r"^(codex|opencode)-shim\.sh$", re.IGNORECASE)
+SHIM_BASENAME_RE = re.compile(r"^(codex|opencode|grok|kimi)-shim\.sh$", re.IGNORECASE)
+MODEL_ROUTING_BASENAME_RE = re.compile(r"^model-routing$", re.IGNORECASE)
 ASSIGNMENT_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=.*$")
 
 
@@ -167,6 +172,50 @@ def shim_invoked(cmd):
     return False
 
 
+def _workflow_runner_call(tokens):
+    for index, token in enumerate(tokens):
+        if not MODEL_ROUTING_BASENAME_RE.match(_token_basename(token)):
+            continue
+        if index > 0 and _token_basename(tokens[0]) not in {
+            "env", "exec", "command", "nohup", "timeout", "python", "python3",
+            "python3.11", "python3.12", "python3.13",
+        }:
+            continue
+        tail = tokens[index + 1:]
+        if len(tail) < 2 or tail[0] != "workflow" or tail[1] not in {"run", "resume"}:
+            continue
+        host = None
+        for position, argument in enumerate(tail[2:]):
+            if argument.startswith("--host="):
+                host = argument.split("=", 1)[1]
+                break
+            if argument == "--host" and position + 3 < len(tail):
+                host = tail[position + 3]
+                break
+        return tail[1], host
+    return None
+
+
+def workflow_runner_calls(cmd):
+    calls = []
+    for segment in _command_segments(str(cmd)):
+        if not segment.strip():
+            continue
+        try:
+            tokens = shlex.split(segment, posix=True)
+        except ValueError:
+            continue
+        if tokens and _token_basename(tokens[0]) in {"bash", "sh", "zsh"}:
+            for index, token in enumerate(tokens[1:], start=1):
+                if "c" in token.lstrip("-") and index + 1 < len(tokens):
+                    calls.extend(workflow_runner_calls(tokens[index + 1]))
+                    break
+        call = _workflow_runner_call(tokens)
+        if call is not None:
+            calls.append(call)
+    return calls
+
+
 def is_real_user_prompt(e):
     """A genuine human prompt, not a tool-result user message and not a subagent sidechain."""
     if e.get("type") != "user" or e.get("isSidechain"):
@@ -236,6 +285,7 @@ def main():
     # 2) Tally Workflow vs. direct shim dispatch among main-loop tool calls this turn.
     workflow_used = False
     direct_shim = False
+    runner_host_violation = None
     for e in turn:
         for b in tool_uses(e):
             name = b.get("name")
@@ -247,8 +297,22 @@ def main():
             elif name == "Bash":
                 cmd = str(inp.get("command", ""))
                 low = cmd.lower()
+                for action, host in workflow_runner_calls(cmd):
+                    if host != "claude":
+                        runner_host_violation = (action, host)
                 if shim_invoked(cmd) and not (re.search(r"\bpong\.md\b", low) or "reply with exactly" in low):
                     direct_shim = True
+
+    if runner_host_violation is not None:
+        action, host = runner_host_violation
+        reason = (
+            "dag-routing HOST BOUNDARY: Claude observed `model-routing workflow "
+            f"{action}` with --host {host!r}. Shared-runner execution from Claude must "
+            "declare `--host claude`; the runner then rejects Claude-provider tasks. "
+            "Use native Claude Workflow for graphs containing Claude work."
+        )
+        print(json.dumps({"decision": "block", "reason": reason}))
+        return 0
 
     if workflow_used or not direct_shim:
         return 0

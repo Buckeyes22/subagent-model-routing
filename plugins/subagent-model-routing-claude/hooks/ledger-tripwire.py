@@ -24,17 +24,21 @@ import sys, json, os, re, shlex
 SHIM_TYPES = {
     "codex-shim",
     "opencode-shim",
+    "grok-shim",
+    "kimi-shim",
     "subagent-model-routing-claude:codex-shim",
     "subagent-model-routing-claude:opencode-shim",
+    "subagent-model-routing-claude:grok-shim",
+    "subagent-model-routing-claude:kimi-shim",
 }
 SHIM_INVOCATION_RE = re.compile(
     r"(?:^|[;&|(`]|\n)\s*"
     r"(?:[A-Za-z_][A-Za-z0-9_]*=\S*\s+)*"
     r"(?:(?:\S*/)?(?:bash|sh)\s+(?:-\w+\s+)*|env\s+(?:\S+\s+)*|timeout\s+\S+\s+)?"
-    r"[\"']?(?:\S*/)?(?:codex|opencode)-shim\.sh[\"']?(?:\s|$)",
+    r"[\"']?(?:\S*/)?(?:codex|opencode|grok|kimi)-shim\.sh[\"']?(?:\s|$)",
     re.IGNORECASE,
 )
-SHIM_BASENAME_RE = re.compile(r"^(codex|opencode)-shim\.sh$", re.IGNORECASE)
+SHIM_BASENAME_RE = re.compile(r"^(codex|opencode|grok|kimi)-shim\.sh$", re.IGNORECASE)
 ASSIGNMENT_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=.*$")
 
 

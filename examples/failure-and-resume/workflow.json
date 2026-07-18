@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "name": "implementation-with-resume",
+  "defaults": {
+    "maxConcurrency": 1,
+    "workspace": "auto",
+    "failurePolicy": "fail-fast"
+  },
+  "tasks": {
+    "analyze": {
+      "route": {
+        "provider": "opencode",
+        "model": "replace-with/provider-model"
+      },
+      "mode": "read",
+      "prompt": {
+        "text": "Identify the smallest safe implementation and its acceptance checks."
+      }
+    },
+    "implement": {
+      "route": {
+        "provider": "claude",
+        "model": "replace-with-claude-model"
+      },
+      "mode": "write",
+      "dependsOn": ["analyze"],
+      "contextFrom": [
+        {
+          "task": "analyze",
+          "artifact": "stdout",
+          "maxBytes": 50000
+        }
+      ],
+      "prompt": {
+        "text": "Implement the supplied plan and run focused tests."
+      },
+      "retry": {
+        "maxAttempts": 2,
+        "backoffSeconds": 5,
+        "on": ["timeout", "transport-error"]
+      },
+      "verify": [
+        ["git", "diff", "--check"]
+      ]
+    }
+  }
+}

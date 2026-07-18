@@ -1,21 +1,27 @@
 {
   "name": "subagent-model-routing-codex",
-  "version": "0.2.0",
-  "description": "Codex-native model routing workflow for flat external-model dispatch and dependency workflows over local codex/opencode shims.",
+  "version": "0.6.0",
+  "description": "Codex-native model routing workflow for flat external-model dispatch and dependency workflows over local claude/kimi/opencode/grok shims.",
   "author": {
     "name": "Buckeyes22"
   },
   "keywords": [
     "subagent-model-routing",
     "codex",
+    "kimi",
+    "moonshot",
     "opencode",
+    "claude",
+    "anthropic",
+    "grok",
+    "xai",
     "shims",
     "external-models"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Model Routing for Codex",
-    "shortDescription": "Route Codex work through local codex/opencode shims.",
+    "shortDescription": "Route Codex work through local model CLI shims.",
     "longDescription": "A Codex-native companion to the Claude Code subagent-model-routing plugin. It keeps flat dispatch and dependency-workflow guidance in Codex terms without loading Claude-only commands, agents, hooks, or Workflow instructions.",
     "developerName": "Buckeyes22",
     "category": "Productivity",
@@ -25,6 +31,7 @@
     ],
     "defaultPrompt": [
       "Use model routing for this task.",
+      "Dispatch this review through Claude.",
       "Dispatch this review through Kimi.",
       "Plan a dependency workflow across models."
     ],

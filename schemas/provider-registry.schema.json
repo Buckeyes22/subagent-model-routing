@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Buckeyes22/subagent-model-routing/schemas/provider-registry.schema.json",
+  "title": "Subagent model-routing provider registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "hosts", "providers"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "hosts": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^[a-z0-9-]+$" },
+      "additionalProperties": { "$ref": "#/$defs/host" }
+    },
+    "providers": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^[a-z0-9-]+$" },
+      "additionalProperties": { "$ref": "#/$defs/provider" }
+    }
+  },
+  "$defs": {
+    "host": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["displayName", "packagePath", "nativeProviders"],
+      "properties": {
+        "displayName": { "type": "string", "minLength": 1 },
+        "packagePath": { "type": "string", "minLength": 1 },
+        "nativeProviders": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "displayName", "shim", "binaryCandidates", "nativeHosts", "promptDelivery",
+        "allowUnknownModels", "defaultModel", "modelSelectors", "effort", "capabilities",
+        "models", "routeFamilies"
+      ],
+      "properties": {
+        "displayName": { "type": "string", "minLength": 1 },
+        "shim": { "type": "string", "pattern": "^[a-z0-9-]+-shim\\.sh$" },
+        "binaryCandidates": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "binaryOverrideEnv": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]+$" },
+        "nativeHosts": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "promptDelivery": { "enum": ["stdin", "argv"] },
+        "allowUnknownModels": { "type": "boolean" },
+        "defaultModel": { "$ref": "#/$defs/defaultModel" },
+        "modelSelectors": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "effort": { "$ref": "#/$defs/effort" },
+        "capabilities": { "$ref": "#/$defs/capabilities" },
+        "models": {
+          "type": "object",
+          "propertyNames": { "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*$" },
+          "additionalProperties": { "$ref": "#/$defs/model" }
+        },
+        "routeFamilies": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/routeFamily" }
+        }
+      }
+    },
+    "defaultModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "fallback"],
+      "properties": {
+        "source": { "enum": ["registry", "codex-config", "kimi-config", "positional"] },
+        "fallback": { "type": ["string", "null"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "source": { "const": "positional" } }, "required": ["source"] },
+          "then": { "properties": { "fallback": { "type": "null" } } }
+        }
+      ]
+    },
+    "effort": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "key", "values"],
+      "properties": {
+        "kind": { "enum": ["config", "provider-flag", "none"] },
+        "key": { "type": ["string", "null"], "minLength": 1 },
+        "values": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "none" } }, "required": ["kind"] },
+          "then": {
+            "properties": {
+              "key": { "type": "null" },
+              "values": { "maxItems": 0 }
+            }
+          },
+          "else": { "properties": { "key": { "type": "string", "minLength": 1 } } }
+        }
+      ]
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authProbe", "configProbe", "worktreeDispatch", "structuredOutput"],
+      "properties": {
+        "authProbe": { "type": "boolean" },
+        "configProbe": { "type": "boolean" },
+        "worktreeDispatch": { "type": "boolean" },
+        "structuredOutput": { "type": "boolean" }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "displayName", "aliases", "effortValues", "promptReference", "runtimeReference",
+        "capabilityCard", "provenance"
+      ],
+      "properties": {
+        "displayName": { "type": "string", "minLength": 1 },
+        "aliases": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "effortValues": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "promptReference": { "type": "string", "minLength": 1 },
+        "runtimeReference": { "type": "string", "minLength": 1 },
+        "capabilityCard": { "type": "string", "minLength": 1 },
+        "provenance": { "type": "string", "minLength": 1 }
+      }
+    },
+    "routeFamily": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "displayName", "patterns", "example", "promptReference", "runtimeReference",
+        "capabilityCard"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "displayName": { "type": "string", "minLength": 1 },
+        "patterns": { "type": "array", "minItems": 1, "items": { "type": "string" }, "uniqueItems": true },
+        "example": { "type": "string", "minLength": 1 },
+        "promptReference": { "type": "string", "minLength": 1 },
+        "runtimeReference": { "type": "string", "minLength": 1 },
+        "capabilityCard": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

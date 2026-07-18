@@ -1,0 +1,16 @@
+{
+  "dispatch.failed": [
+    {
+      "command": ["/home/user/bin/notify-routing-failure"],
+      "timeoutSeconds": 5,
+      "failurePolicy": "ignore"
+    }
+  ],
+  "dispatch.timed_out": [
+    {
+      "command": ["/home/user/bin/record-routing-timeout"],
+      "timeoutSeconds": 5,
+      "failurePolicy": "ignore"
+    }
+  ]
+}

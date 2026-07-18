@@ -6,7 +6,7 @@
     {
       "name": "subagent-model-routing-claude",
       "source": "./plugins/subagent-model-routing-claude",
-      "description": "Claude Code subagent-model-routing skill with flat dispatch + Workflow DAG orchestration over the codex/opencode shims."
+      "description": "Claude Code subagent-model-routing skill with flat dispatch + Workflow DAG orchestration over the codex/kimi/opencode/grok shims."
     }
   ]
 }

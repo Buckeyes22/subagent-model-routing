@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Buckeyes22/subagent-model-routing/schemas/dispatch-result.schema.json",
+  "title": "Subagent model-routing dispatch result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "dispatchId", "workflowId", "taskId", "provider", "model",
+    "requestedModel", "effort", "arguments", "providerVersion", "status", "outcome",
+    "createdAt", "startedAt", "finishedAt", "wallMs", "exitCode", "signal", "timeout",
+    "sentinel", "workspace", "output", "artifacts", "integration"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "dispatchId": { "type": "string", "format": "uuid" },
+    "workflowId": { "type": ["string", "null"] },
+    "taskId": { "type": ["string", "null"] },
+    "provider": { "type": "string", "minLength": 1 },
+    "model": { "type": "string", "minLength": 1 },
+    "requestedModel": { "type": "string", "minLength": 1 },
+    "effort": { "type": ["string", "null"] },
+    "arguments": { "type": "array", "items": { "type": "string" } },
+    "providerVersion": { "type": ["string", "null"] },
+    "status": { "enum": ["succeeded", "failed", "timed_out", "cancelled", "preflight_failed"] },
+    "outcome": { "enum": ["ok", "error", "timeout", "cancelled"] },
+    "createdAt": { "type": "string" },
+    "startedAt": { "type": ["string", "null"] },
+    "finishedAt": { "type": "string" },
+    "wallMs": { "type": "integer", "minimum": 0 },
+    "exitCode": { "type": "integer", "minimum": 0, "maximum": 255 },
+    "signal": { "type": ["integer", "null"], "minimum": 1 },
+    "timeout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["seconds", "expired"],
+      "properties": {
+        "seconds": { "type": ["number", "null"], "minimum": 0 },
+        "expired": { "type": "boolean" }
+      }
+    },
+    "sentinel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["emitted", "exit"],
+      "properties": {
+        "emitted": { "type": "boolean" },
+        "exit": { "type": "integer", "minimum": 0, "maximum": 255 }
+      }
+    },
+    "workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "path"],
+      "properties": {
+        "mode": { "enum": ["shared", "isolated"] },
+        "path": { "type": "string" },
+        "baseSha": { "type": ["string", "null"] },
+        "finalSha": { "type": ["string", "null"] }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stdout", "stderr"],
+      "properties": {
+        "stdout": { "$ref": "#/$defs/outputDigest" },
+        "stderr": { "$ref": "#/$defs/outputDigest" }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "integration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "appliedAt", "target"],
+      "properties": {
+        "status": { "enum": ["not_applied", "applied", "conflicted", "discarded"] },
+        "appliedAt": { "type": ["string", "null"] },
+        "target": { "type": ["string", "null"] },
+        "method": { "enum": ["patch", "cherry-pick", "discard", null] },
+        "identity": { "type": ["string", "null"] },
+        "conflictedFiles": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "$defs": {
+    "outputDigest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bytes", "sha256"],
+      "properties": {
+        "bytes": { "type": "integer", "minimum": 0 },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    }
+  }
+}
