@@ -9,11 +9,13 @@ import json
 import os
 from pathlib import Path
 import pty
+import select
 import signal
 import subprocess
 import sys
 import tempfile
 import termios
+import threading
 import unittest
 from unittest import mock
 
@@ -179,8 +181,8 @@ class DetectionAndSelectionTests(unittest.TestCase):
                 "KIMI_BIN": str(custom_kimi),
             }
             rows = {row.provider_id: row for row in provider_setup.detect_provider_rows(self.specs(), env)}
-            self.assertEqual(str(codex), rows["codex"].installed_path)
-            self.assertEqual(str(custom_kimi), rows["kimi"].installed_path)
+            self.assertEqual(str(codex.resolve()), rows["codex"].installed_path)
+            self.assertEqual(str(custom_kimi.resolve()), rows["kimi"].installed_path)
             self.assertFalse(rows["claude"].installed)
 
     def test_detection_refreshes_existing_common_user_bin_directories(self) -> None:
@@ -191,7 +193,7 @@ class DetectionAndSelectionTests(unittest.TestCase):
                 self.specs(), {"HOME": str(home), "PATH": "/nonexistent"}
             )
             by_id = {row.provider_id: row for row in rows}
-            self.assertEqual(str(opencode), by_id["opencode"].installed_path)
+            self.assertEqual(str(opencode.resolve()), by_id["opencode"].installed_path)
 
     def test_selection_skips_installed_rows_and_toggles_only_missing(self) -> None:
         rows = (
@@ -252,6 +254,19 @@ class DetectionAndSelectionTests(unittest.TestCase):
 
     def test_tty_selector_reads_arrows_space_enter_and_restores_attributes(self) -> None:
         master, slave = pty.openpty()
+        stop_drain = threading.Event()
+
+        def drain_master() -> None:
+            while not stop_drain.is_set():
+                ready, _, _ = select.select([master], [], [], 0.05)
+                if ready:
+                    try:
+                        os.read(master, 4096)
+                    except OSError:
+                        return
+
+        drain_thread = threading.Thread(target=drain_master, daemon=True)
+        drain_thread.start()
         try:
             tty_path = os.ttyname(slave)
             before = termios.tcgetattr(slave)
@@ -270,6 +285,8 @@ class DetectionAndSelectionTests(unittest.TestCase):
                 self.assertEqual(before, termios.tcgetattr(slave))
             self.assertEqual(before, termios.tcgetattr(slave))
         finally:
+            stop_drain.set()
+            drain_thread.join(timeout=1)
             os.close(master)
             os.close(slave)
 

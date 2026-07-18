@@ -842,10 +842,10 @@
       "sha256": "9e40608c4ff3dead505d2fcaedd8af1f4bfbd84570bc09e54dd60647a409618c"
     },
     {
-      "bytes": 25330,
+      "bytes": 25916,
       "executable": false,
       "path": "tests/test_provider_setup.py",
-      "sha256": "a30345a0f49f9b3b17bcb4afa3c36cf5ddf4c151633997cca1018716c3f4bf3e"
+      "sha256": "59fd509d9fcfb929028e7ae5fcc52903c2fcc8dd88eb298d677d4f977f8c405d"
     },
     {
       "bytes": 2861,
