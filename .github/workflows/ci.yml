@@ -7,11 +7,67 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  checks:
+  public-release:
+    name: Public release snapshot
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install hash-locked development checks
+        run: python -m pip install --require-hashes --requirement requirements-dev.lock
+      - name: Build and validate the public allowlist
+        run: |
+          set -euo pipefail
+          release_parent="$(mktemp -d)"
+          candidate="$release_parent/candidate"
+          python3 tools/build_public_release.py "$candidate"
+          cd "$candidate"
+          ruff check runtime tests tools scripts/model-routing
+          mypy --python-version 3.11 runtime/model_routing tools scripts/model-routing
+          python3 tools/check_markdown_links.py
+          python3 tools/validate_json_schemas.py
+          python3 tools/validate_plugins.py
+          python3 tools/validate_registry.py
+          python3 tools/sync_routes.py --check
+          python3 tools/check_generated.py
+          python3 -m unittest discover -s tests -v
+          for script in scripts/*.sh; do bash -n "$script"; done
+
+  checks:
+    name: checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install development checks
+        run: python -m pip install --require-hashes --requirement requirements-dev.lock
+
+      - name: Run repository quality gates
+        run: |
+          git diff --check
+          ruff check runtime tests tools scripts/model-routing
+          mypy --python-version 3.11 runtime/model_routing tools scripts/model-routing
+          python tools/check_markdown_links.py
+          python tools/validate_json_schemas.py
+          python tools/validate_plugins.py
+          python tools/check_generated.py
+          go run github.com/rhysd/actionlint/cmd/actionlint@03d0035246f3e81f36aed592ffb4bebf33a03106  # v1.7.7
 
       - name: Check shell script syntax
         run: |
@@ -20,11 +76,284 @@ jobs:
             bash -n "$s"
           done
 
+      - name: Compile and run the complete Python suite
+        run: |
+          python3 -m compileall -q runtime tests tools scripts/model-routing
+          python3 -m unittest discover -s tests -v
+
+      - name: Validate provider registry and generated routes
+        run: |
+          python3 tools/validate_registry.py
+          python3 tools/sync_routes.py --check
+          python3 scripts/model-routing doctor --installation-only --json >/dev/null
+
       - name: Check shim usage-error sentinels
         run: |
           set -euo pipefail
           [ "$(bash scripts/codex-shim.sh 2>&1 | tail -1)" = "SHIM-DONE exit=64" ]
           [ "$(bash scripts/opencode-shim.sh 2>&1 | tail -1)" = "SHIM-DONE exit=64" ]
+          [ "$(bash scripts/grok-shim.sh 2>&1 | tail -1)" = "SHIM-DONE exit=64" ]
+          [ "$(bash scripts/claude-shim.sh 2>&1 | tail -1)" = "SHIM-DONE exit=64" ]
+          [ "$(bash scripts/kimi-shim.sh 2>&1 | tail -1)" = "SHIM-DONE exit=64" ]
+
+      - name: Check client-native route boundaries
+        run: |
+          set -euo pipefail
+          codex_skill=plugins/subagent-model-routing-codex/skills/subagent-model-routing/SKILL.md
+          claude_skill=plugins/subagent-model-routing-claude/skills/subagent-model-routing/SKILL.md
+          copilot_skill=plugins/subagent-model-routing-copilot/skills/subagent-model-routing/SKILL.md
+
+          grep -q '~/.claude/scripts/claude-shim.sh' "$codex_skill"
+          grep -q '~/.claude/scripts/kimi-shim.sh' "$codex_skill"
+          ! grep -q '~/.claude/scripts/codex-shim.sh' "$codex_skill"
+          grep -q 'native Codex harness' "$codex_skill"
+
+          grep -q '~/.claude/scripts/codex-shim.sh' "$claude_skill"
+          grep -q '~/.claude/scripts/kimi-shim.sh' "$claude_skill"
+          ! grep -q '~/.claude/scripts/claude-shim.sh' "$claude_skill"
+          grep -q 'native `Agent` calls for Claude work' "$claude_skill"
+
+          grep -q '~/.claude/scripts/codex-shim.sh' "$copilot_skill"
+          grep -q '~/.claude/scripts/claude-shim.sh' "$copilot_skill"
+          grep -q '~/.claude/scripts/kimi-shim.sh' "$copilot_skill"
+
+      - name: Check Claude system-card reference wiring
+        run: |
+          set -euo pipefail
+          bundle=plugins/subagent-model-routing-claude/skills/subagent-model-routing/references/model-prompting.md
+
+          check_reference() {
+            slug="$1"
+            source_url="$2"
+            anchor="$3"
+            reference="prompting/anthropic-claude-${slug}-prompting-reference.md"
+            card="plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/claude-${slug}.md"
+
+            test -s "$reference"
+            test -s "$card"
+            grep -Fq "$source_url" "$reference"
+            grep -Fq "references/model-prompting.md#$anchor" plugins/subagent-model-routing-codex/skills/subagent-model-routing/SKILL.md
+            grep -Fq "references/model-prompting.md#$anchor" plugins/subagent-model-routing-copilot/skills/subagent-model-routing/SKILL.md
+            grep -Fq "../references/model-prompting.md#$anchor" "$card"
+          }
+
+          test -s "$bundle"
+          test -s references/README.md
+          test ! -d references/system-cards
+          check_reference sonnet-5 https://www.anthropic.com/claude-sonnet-5-system-card claude-sonnet-5
+          check_reference opus-4.8 https://www.anthropic.com/claude-opus-4-8-system-card claude-opus-48
+          check_reference fable-5 https://www.anthropic.com/claude-fable-5-mythos-5-system-card claude-fable-5
+
+          test ! -e prompting/anthropic-claude-mythos-5-prompting-reference.md
+          test ! -e plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/claude-mythos-5.md
+
+      - name: Check bundled runtime reference resolution
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib
+          import pathlib
+          import re
+
+          packages = [
+              pathlib.Path("plugins/subagent-model-routing-claude"),
+              pathlib.Path("plugins/subagent-model-routing-codex"),
+              pathlib.Path("plugins/subagent-model-routing-copilot"),
+          ]
+          payloads = []
+          for package in packages:
+              skill_dir = package / "skills/subagent-model-routing"
+              skill = skill_dir / "SKILL.md"
+              bundle = skill_dir / "references/model-prompting.md"
+              assert bundle.is_file() and bundle.stat().st_size > 0, bundle
+              bundle_text = bundle.read_text(encoding="utf-8")
+              assert not re.search(r"^#{1,6}\s+.*mythos", bundle_text, re.I | re.M), bundle
+              text = skill.read_text(encoding="utf-8")
+              assert "Full reference: `prompting/" not in text, skill
+              references = re.findall(r"Full reference: `([^`]+)`", text)
+              assert references, skill
+              for reference in references:
+                  relative, _, anchor = reference.partition("#")
+                  target = skill_dir / relative
+                  assert target.is_file(), (skill, reference)
+                  if anchor:
+                      target_text = target.read_text(encoding="utf-8").lower()
+                      assert f"(#{anchor})" in target_text, (target, anchor)
+              payloads.append(bundle.read_bytes())
+          assert len({hashlib.sha256(p).hexdigest() for p in payloads}) == 1
+          assert not list(pathlib.Path("prompting").glob("*mythos*"))
+          assert not list(pathlib.Path("plugins").rglob("*mythos*"))
+          print("all package-local references resolve and bundles are synchronized")
+          PY
+
+      - name: Check durable distillation mapping
+        run: |
+          set -euo pipefail
+          distill=plugins/subagent-model-routing-claude/commands/distill.md
+          grep -Fq 'SUBAGENT_MODEL_ROUTING_HOME' "$distill"
+          grep -Fq 'Never edit an installed plugin cache' "$distill"
+          grep -Fq 'Map each record by both `shim` and `model`' "$distill"
+          grep -Fq '`shim:"codex"`' "$distill"
+          grep -Fq '`shim:"claude"`' "$distill"
+          grep -Fq '`shim:"grok"`' "$distill"
+          grep -Fq '`shim:"kimi"`' "$distill"
+          grep -Fq '`shim:"opencode"`' "$distill"
+          grep -Fq 'kimi-for-coding/*' "$distill"
+          grep -Fq 'zai-coding-plan/*' "$distill"
+          grep -Fq 'git -C "$ROOT" diff' "$distill"
+
+      - name: Check GPT-5.6 codex model forwarding and attribution
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+          mkdir -p "$tmp/bin" "$tmp/home/.codex"
+          printf 'test prompt\n' > "$tmp/prompt.md"
+          cat > "$tmp/bin/codex" <<'SH'
+          #!/usr/bin/env bash
+          cat >/dev/null
+          printf 'fake-codex %s\n' "$*"
+          SH
+          chmod +x "$tmp/bin/codex"
+
+          check_model() {
+            expected="$1"
+            shift
+            ledger="$tmp/ledger-${expected}.jsonl"
+            output="$(
+              HOME="$tmp/home" \
+              PATH="$tmp/bin:$PATH" \
+              SUBAGENT_MODEL_ROUTING_LEDGER="$ledger" \
+              bash scripts/codex-shim.sh "$tmp/prompt.md" "$@"
+            )"
+            [ "$(printf '%s\n' "$output" | tail -1)" = "SHIM-DONE exit=0" ]
+            EXPECTED="$expected" LEDGER="$ledger" python3 - <<'PY'
+          import json, os
+          records = [json.loads(line) for line in open(os.environ["LEDGER"], encoding="utf-8")]
+          assert records[-1]["model"] == os.environ["EXPECTED"], records
+          assert records[-1]["outcome"] == "ok", records
+          PY
+          }
+
+          check_model gpt-5.6-sol --model=gpt-5.6-sol
+          check_model gpt-5.6-terra --model gpt-5.6-terra
+          check_model gpt-5.6-luna -m=gpt-5.6-luna
+
+          grep -Fq 'Selector provenance: current Codex runtime model metadata' prompting/openai-codex-gpt-prompting-reference.md
+          ! grep -RFq '`gpt-5.6`' README.md scripts plugins prompting
+
+      - name: Check Grok 4.5 forwarding, policy, and attribution
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+          mkdir -p "$tmp/bin" "$tmp/home"
+          printf 'test prompt\n' > "$tmp/prompt.md"
+          cat > "$tmp/bin/grok" <<'SH'
+          #!/usr/bin/env bash
+          printf '%s\0' "$@" > "$GROK_ARGS_FILE"
+          printf 'fake-grok\n'
+          SH
+          chmod +x "$tmp/bin/grok"
+
+          ledger="$tmp/ledger-default.jsonl"
+          output="$(
+            HOME="$tmp/home" \
+            PATH="$tmp/bin:$PATH" \
+            GROK_ARGS_FILE="$tmp/args-default" \
+            SUBAGENT_MODEL_ROUTING_LEDGER="$ledger" \
+            bash scripts/grok-shim.sh "$tmp/prompt.md" --effort low
+          )"
+          [ "$(printf '%s\n' "$output" | tail -1)" = "SHIM-DONE exit=0" ]
+
+          ARGS="$tmp/args-default" LEDGER="$ledger" python3 - <<'PY'
+          import json, os
+          args = open(os.environ["ARGS"], "rb").read().rstrip(b"\0").decode().split("\0")
+          for flag in ("--no-auto-update", "--no-alt-screen", "--always-approve"):
+              assert flag in args, args
+          assert args[args.index("-m") + 1] == "grok-4.5", args
+          assert args[args.index("--effort") + 1] == "low", args
+          assert args[args.index("--output-format") + 1] == "plain", args
+          assert args[args.index("-p") + 1] == "test prompt", args
+          records = [json.loads(line) for line in open(os.environ["LEDGER"], encoding="utf-8")]
+          assert records[-1]["model"] == "grok-4.5", records
+          assert records[-1]["outcome"] == "ok", records
+          PY
+
+          override_ledger="$tmp/ledger-override.jsonl"
+          HOME="$tmp/home" \
+            PATH="$tmp/bin:$PATH" \
+            GROK_ARGS_FILE="$tmp/args-override" \
+            SUBAGENT_MODEL_ROUTING_UNRESTRICTED=0 \
+            SUBAGENT_MODEL_ROUTING_LEDGER="$override_ledger" \
+            bash scripts/grok-shim.sh "$tmp/prompt.md" --model=grok-test >/dev/null
+
+          ARGS="$tmp/args-override" LEDGER="$override_ledger" python3 - <<'PY'
+          import json, os
+          args = open(os.environ["ARGS"], "rb").read().rstrip(b"\0").decode().split("\0")
+          assert "--model=grok-test" in args, args
+          assert "--always-approve" not in args, args
+          assert "grok-4.5" not in args, args
+          records = [json.loads(line) for line in open(os.environ["LEDGER"], encoding="utf-8")]
+          assert records[-1]["model"] == "grok-test", records
+          PY
+
+      - name: Check Claude Code forwarding, policy, and attribution
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+          mkdir -p "$tmp/bin" "$tmp/home"
+          printf '%s\n' '--help' > "$tmp/prompt.md"
+          cat > "$tmp/bin/claude" <<'SH'
+          #!/usr/bin/env bash
+          printf '%s\0' "$@" > "$CLAUDE_ARGS_FILE"
+          printf 'fake-claude\n'
+          SH
+          chmod +x "$tmp/bin/claude"
+
+          ledger="$tmp/ledger-default.jsonl"
+          output="$(
+            HOME="$tmp/home" \
+            PATH="$tmp/bin:$PATH" \
+            CLAUDE_ARGS_FILE="$tmp/args-default" \
+            SUBAGENT_MODEL_ROUTING_LEDGER="$ledger" \
+            bash scripts/claude-shim.sh "$tmp/prompt.md" --effort low --max-turns 3
+          )"
+          [ "$(printf '%s\n' "$output" | tail -1)" = "SHIM-DONE exit=0" ]
+
+          ARGS="$tmp/args-default" LEDGER="$ledger" python3 - <<'PY'
+          import json, os
+          args = open(os.environ["ARGS"], "rb").read().rstrip(b"\0").decode().split("\0")
+          for flag in ("-p", "--no-session-persistence", "--dangerously-skip-permissions"):
+              assert flag in args, args
+          assert args[args.index("--model") + 1] == "sonnet", args
+          assert args[args.index("--effort") + 1] == "low", args
+          assert args[args.index("--max-turns") + 1] == "3", args
+          assert args[args.index("--output-format") + 1] == "text", args
+          assert args[-2:] == ["--", "--help"], args
+          records = [json.loads(line) for line in open(os.environ["LEDGER"], encoding="utf-8")]
+          assert records[-1]["model"] == "sonnet", records
+          assert records[-1]["outcome"] == "ok", records
+          PY
+
+          override_ledger="$tmp/ledger-override.jsonl"
+          HOME="$tmp/home" \
+            PATH="$tmp/bin:$PATH" \
+            CLAUDE_ARGS_FILE="$tmp/args-override" \
+            SUBAGENT_MODEL_ROUTING_UNRESTRICTED=0 \
+            SUBAGENT_MODEL_ROUTING_LEDGER="$override_ledger" \
+            bash scripts/claude-shim.sh "$tmp/prompt.md" --model=opus >/dev/null
+
+          ARGS="$tmp/args-override" LEDGER="$override_ledger" python3 - <<'PY'
+          import json, os
+          args = open(os.environ["ARGS"], "rb").read().rstrip(b"\0").decode().split("\0")
+          assert "--model=opus" in args, args
+          assert "--dangerously-skip-permissions" not in args, args
+          assert "sonnet" not in args, args
+          records = [json.loads(line) for line in open(os.environ["LEDGER"], encoding="utf-8")]
+          assert records[-1]["model"] == "opus", records
+          PY
 
       - name: Compile stop hooks
         run: |
@@ -45,10 +374,35 @@ jobs:
               "plugins/subagent-model-routing-codex/.codex-plugin/plugin.json",
               "plugins/subagent-model-routing-copilot/plugin.json",
               "plugins/subagent-model-routing-claude/hooks/hooks.json",
+              "config/provider-installers.json",
+              "schemas/provider-installers.schema.json",
+              "schemas/provider-registry.schema.json",
+              "schemas/dispatch-result.schema.json",
+              "schemas/lifecycle-event.schema.json",
+              "schemas/doctor-result.schema.json",
+              "schemas/workflow.schema.json",
           ]
           for m in manifests:
               with open(m, encoding="utf-8") as f:
                   json.load(f)
+          with open("plugins/subagent-model-routing-claude/.claude-plugin/plugin.json", encoding="utf-8") as f:
+              claude = json.load(f)
+          with open("plugins/subagent-model-routing-codex/.codex-plugin/plugin.json", encoding="utf-8") as f:
+              codex = json.load(f)
+          with open("plugins/subagent-model-routing-copilot/plugin.json", encoding="utf-8") as f:
+              copilot = json.load(f)
+          with open(".github/plugin/marketplace.json", encoding="utf-8") as f:
+              copilot_marketplace = json.load(f)
+          with open(".claude-plugin/marketplace.json", encoding="utf-8") as f:
+              claude_marketplace = json.load(f)
+          versions = {claude["version"], codex["version"], copilot["version"]}
+          assert versions == {"0.6.0"}, versions
+          entry = copilot_marketplace["plugins"][0]
+          assert entry["version"] == copilot["version"]
+          assert all(name in entry["description"].lower() for name in ("codex", "claude", "kimi", "opencode", "grok"))
+          assert all(name in claude_marketplace["plugins"][0]["description"].lower() for name in ("codex", "kimi", "opencode", "grok"))
+          assert "v0.6.0" in open("README.md", encoding="utf-8").read()
+          assert "## [0.6.0] - 2026-07-17" in open("CHANGELOG.md", encoding="utf-8").read()
           print(f"all {len(manifests)} manifests valid")
           PY
 
@@ -144,6 +498,24 @@ jobs:
               "ledger dispatch-without-ledger blocks",
           )
 
+          ok &= assert_block(
+              run_hook(LEDGER, base, [
+                  user_entry("run grok shim"),
+                  bash_tool("scripts/grok-shim.sh prompt.md"),
+              ]),
+              True,
+              "ledger grok dispatch blocks",
+          )
+
+          ok &= assert_block(
+              run_hook(LEDGER, base, [
+                  user_entry("run kimi shim"),
+                  bash_tool("scripts/kimi-shim.sh prompt.md"),
+              ]),
+              True,
+              "ledger kimi dispatch blocks",
+          )
+
           # (b) ledger: >> append satisfies the tripwire
           ok &= assert_block(
               run_hook(LEDGER, base, [
@@ -173,6 +545,24 @@ jobs:
               ]),
               True,
               "dag control-flow dispatch blocks",
+          )
+
+          ok &= assert_block(
+              run_hook(DAG, base, [
+                  user_entry("command-name>/subagent-model-routing-claude:dag-routing run"),
+                  agent_tool("subagent-model-routing-claude:grok-shim"),
+              ]),
+              True,
+              "dag namespaced grok agent blocks",
+          )
+
+          ok &= assert_block(
+              run_hook(DAG, base, [
+                  user_entry("command-name>/subagent-model-routing-claude:dag-routing run"),
+                  agent_tool("subagent-model-routing-claude:kimi-shim"),
+              ]),
+              True,
+              "dag namespaced kimi agent blocks",
           )
 
           # (e) dag: Workflow present satisfies the tripwire
@@ -217,3 +607,49 @@ jobs:
               sys.exit(1)
           print("all hook pipe tests passed")
           PY
+
+  runtime-python:
+    name: Runtime Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Validate the standard-library runtime
+        run: |
+          python -m compileall -q runtime tests tools scripts/model-routing
+          python -m unittest discover -s tests -v
+          python tools/validate_registry.py
+          python tools/sync_routes.py --check
+
+  runtime-macos:
+    name: Runtime macOS smoke
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.11"
+      - name: Run portable runtime modules
+        run: |
+          python -m compileall -q runtime tests tools scripts/model-routing
+          python -m unittest \
+            tests.test_provider_adapters \
+            tests.test_run_store \
+            tests.test_events \
+            tests.test_hooks \
+            tests.test_doctor \
+            tests.test_provider_setup \
+            tests.test_bootstrap \
+            tests.test_workspace \
+            tests.test_result \
+            tests.test_registry -v

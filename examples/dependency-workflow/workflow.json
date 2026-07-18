@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "name": "dependency-review",
+  "defaults": {
+    "maxConcurrency": 2,
+    "workspace": "auto",
+    "failurePolicy": "fail-fast"
+  },
+  "tasks": {
+    "analyze": {
+      "route": {
+        "provider": "opencode",
+        "model": "replace-with/provider-model"
+      },
+      "mode": "read",
+      "prompt": {
+        "file": "prompts/analyze.md"
+      }
+    },
+    "review": {
+      "route": {
+        "provider": "grok",
+        "model": "grok-4.5",
+        "effort": "high"
+      },
+      "mode": "read",
+      "dependsOn": ["analyze"],
+      "contextFrom": [
+        {
+          "task": "analyze",
+          "artifact": "stdout",
+          "maxBytes": 50000
+        }
+      ],
+      "prompt": {
+        "file": "prompts/review.md"
+      }
+    }
+  }
+}

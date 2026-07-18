@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Buckeyes22/subagent-model-routing/schemas/lifecycle-event.schema.json",
+  "title": "Subagent model-routing lifecycle event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "eventId", "event", "timestamp", "dispatchId", "provider", "model", "data"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "eventId": { "type": "string", "format": "uuid" },
+    "event": {
+      "enum": [
+        "dispatch.created", "dispatch.preflight_started", "dispatch.preflight_succeeded",
+        "dispatch.preflight_failed", "dispatch.workspace_preparing", "dispatch.workspace_ready",
+        "dispatch.started", "dispatch.output", "dispatch.succeeded",
+        "dispatch.failed", "dispatch.timed_out", "dispatch.cancelled", "dispatch.cleaned_up"
+      ]
+    },
+    "timestamp": { "type": "string" },
+    "dispatchId": { "type": "string", "format": "uuid" },
+    "workflowId": { "type": ["string", "null"] },
+    "taskId": { "type": ["string", "null"] },
+    "provider": { "type": "string", "minLength": 1 },
+    "model": { "type": "string", "minLength": 1 },
+    "data": { "type": "object" }
+  }
+}

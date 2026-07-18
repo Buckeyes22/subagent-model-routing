@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "sourceVerifiedOn": "2026-07-17",
+  "providers": {
+    "codex": {
+      "documentationUrl": "https://github.com/openai/codex",
+      "platforms": {
+        "darwin": {
+          "installerUrl": "https://chatgpt.com/codex/install.sh",
+          "interpreter": ["sh"],
+          "sha256": "1154e9daf713aacd1534efca8042bfd6665ad24bc1d1dfd86b8f439fe60a7a5d"
+        },
+        "linux": {
+          "installerUrl": "https://chatgpt.com/codex/install.sh",
+          "interpreter": ["sh"],
+          "sha256": "1154e9daf713aacd1534efca8042bfd6665ad24bc1d1dfd86b8f439fe60a7a5d"
+        }
+      },
+      "allowedRedirectHosts": ["chatgpt.com", "github.com", "release-assets.githubusercontent.com"],
+      "verifyArgs": ["--version"],
+      "authArgs": ["login"]
+    },
+    "claude": {
+      "documentationUrl": "https://code.claude.com/docs/en/getting-started",
+      "platforms": {
+        "darwin": {
+          "installerUrl": "https://claude.ai/install.sh",
+          "interpreter": ["bash"],
+          "sha256": "b3f79015b54c751440a6488f07b1b64f9088742b9052bc1bd356d13108320d2a"
+        },
+        "linux": {
+          "installerUrl": "https://claude.ai/install.sh",
+          "interpreter": ["bash"],
+          "sha256": "b3f79015b54c751440a6488f07b1b64f9088742b9052bc1bd356d13108320d2a"
+        }
+      },
+      "allowedRedirectHosts": ["claude.ai", "downloads.claude.ai"],
+      "verifyArgs": ["--version"],
+      "authArgs": ["auth", "login"]
+    },
+    "grok": {
+      "documentationUrl": "https://docs.x.ai/build/overview",
+      "platforms": {
+        "darwin": {
+          "installerUrl": "https://x.ai/cli/install.sh",
+          "interpreter": ["bash"],
+          "sha256": "0465d810453bbf18608ccae310fa79f4c59ae4a0538bd8a3a374ebce749be952"
+        },
+        "linux": {
+          "installerUrl": "https://x.ai/cli/install.sh",
+          "interpreter": ["bash"],
+          "sha256": "0465d810453bbf18608ccae310fa79f4c59ae4a0538bd8a3a374ebce749be952"
+        }
+      },
+      "allowedRedirectHosts": ["x.ai"],
+      "verifyArgs": ["version"],
+      "authArgs": ["login"]
+    },
+    "kimi": {
+      "documentationUrl": "https://moonshotai.github.io/kimi-code/en/guides/getting-started.html",
+      "platforms": {
+        "darwin": {
+          "installerUrl": "https://code.kimi.com/kimi-code/install.sh",
+          "interpreter": ["bash"],
+          "sha256": null
+        },
+        "linux": {
+          "installerUrl": "https://code.kimi.com/kimi-code/install.sh",
+          "interpreter": ["bash"],
+          "sha256": null
+        }
+      },
+      "allowedRedirectHosts": ["code.kimi.com"],
+      "verifyArgs": ["--version"],
+      "authArgs": ["login"]
+    },
+    "opencode": {
+      "documentationUrl": "https://opencode.ai/docs/",
+      "platforms": {
+        "darwin": {
+          "installerUrl": "https://opencode.ai/install",
+          "interpreter": ["bash"],
+          "sha256": "fc3c1b2123f49b6df545a7622e5127d21cd794b15134fc3b66e1ca49f7fb297e"
+        },
+        "linux": {
+          "installerUrl": "https://opencode.ai/install",
+          "interpreter": ["bash"],
+          "sha256": "fc3c1b2123f49b6df545a7622e5127d21cd794b15134fc3b66e1ca49f7fb297e"
+        }
+      },
+      "allowedRedirectHosts": ["opencode.ai", "raw.githubusercontent.com"],
+      "verifyArgs": ["--version"],
+      "authArgs": ["auth", "login"]
+    }
+  }
+}

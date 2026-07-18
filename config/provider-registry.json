@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "hosts": {
+    "claude": {
+      "displayName": "Claude Code",
+      "packagePath": "plugins/subagent-model-routing-claude",
+      "nativeProviders": ["claude"]
+    },
+    "codex": {
+      "displayName": "Codex",
+      "packagePath": "plugins/subagent-model-routing-codex",
+      "nativeProviders": ["codex"]
+    },
+    "copilot": {
+      "displayName": "GitHub Copilot CLI",
+      "packagePath": "plugins/subagent-model-routing-copilot",
+      "nativeProviders": []
+    }
+  },
+  "providers": {
+    "codex": {
+      "displayName": "OpenAI Codex",
+      "shim": "codex-shim.sh",
+      "binaryCandidates": ["codex"],
+      "binaryOverrideEnv": "CODEX_BIN",
+      "nativeHosts": ["codex"],
+      "promptDelivery": "stdin",
+      "allowUnknownModels": true,
+      "defaultModel": {
+        "source": "codex-config",
+        "fallback": "codex-default"
+      },
+      "modelSelectors": ["-m", "--model", "model="],
+      "effort": {
+        "kind": "config",
+        "key": "model_reasoning_effort",
+        "values": ["minimal", "low", "medium", "high", "xhigh"]
+      },
+      "capabilities": {
+        "authProbe": true,
+        "configProbe": false,
+        "worktreeDispatch": true,
+        "structuredOutput": false
+      },
+      "models": {
+        "gpt-5.6-sol": {
+          "displayName": "GPT-5.6 Sol",
+          "aliases": [],
+          "effortValues": ["minimal", "low", "medium", "high", "xhigh"],
+          "promptReference": "prompting/openai-codex-gpt-prompting-reference.md",
+          "runtimeReference": "references/model-prompting.md#openai-gpt-56-through-codex",
+          "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/codex.md",
+          "provenance": "deployment-safety-card-and-runtime-metadata"
+        },
+        "gpt-5.6-terra": {
+          "displayName": "GPT-5.6 Terra",
+          "aliases": [],
+          "effortValues": ["minimal", "low", "medium", "high", "xhigh"],
+          "promptReference": "prompting/openai-codex-gpt-prompting-reference.md",
+          "runtimeReference": "references/model-prompting.md#openai-gpt-56-through-codex",
+          "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/codex.md",
+          "provenance": "deployment-safety-card-and-runtime-metadata"
+        },
+        "gpt-5.6-luna": {
+          "displayName": "GPT-5.6 Luna",
+          "aliases": [],
+          "effortValues": ["minimal", "low", "medium", "high", "xhigh"],
+          "promptReference": "prompting/openai-codex-gpt-prompting-reference.md",
+          "runtimeReference": "references/model-prompting.md#openai-gpt-56-through-codex",
+          "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/codex.md",
+          "provenance": "deployment-safety-card-and-runtime-metadata"
+        }
+      },
+      "routeFamilies": []
+    },
+    "claude": {
+      "displayName": "Anthropic Claude Code",
+      "shim": "claude-shim.sh",
+      "binaryCandidates": ["claude"],
+      "binaryOverrideEnv": "CLAUDE_BIN",
+      "nativeHosts": ["claude"],
+      "promptDelivery": "argv",
+      "allowUnknownModels": true,
+      "defaultModel": {
+        "source": "registry",
+        "fallback": "sonnet"
+      },
+      "modelSelectors": ["--model"],
+      "effort": {
+        "kind": "provider-flag",
+        "key": "--effort",
+        "values": ["low", "medium", "high", "xhigh", "max"]
+      },
+      "capabilities": {
+        "authProbe": true,
+        "configProbe": false,
+        "worktreeDispatch": true,
+        "structuredOutput": false
+      },
+      "models": {
+        "sonnet": {
+          "displayName": "Claude Sonnet 5",
+          "aliases": [],
+          "effortValues": ["low", "medium", "high", "xhigh", "max"],
+          "promptReference": "prompting/anthropic-claude-sonnet-5-prompting-reference.md",
+          "runtimeReference": "references/model-prompting.md#claude-sonnet-5",
+          "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/claude-sonnet-5.md",
+          "provenance": "system-card-evidence-derived"
+        },
+        "opus": {
+          "displayName": "Claude Opus 4.8",
+          "aliases": [],
+          "effortValues": ["low", "medium", "high", "xhigh", "max"],
+          "promptReference": "prompting/anthropic-claude-opus-4.8-prompting-reference.md",
+          "runtimeReference": "references/model-prompting.md#claude-opus-48",
+          "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/claude-opus-4.8.md",
+          "provenance": "system-card-evidence-derived"
+        },
+        "fable": {
+          "displayName": "Claude Fable 5",
+          "aliases": [],
+          "effortValues": ["low", "medium", "high", "xhigh", "max"],
+          "promptReference": "prompting/anthropic-claude-fable-5-prompting-reference.md",
+          "runtimeReference": "references/model-prompting.md#claude-fable-5",
+          "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/claude-fable-5.md",
+          "provenance": "system-card-evidence-derived"
+        }
+      },
+      "routeFamilies": []
+    },
+    "grok": {
+      "displayName": "xAI Grok Build",
+      "shim": "grok-shim.sh",
+      "binaryCandidates": ["grok"],
+      "binaryOverrideEnv": "GROK_BIN",
+      "nativeHosts": [],
+      "promptDelivery": "argv",
+      "allowUnknownModels": true,
+      "defaultModel": {
+        "source": "registry",
+        "fallback": "grok-4.5"
+      },
+      "modelSelectors": ["-m", "--model"],
+      "effort": {
+        "kind": "provider-flag",
+        "key": "--effort",
+        "values": ["low", "medium", "high"]
+      },
+      "capabilities": {
+        "authProbe": true,
+        "configProbe": false,
+        "worktreeDispatch": true,
+        "structuredOutput": false
+      },
+      "models": {
+        "grok-4.5": {
+          "displayName": "Grok 4.5",
+          "aliases": [],
+          "effortValues": ["low", "medium", "high"],
+          "promptReference": "prompting/xai-grok-prompting-reference.md",
+          "runtimeReference": "references/model-prompting.md#xai-grok-45-through-grok-build",
+          "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/grok.md",
+          "provenance": "first-party-xai-documentation"
+        }
+      },
+      "routeFamilies": []
+    },
+    "kimi": {
+      "displayName": "Moonshot Kimi Code",
+      "shim": "kimi-shim.sh",
+      "binaryCandidates": ["kimi"],
+      "binaryOverrideEnv": "KIMI_BIN",
+      "nativeHosts": [],
+      "promptDelivery": "argv",
+      "allowUnknownModels": true,
+      "defaultModel": {
+        "source": "kimi-config",
+        "fallback": "kimi-default"
+      },
+      "modelSelectors": ["-m", "--model"],
+      "effort": {
+        "kind": "none",
+        "key": null,
+        "values": []
+      },
+      "capabilities": {
+        "authProbe": false,
+        "configProbe": true,
+        "worktreeDispatch": true,
+        "structuredOutput": false
+      },
+      "models": {
+        "kimi-code/kimi-for-coding": {
+          "displayName": "Kimi for Coding",
+          "aliases": [],
+          "effortValues": [],
+          "promptReference": "prompting/kimi-moonshot-prompting-reference.md",
+          "runtimeReference": "references/model-prompting.md#kimi",
+          "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/kimi.md",
+          "provenance": "official-kimi-code-cli-documentation"
+        }
+      },
+      "routeFamilies": []
+    },
+    "opencode": {
+      "displayName": "OpenCode",
+      "shim": "opencode-shim.sh",
+      "binaryCandidates": ["opencode", "$HOME/.opencode/bin/opencode"],
+      "binaryOverrideEnv": "OPENCODE_BIN",
+      "nativeHosts": [],
+      "promptDelivery": "stdin",
+      "allowUnknownModels": true,
+      "defaultModel": {
+        "source": "positional",
+        "fallback": null
+      },
+      "modelSelectors": [],
+      "effort": {
+        "kind": "provider-flag",
+        "key": "--variant",
+        "values": []
+      },
+      "capabilities": {
+        "authProbe": true,
+        "configProbe": false,
+        "worktreeDispatch": true,
+        "structuredOutput": false
+      },
+      "models": {},
+      "routeFamilies": [
+        {
+          "id": "glm",
+          "displayName": "GLM",
+          "patterns": ["glm-*", "zai-*", "zai-coding-plan/*"],
+          "example": "zai-coding-plan/glm-5.2",
+          "promptReference": "prompting/glm-zhipu-prompting-reference.md",
+          "runtimeReference": "references/model-prompting.md#glm",
+          "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/glm.md"
+        },
+        {
+          "id": "minimax",
+          "displayName": "MiniMax",
+          "patterns": ["minimax*", "minimax/*"],
+          "example": "minimax/MiniMax-M3",
+          "promptReference": "prompting/minimax-prompting-reference.md",
+          "runtimeReference": "references/model-prompting.md#minimax",
+          "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/minimax.md"
+        },
+        {
+          "id": "qwen",
+          "displayName": "Qwen",
+          "patterns": ["qwen*", "*/qwen*"],
+          "example": "custom-provider/qwen-model",
+          "promptReference": "prompting/qwen-alibaba-prompting-reference.md",
+          "runtimeReference": "references/model-prompting.md#qwen",
+          "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/qwen.md"
+        }
+      ]
+    }
+  }
+}

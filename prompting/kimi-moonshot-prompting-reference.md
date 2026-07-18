@@ -11,6 +11,8 @@
 
 Moonshot publishes a genuine, dedicated prompt best-practices page. The platform has rebranded toward the **Kimi** name; `platform.moonshot.ai` and `platform.kimi.ai` resolve to the same documentation with identical paths, and `platform.kimi.com` serves the China site. The structure of the official guide closely mirrors the canonical OpenAI prompt-engineering taxonomy.
 
+In this repository, Kimi is routed through the dedicated `kimi-shim.sh <prompt-file> [Kimi args]` transport backed by the Kimi Code CLI. Model precedence is explicit `-m`/`--model`, then `KIMI_MODEL_NAME`, then the configured default. The shim invokes non-interactive prompt mode, keeps the prompt file as the routing boundary, fixes output to text, and rejects shim-owned prompt/output flags. Kimi Code prompt mode applies its `auto` permission policy while retaining static deny rules, so the shim also rejects the mutually incompatible `-y`/`--yolo`/`--auto` flags. The CLI exposes no compatible restricted-mode or per-invocation effort switch. The default Kimi doctor check runs the read-only `kimi doctor config`; explicit model discovery parses only model-alias keys from bounded `kimi provider list --json` output and never retains its raw provider objects. There is no documented read-only authentication-status command. Set `KIMI_DISABLE_TELEMETRY=1` to disable Kimi Code's native anonymous telemetry.
+
 ---
 
 ## 1. Official guidance landscape
@@ -108,6 +110,7 @@ Moonshot's benchmarking best-practices page is worth following whenever output s
 
 | Situation | Action |
 |---|---|
+| Repository transport | `kimi-shim.sh <prompt-file>`; optionally add `--model <id>` |
 | Set temperature | Per model: 0.6 for K2-Instruct/turbo, 0.3 for older; `n=1` if `temperature=0` |
 | Reliability on long outputs | Enable streaming |
 | Steering | Use the canonical Kimi system prompt (long form for API) |
@@ -129,6 +132,7 @@ Moonshot's benchmarking best-practices page is worth following whenever output s
 - Benchmarking best practices: https://platform.moonshot.ai/docs/guide/benchmark-best-practice
 - OpenAI-to-Kimi migration: https://platform.moonshot.ai/docs/guide/migrating-from-openai-to-kimi
 - Agent support / coding-tool setup: https://platform.moonshot.ai/docs/guide/agent-support
+- Kimi Code command reference: https://moonshotai.github.io/kimi-code/en/reference/kimi-command.html
 - Model card (params + system prompt): https://huggingface.co/moonshotai/Kimi-K2-Instruct
 - GitHub (tool-calling guide, deployment): https://github.com/MoonshotAI/Kimi-K2
 - China platform: https://platform.kimi.com
