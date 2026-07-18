@@ -398,7 +398,8 @@ def resolve_provider_binary(
     if os.path.isabs(expanded) or os.sep in expanded:
         path = Path(expanded)
         return str(path.resolve()) if path.is_file() and os.access(path, os.X_OK) else None
-    return shutil.which(expanded, path=env.get("PATH"))
+    discovered = shutil.which(expanded, path=env.get("PATH"))
+    return str(Path(discovered).resolve()) if discovered is not None else None
 
 
 def detect_provider_rows(
@@ -513,7 +514,7 @@ class TtySession:
                 except OSError:
                     pass
             if self._attributes is not None and termios is not None:
-                termios.tcsetattr(self.fd, termios.TCSADRAIN, self._attributes)
+                termios.tcsetattr(self.fd, termios.TCSANOW, self._attributes)
             os.close(self.fd)
             self.fd = None
         self._attributes = None
@@ -578,7 +579,7 @@ class TtySession:
         """Return the TTY to its original mode before an upstream installer runs."""
 
         if self.fd is not None and self._attributes is not None and termios is not None:
-            termios.tcsetattr(self.fd, termios.TCSADRAIN, self._attributes)
+            termios.tcsetattr(self.fd, termios.TCSANOW, self._attributes)
 
 
 def render_selection(state: SelectionState, *, use_color: bool) -> tuple[str, ...]:

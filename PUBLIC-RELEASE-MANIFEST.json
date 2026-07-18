@@ -596,10 +596,10 @@
       "sha256": "7612c3c18c2d2a409d85d9716cd1a5e925c4f10219caec560ef6946aff1ec5a3"
     },
     {
-      "bytes": 37615,
+      "bytes": 37696,
       "executable": false,
       "path": "runtime/model_routing/provider_setup.py",
-      "sha256": "448ebceb9d787715908819f335ea4816c954c1d0e31256e01d9a89eab79ab6a0"
+      "sha256": "632aa7c5836a4bcf3ede02a4ae14e384ca9a624d3607d2d86bcd4eb5c4dda533"
     },
     {
       "bytes": 744,
