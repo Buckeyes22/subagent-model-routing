@@ -105,19 +105,23 @@ jobs:
           claude_skill=plugins/subagent-model-routing-claude/skills/subagent-model-routing/SKILL.md
           copilot_skill=plugins/subagent-model-routing-copilot/skills/subagent-model-routing/SKILL.md
 
-          grep -q '~/.claude/scripts/claude-shim.sh' "$codex_skill"
-          grep -q '~/.claude/scripts/kimi-shim.sh' "$codex_skill"
-          ! grep -q '~/.claude/scripts/codex-shim.sh' "$codex_skill"
-          grep -q 'native Codex harness' "$codex_skill"
+          grep -Eq '[~]/\.claude/scripts/claude-shim\.sh' "$codex_skill"
+          grep -Eq '[~]/\.claude/scripts/kimi-shim\.sh' "$codex_skill"
+          if grep -Eq '[~]/\.claude/scripts/codex-shim\.sh' "$codex_skill"; then
+            exit 1
+          fi
+          grep -Fq 'native Codex harness' "$codex_skill"
 
-          grep -q '~/.claude/scripts/codex-shim.sh' "$claude_skill"
-          grep -q '~/.claude/scripts/kimi-shim.sh' "$claude_skill"
-          ! grep -q '~/.claude/scripts/claude-shim.sh' "$claude_skill"
-          grep -q 'native `Agent` calls for Claude work' "$claude_skill"
+          grep -Eq '[~]/\.claude/scripts/codex-shim\.sh' "$claude_skill"
+          grep -Eq '[~]/\.claude/scripts/kimi-shim\.sh' "$claude_skill"
+          if grep -Eq '[~]/\.claude/scripts/claude-shim\.sh' "$claude_skill"; then
+            exit 1
+          fi
+          grep -Fq "native \`Agent\` calls for Claude work" "$claude_skill"
 
-          grep -q '~/.claude/scripts/codex-shim.sh' "$copilot_skill"
-          grep -q '~/.claude/scripts/claude-shim.sh' "$copilot_skill"
-          grep -q '~/.claude/scripts/kimi-shim.sh' "$copilot_skill"
+          grep -Eq '[~]/\.claude/scripts/codex-shim\.sh' "$copilot_skill"
+          grep -Eq '[~]/\.claude/scripts/claude-shim\.sh' "$copilot_skill"
+          grep -Eq '[~]/\.claude/scripts/kimi-shim\.sh' "$copilot_skill"
 
       - name: Check Claude system-card reference wiring
         run: |
@@ -194,15 +198,15 @@ jobs:
           distill=plugins/subagent-model-routing-claude/commands/distill.md
           grep -Fq 'SUBAGENT_MODEL_ROUTING_HOME' "$distill"
           grep -Fq 'Never edit an installed plugin cache' "$distill"
-          grep -Fq 'Map each record by both `shim` and `model`' "$distill"
-          grep -Fq '`shim:"codex"`' "$distill"
-          grep -Fq '`shim:"claude"`' "$distill"
-          grep -Fq '`shim:"grok"`' "$distill"
-          grep -Fq '`shim:"kimi"`' "$distill"
-          grep -Fq '`shim:"opencode"`' "$distill"
+          grep -Fq "Map each record by both \`shim\` and \`model\`" "$distill"
+          grep -Fq "\`shim:\"codex\"\`" "$distill"
+          grep -Fq "\`shim:\"claude\"\`" "$distill"
+          grep -Fq "\`shim:\"grok\"\`" "$distill"
+          grep -Fq "\`shim:\"kimi\"\`" "$distill"
+          grep -Fq "\`shim:\"opencode\"\`" "$distill"
           grep -Fq 'kimi-for-coding/*' "$distill"
           grep -Fq 'zai-coding-plan/*' "$distill"
-          grep -Fq 'git -C "$ROOT" diff' "$distill"
+          grep -Fq "git -C \"\$ROOT\" diff" "$distill"
 
       - name: Check GPT-5.6 codex model forwarding and attribution
         run: |
@@ -242,7 +246,9 @@ jobs:
           check_model gpt-5.6-luna -m=gpt-5.6-luna
 
           grep -Fq 'Selector provenance: current Codex runtime model metadata' prompting/openai-codex-gpt-prompting-reference.md
-          ! grep -RFq '`gpt-5.6`' README.md scripts plugins prompting
+          if grep -RFq "\`gpt-5.6\`" README.md scripts plugins prompting; then
+            exit 1
+          fi
 
       - name: Check Grok 4.5 forwarding, policy, and attribution
         run: |
