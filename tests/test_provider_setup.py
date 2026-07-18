@@ -35,6 +35,14 @@ def executable(path: Path, content: str = "#!/bin/sh\nexit 0\n") -> Path:
     return path
 
 
+def comparable_tty_attributes(fd: int) -> list[object]:
+    """Return terminal attributes without Darwin's transient pending-input state."""
+
+    attributes: list[object] = termios.tcgetattr(fd)
+    attributes[3] = int(attributes[3]) & ~getattr(termios, "PENDIN", 0)
+    return attributes
+
+
 class FakeResponse:
     def __init__(self, content: bytes, url: str, *, status: int = 200) -> None:
         self.content = content
@@ -269,7 +277,7 @@ class DetectionAndSelectionTests(unittest.TestCase):
         drain_thread.start()
         try:
             tty_path = os.ttyname(slave)
-            before = termios.tcgetattr(slave)
+            before = comparable_tty_attributes(slave)
             with provider_setup.TtySession(tty_path, term="xterm") as session:
                 os.write(master, b" \x1b[B \r")
                 selected = provider_setup.choose_providers(
@@ -282,8 +290,8 @@ class DetectionAndSelectionTests(unittest.TestCase):
                 )
                 self.assertEqual(("codex", "claude"), selected)
                 session.restore_input_mode()
-                self.assertEqual(before, termios.tcgetattr(slave))
-            self.assertEqual(before, termios.tcgetattr(slave))
+                self.assertEqual(before, comparable_tty_attributes(slave))
+            self.assertEqual(before, comparable_tty_attributes(slave))
         finally:
             stop_drain.set()
             drain_thread.join(timeout=1)
@@ -294,11 +302,11 @@ class DetectionAndSelectionTests(unittest.TestCase):
         master, slave = pty.openpty()
         try:
             tty_path = os.ttyname(slave)
-            before = termios.tcgetattr(slave)
+            before = comparable_tty_attributes(slave)
             with self.assertRaises(provider_setup.TerminalSignal):
                 with provider_setup.TtySession(tty_path, term="xterm"):
                     os.kill(os.getpid(), signal.SIGINT)
-            self.assertEqual(before, termios.tcgetattr(slave))
+            self.assertEqual(before, comparable_tty_attributes(slave))
         finally:
             os.close(master)
             os.close(slave)
