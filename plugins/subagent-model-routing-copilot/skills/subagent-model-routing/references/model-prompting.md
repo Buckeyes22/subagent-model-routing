@@ -83,7 +83,7 @@ Evidence basis: [Claude Sonnet 5 System Card](https://www.anthropic.com/claude-s
 
 ## Claude Opus 4.8
 
-Use Opus 4.8 for difficult software engineering, deep or long-context repository analysis, adversarial review, and verification-heavy work where quality matters more than route cost or latency.
+Use Opus 4.8 for difficult software engineering, deep or long-context repository analysis, skeptical review, and verification-heavy work where quality matters more than route cost or latency.
 
 Anthropic's system card reports broad gains over Opus 4.7 and strong flawed-results, lazy-investigation, and code-status-honesty evaluations. Its case studies still include fabrication, ignored corrections, skipped cheap verification, and instruction-following failures. Unsafeguarded prompt-injection robustness also regressed in several agentic settings even though product safeguards closed much of the gap.
 
@@ -95,7 +95,7 @@ Evidence basis: [Claude Opus 4.8 System Card](https://www.anthropic.com/claude-o
 
 Use Fable 5 for the hardest generally available Claude coding, long-context, multimodal, and professional work when the additional capability justifies the route. Prefer Sonnet for routine work.
 
-The combined system card describes Fable as the generally available safeguarded configuration. Protected high-risk biology or cybersecurity work may be blocked or silently fall back to Opus 4.8, so do not promise an exact serving path from response quality. The card also reports strong agentic capability alongside cases of reckless or destructive action in pursuit of goals.
+The combined system card describes Fable as the generally available safeguarded configuration. Protected high-risk biology or cybersecurity work may be blocked or fall back to Opus 4.8 without notice, so do not promise an exact serving path from response quality. The card also reports strong agentic capability alongside cases of reckless or destructive action in pursuit of goals.
 
 Give narrow authorization boundaries and explicit confirmation gates for destructive, external, financial, security-sensitive, or irreversible actions. Report refusals, fallback-like limitations, tool failures, and incomplete work without disguising them as success. Do not attempt to prompt around safeguards.
 
@@ -135,7 +135,7 @@ Route through `opencode-shim.sh minimax/MiniMax-M3 <prompt-file>`.
 
 MiniMax has no dedicated official text-prompting guide in the canonical research set. Use a structured prompt with role, task, constraints, success criteria, and output shape. A planning phase can help coding work. `--thinking` controls reasoning-trace visibility; it is not an effort dial.
 
-A missing-text result before the sentinel is a known operational stall shape. Retry the same model up to three times and do not silently reroute.
+A missing-text result before the sentinel is a known operational stall shape. Retry the same model up to three times and do not reroute without reporting it.
 
 ## Qwen
 

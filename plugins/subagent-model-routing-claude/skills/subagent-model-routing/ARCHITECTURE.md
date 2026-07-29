@@ -42,7 +42,7 @@ EXTERNAL MODEL  (GPT-5.x · Grok 4.5 · Kimi K2.7 · GLM-5.2 · MiniMax-M3 · lo
     the CLI layer writes /tmp/dag-<task>/<artifact>; the next node's CLI reads it. (§5)
 ```
 
-The single most important structural fact: **there are five nested execution contexts**, and the "work" happens in the bottom one (the external model inside the CLI). A node authored without `agentType` collapses the bottom three layers into "a default Claude subagent does the work itself" — the silent leak the skill exists to prevent.
+The single most important structural fact: **there are five nested execution contexts**, and the "work" happens in the bottom one (the external model inside the CLI). A node authored without `agentType` collapses the bottom three layers into "a default Claude subagent does the work itself" — the silent misroute the skill exists to prevent.
 
 ## 2. How the Workflow tool runs a script
 
@@ -62,7 +62,7 @@ The script is plain JavaScript (NOT TypeScript), executed in a sandbox by the `W
 2. The node's `prompt` ("Run verbatim: ~/.claude/scripts/codex-shim.sh …") IS the command the transport agent looks for.
 3. The transport runs it; the shim execs the CLI; the CLI drives the external model; stdout flows back as the node's string return.
 
-**The leak path:** `agentType` is matched by string. A typo (`codex_shim`, `codexshim`) or omission does **not** error — it falls back to the default workflow subagent (in-loop Claude with full tools), which then *does the task itself* and returns a plausible result. Nothing distinguishes that from a routed node except the transcript. This is why the skill's defenses are structural (helpers) + mechanical (the audit) rather than "remember to set agentType." Verified in the pilot run: the routed nodes' transcripts carry `"agentType":"subagent-model-routing-claude:codex-shim"`/`"subagent-model-routing-claude:opencode-shim"` and the actual `*-shim.sh` invocations; a leaked node would carry neither.
+**The misroute path:** `agentType` is matched by string. A typo (`codex_shim`, `codexshim`) or omission does **not** error — it falls back to the default workflow subagent (in-loop Claude with full tools), which then *does the task itself* and returns a plausible result. Nothing distinguishes that from a routed node except the transcript. This is why the skill's safeguards are structural (helpers) + mechanical (the audit) rather than "remember to set agentType." Verified in the pilot run: the routed nodes' transcripts carry `"agentType":"subagent-model-routing-claude:codex-shim"`/`"subagent-model-routing-claude:opencode-shim"` and the actual `*-shim.sh` invocations; a misrouted node would carry neither.
 
 Composition caveat: when `agentType` is combined with `schema`, the custom agent's system prompt gets a StructuredOutput instruction appended. Shim nodes never use `schema`, so this never applies here — keep it that way.
 
@@ -126,16 +126,16 @@ agent-<id>.meta.json               ── per-node metadata (incl. agentType)
 - **Plane 1 — `/workflows`** (and the launch result + completion `<notification>`): the DAG's live progress — phase groups, per-node label rows, the final `return` value and usage summary. This is the Claude-Code-native view of the orchestration.
 - **Plane 2 — shim run records:** each shim invocation logs a `"source":"shim"` record (`event`: `started`/`finished`) and emits a final `SHIM-DONE exit=<n>` sentinel; the absence of the sentinel signals clipped or still-running output. The DAG layer inherits this for free because nodes route through the shims.
 
-A node that leaked to a default subagent appears in Plane 1 (as a generic agent row) but **NOT** with shim records or the `SHIM-DONE` sentinel — a second, independent way to spot a leak after the fact.
+A node that misrouted to a default subagent appears in Plane 1 (as a generic agent row) but **NOT** with shim records or the `SHIM-DONE` sentinel — a second, independent way to spot a misroute after the fact.
 
 ## 10. Layering — who owns what
 
 ```
 subagent-model-routing Part A       ── DAG topology, node=agentType-routed-helper, segmentation,
-  (this doc)                  filesystem handoff, anti-leak gate, the Workflow substrate
+  (this doc)                  filesystem handoff, routing gate, the Workflow substrate
         │ shares transport with ▼
 subagent-model-routing Part B       ── model catalog/picking, response parsing, auth pre-flight, failure modes,
-  (SKILL.md Part B (flat dispatch & shared transport substrate))       suppression-cheat, per-provider headroom, Why-Sonnet, cost/quota
+  (SKILL.md Part B (flat dispatch & shared transport substrate))       suppression-shortcut, per-provider headroom, Why-Sonnet, cost/quota
         │ drives ▼
 plugins/subagent-model-routing-claude/agents/{codex,kimi,opencode,grok}-shim.md ── the Sonnet transport agent contracts (find-command → Bash → verbatim)
         │ exec ▼

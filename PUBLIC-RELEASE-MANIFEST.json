@@ -56,16 +56,16 @@
       "sha256": "6dbcffa626ac1a9f885fa1b022690d2632c6727ec87bc417486d665011a57ce9"
     },
     {
-      "bytes": 32776,
+      "bytes": 32774,
       "executable": false,
       "path": "README.md",
-      "sha256": "470e921243b07e07148d09682b35050e676f59a4bddb42c8e45fe06d5bdcc6f0"
+      "sha256": "bc71aba005cbb96370f9216dbf55be49c34f6cbfd0c8f086aa0ce5c3f2b8fcac"
     },
     {
-      "bytes": 8174,
+      "bytes": 8173,
       "executable": false,
       "path": "SECURITY.md",
-      "sha256": "658c3eb74023430c3d4a5d37273190d82661791db9e9958e7919f3d6ddc741d7"
+      "sha256": "2ca3b1a0f843bee104c07d2c0431030501bd71cfa03173b6ce35fd033958812b"
     },
     {
       "bytes": 3373,
@@ -86,10 +86,10 @@
       "sha256": "a67d112e267a20465cbd20382145d5e8dc92b797c2a4691211a3ea00df2ae12e"
     },
     {
-      "bytes": 5595,
+      "bytes": 5599,
       "executable": false,
       "path": "docs/architecture.md",
-      "sha256": "05969532c91f9aea66cb9d81c158e440b176591290c2d7d016f76b31956e67c7"
+      "sha256": "8b914c25a31a8f20272022c1598431b4404ed26e79faff5a0f399cf96f5aa252"
     },
     {
       "bytes": 3802,
@@ -140,10 +140,10 @@
       "sha256": "6ce4cb7d0b835f859998ff1582a7eeb8449574f2a509c40860d21fdf64ce2426"
     },
     {
-      "bytes": 3378,
+      "bytes": 3377,
       "executable": false,
       "path": "docs/run-records.md",
-      "sha256": "36ab78c7ae18912452922908a52264cce096600a333cdb2ed81db05142d14786"
+      "sha256": "3b110d946b33f25c3fe978c010a7a4cab5fbf019712b897ed7adb4c9967f0b81"
     },
     {
       "bytes": 5489,
@@ -242,10 +242,10 @@
       "sha256": "eb73461551134de144376350e884bdb881832d01f1534cde69bcd7a58b6c9af7"
     },
     {
-      "bytes": 5417,
+      "bytes": 5420,
       "executable": false,
       "path": "plugins/subagent-model-routing-claude/README.md",
-      "sha256": "217885f32889391e1d8b8f8ca05ab61ad2ab40acac7ec7680b6f5f84f82f8e1a"
+      "sha256": "8bff207cc6e9cf51c1b1dd965d42bd6fa3d6edf11c92ae182467a1f01f0bea11"
     },
     {
       "bytes": 5017,
@@ -272,22 +272,22 @@
       "sha256": "e17bd773cc184b2cb75ec6595728b905db12685afc1a72c1ed03c84087a770b2"
     },
     {
-      "bytes": 1371,
+      "bytes": 1379,
       "executable": false,
       "path": "plugins/subagent-model-routing-claude/commands/dag-routing.md",
-      "sha256": "077f0ea1117b292facdd7c27825b211f91d992dcd001dc746d42151851403aad"
+      "sha256": "b189901c4a9f78dd3c319bc869642de4cd7a20689c4adbeaf4ef21164ff83d7a"
     },
     {
-      "bytes": 4131,
+      "bytes": 4130,
       "executable": false,
       "path": "plugins/subagent-model-routing-claude/commands/distill.md",
-      "sha256": "ba2a411bb56f1a21746f87b5280962c184f1aa9b6835c3c45d09daf319579e63"
+      "sha256": "7f890fa158a2c4466cf5e115ffd2105452d2558dc6d5401698e0098b30e8f1ad"
     },
     {
-      "bytes": 11586,
+      "bytes": 11606,
       "executable": true,
       "path": "plugins/subagent-model-routing-claude/hooks/dag-tripwire.py",
-      "sha256": "b7759ad29847eb697c5ba5741d8a8a01393b0eb2aeca5393fc471de94d1bbbe0"
+      "sha256": "34ae63283b574b5b34be4380f0699d5d6762f8e0a57a21bb50848ca8e67571d3"
     },
     {
       "bytes": 531,
@@ -302,22 +302,22 @@
       "sha256": "32a4c231c91cbdcb0376e878e3d227488d9b71ca3377d00cda929b6ddd8d6e90"
     },
     {
-      "bytes": 17006,
+      "bytes": 17027,
       "executable": false,
       "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ARCHITECTURE.md",
-      "sha256": "33cfe0423a6238f603a68a09e8d1a7cea496385c5168a92d0b93d58c622c0664"
+      "sha256": "0d3846adaa09cc56c3b9f27902f62034dfe279c40574bcc22100fb32e9d9eb50"
     },
     {
-      "bytes": 56282,
+      "bytes": 56658,
       "executable": false,
       "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/SKILL.md",
-      "sha256": "d676bc72b522f3276e12a2876e217ece597f05ea6b91e9e39913099e062fbae7"
+      "sha256": "3f1468f142c4d932f70d151ce13c1da48701f77a5ae5b9875d2488a9c9b5fd3f"
     },
     {
-      "bytes": 1448,
+      "bytes": 1468,
       "executable": false,
       "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/claude-fable-5.md",
-      "sha256": "78b9e583647c01b3f1766ae3a1f2b936f7b77d45405b6ea482548ce876bbbc79"
+      "sha256": "412a8975194928a303488ed44f1566a7b1f784d5607ca70f6c34154d1c7f0fd3"
     },
     {
       "bytes": 1441,
@@ -368,10 +368,10 @@
       "sha256": "860dc0a6923617ca04f0d26d982b87b4d833adbcc689715c22f323686d20248f"
     },
     {
-      "bytes": 12206,
+      "bytes": 12222,
       "executable": false,
       "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/references/model-prompting.md",
-      "sha256": "8e4d1ce8590c70df842cdbdfcbe4fade2ea25a468b86d7e63b3e643d59189837"
+      "sha256": "304db4304c4897e1777e95b4d1c0e7c4b446251f5770ccea8ccd5baa94373c0b"
     },
     {
       "bytes": 7596,
@@ -398,16 +398,16 @@
       "sha256": "807014d262616cb4baecb0652f0cb4bfd1b9ba696edf819cb78e4c7c991c9a97"
     },
     {
-      "bytes": 14369,
+      "bytes": 14374,
       "executable": false,
       "path": "plugins/subagent-model-routing-codex/skills/subagent-model-routing/SKILL.md",
-      "sha256": "513fb7413fe136bfa1842f07e7c674bc85e25263536e7c0e0472ec60bd7ce953"
+      "sha256": "feedec61f66c914e857469b2bbf7780e3290224f609339765b8a7da340982cf6"
     },
     {
-      "bytes": 12206,
+      "bytes": 12222,
       "executable": false,
       "path": "plugins/subagent-model-routing-codex/skills/subagent-model-routing/references/model-prompting.md",
-      "sha256": "8e4d1ce8590c70df842cdbdfcbe4fade2ea25a468b86d7e63b3e643d59189837"
+      "sha256": "304db4304c4897e1777e95b4d1c0e7c4b446251f5770ccea8ccd5baa94373c0b"
     },
     {
       "bytes": 7500,
@@ -434,16 +434,16 @@
       "sha256": "d1e18e9d0a59da014f9d11273f2114f929d75890368cc93bfb3d97de9d429270"
     },
     {
-      "bytes": 15221,
+      "bytes": 15226,
       "executable": false,
       "path": "plugins/subagent-model-routing-copilot/skills/subagent-model-routing/SKILL.md",
-      "sha256": "c0f4754aa95a72d8018a9d98389bfc4b133265d941c6c6401f3bf1c938681f8a"
+      "sha256": "46bf47d2d052eb4327aba8109822b79bb9ff2bf3f59ca7c05afbd86a4fcfe0b0"
     },
     {
-      "bytes": 12206,
+      "bytes": 12222,
       "executable": false,
       "path": "plugins/subagent-model-routing-copilot/skills/subagent-model-routing/references/model-prompting.md",
-      "sha256": "8e4d1ce8590c70df842cdbdfcbe4fade2ea25a468b86d7e63b3e643d59189837"
+      "sha256": "304db4304c4897e1777e95b4d1c0e7c4b446251f5770ccea8ccd5baa94373c0b"
     },
     {
       "bytes": 10219,
@@ -476,10 +476,10 @@
       "sha256": "d5b560e56a241be32d91b475cffa72c04f024845ad3d0630e02c4179f35064de"
     },
     {
-      "bytes": 5164,
+      "bytes": 5162,
       "executable": false,
       "path": "prompting/anthropic-claude-opus-4.8-prompting-reference.md",
-      "sha256": "36ae120d0e73c50e61a4513c625ec34a3e4c5e0a664864c3a8d4ff398700ce53"
+      "sha256": "285ed7244234212dc38379c2dfda83f96aa2ebbf3692de366033727879dbed84"
     },
     {
       "bytes": 4936,

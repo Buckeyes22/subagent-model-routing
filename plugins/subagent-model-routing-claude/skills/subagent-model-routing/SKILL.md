@@ -92,7 +92,7 @@ If your CLI has MCP tools configured, prompts may direct their use.
 - **Prompt shape:** use structured prompting: clear role, task, constraints, success criteria, and output shape.
 - **Coding behavior:** allow or request a planning phase when that helps the task.
 - **Thinking control:** `--thinking` is a binary visibility toggle for M3, not an effort dial.
-- **Gotcha:** MiniMax can stall with no text before the sentinel. Retry the same model up to 3 times; do not silently reroute.
+- **Gotcha:** MiniMax can stall with no text before the sentinel. Retry the same model up to 3 times; do not reroute without reporting it.
 - Full reference: `references/model-prompting.md#minimax`
 
 ### Qwen / Alibaba
@@ -134,12 +134,12 @@ Use this part when a task is multi-step with dependencies and you want the actua
 
 Invoking this skill is authorization to call the Workflow tool for this task.
 
-Two leaks must be prevented:
+Two misroutes must be prevented:
 
-| # | Leak | What it looks like | Gate |
+| # | Misroute | What it looks like | Gate |
 |---|---|---|---|
-| 1 | Transport leak | A dependency graph is run through direct `Agent` or shell calls instead of Workflow. The models may run, but the DAG did not exist. | Section 0 |
-| 2 | Node leak | The Workflow runs, but a node lacks `agentType` and executes as a default Claude subagent. | The anti-leak gate |
+| 1 | Transport misroute | A dependency graph is run through direct `Agent` or shell calls instead of Workflow. The models may run, but the DAG did not exist. | Section 0 |
+| 2 | Node misroute | The Workflow runs, but a node lacks `agentType` and executes as a default Claude subagent. | The routing gate |
 
 ## Section 0 -- Mechanism is mandatory
 
@@ -207,7 +207,7 @@ agent("Run verbatim: ~/.claude/scripts/codex-shim.sh /tmp/dag-x/n1.md",
 
 - **No `schema`.** You want the shim's raw stdout, not a structured object forced by the Workflow layer. Prefer filesystem artifacts for structured output.
 - **`agentType` carries the shim system prompt** into the node.
-- **The names are namespaced.** Use `subagent-model-routing-claude:codex-shim`, `subagent-model-routing-claude:kimi-shim`, `subagent-model-routing-claude:grok-shim`, and `subagent-model-routing-claude:opencode-shim`. A bare shim name or a typo can leak to a default node.
+- **The names are namespaced.** Use `subagent-model-routing-claude:codex-shim`, `subagent-model-routing-claude:kimi-shim`, `subagent-model-routing-claude:grok-shim`, and `subagent-model-routing-claude:opencode-shim`. A bare shim name or a typo can misroute to a default node. If the plugin is ever renamed, the namespace prefix changes with it: a stale-but-well-formed prefix fails loudly with *'agent type not found'* (verified 2026-07-28 on a live pilot) — a clean error, not a fallback — whereas a typo'd agent name falls back to a default subagent without erroring.
 - **Argument shape differs:** `codex-shim.sh <file> [flags]`; `kimi-shim.sh <file> [flags]`; `grok-shim.sh <file> [flags]`; `opencode-shim.sh <provider/model> <file> [flags]`.
 
 Author nodes only through helpers. Keep helper definitions on one line so the audit can match them:
@@ -253,7 +253,7 @@ All helpers are peers. `codex` routes GPT work, `kimi` routes Kimi Code, `grok` 
 
 An agentic shim node runs a full agent loop: read source, author, run gates, fix, and report. The default unit of work is one node, not `build -> review -> fix`.
 
-Use a separate adversarial review node only for critical/contract units or when the user explicitly asks for independent review. Keep review off the per-unit critical path when possible: run builds in parallel, then one review-all node, then inline triage.
+Use a separate skeptical review node only for critical/contract units or when the user explicitly asks for independent review. Keep review off the per-unit critical path when possible: run builds in parallel, then one review-all node, then inline triage.
 
 ## The DAG-shape catalog
 
@@ -365,7 +365,7 @@ A shared convention is a contract, not a dependency. Put the exact convention in
 
 When the mandate is "delegate everything," encode the whole reversible graph as nodes:
 
-- Authoring and adversarial review.
+- Authoring and skeptical review.
 - Integration/build/wiring nodes that read authored artifacts, edit shared registration files, and run gates.
 - Branch work that is reversible.
 
@@ -403,7 +403,7 @@ ls -la /tmp/dag-feature/impl-*.ts
 wc -l /tmp/dag-feature/impl-*.ts
 ```
 
-## The anti-leak gate
+## The routing gate
 
 **Layer 0 -- helpers only.** Nodes are created through `codex()`, `grok()`, `kimi()`, `glm()`, and `minimax()` helpers only.
 
@@ -415,13 +415,13 @@ wc -l /tmp/dag-feature/impl-*.ts
 S=/tmp/dag-<task>/script.mjs
 total=$(grep -cE '\bagent\(' "$S")
 defs=$(grep -cE '^\s*const (codex|grok|kimi|glm|minimax) *=.*\bagent\(' "$S")
-[ "$total" -eq "$defs" ] || { echo "LEAK: $total agent( sites but only $defs helper defs"; exit 1; }
+[ "$total" -eq "$defs" ] || { echo "MISROUTE: $total agent( sites but only $defs helper defs"; exit 1; }
 types=$(grep -oE "agentType: *'[^']+'" "$S" || true)
 bad=$(printf '%s\n' "$types" | grep -vE "^agentType: *'subagent-model-routing-claude:(codex|kimi|opencode|grok)-shim'$" || true)
-[ -z "$bad" ] || { echo "LEAK: bad/non-namespaced agentType:"; printf '%s\n' "$bad"; exit 1; }
-[ "$(printf '%s\n' "$types" | grep -c .)" -eq "$defs" ] || { echo "LEAK: missing agentType in helper"; exit 1; }
+[ -z "$bad" ] || { echo "MISROUTE: bad/non-namespaced agentType:"; printf '%s\n' "$bad"; exit 1; }
+[ "$(printf '%s\n' "$types" | grep -c .)" -eq "$defs" ] || { echo "MISROUTE: missing agentType in helper"; exit 1; }
 bad_models=$(grep -E '^\s*const (codex|grok|kimi|glm|minimax) *=.*\bagent\(' "$S" | grep -vE "model: *['\"]sonnet['\"]" || true)
-[ -z "$bad_models" ] || { echo "LEAK: helper missing model: 'sonnet':"; printf '%s\n' "$bad_models"; exit 1; }
+[ -z "$bad_models" ] || { echo "MISROUTE: helper missing model: 'sonnet':"; printf '%s\n' "$bad_models"; exit 1; }
 printf '%s\n' "$types" | sort | uniq -c
 ```
 
@@ -429,7 +429,7 @@ printf '%s\n' "$types" | sort | uniq -c
 
 | Thought | Reality |
 |---|---|
-| "I will just batch direct shim calls." | Transport leak. DAGs run through Workflow. |
+| "I will just batch direct shim calls." | Transport misroute. DAGs run through Workflow. |
 | "This node is trivial." | Trivial work still routes through a shim helper. |
 | "Synthesis can be one quick node." | Synthesis is a segment boundary and stays inline. |
 | "The workflow can pick the model." | You choose the model in the helper command. |
@@ -457,7 +457,7 @@ const replyText = (stdout) => stdout.split('\n').filter((line) => !/^SHIM-DONE e
 
 Prefer filesystem artifacts for anything structured. If a node should produce JSON, a patch, or a report, instruct it to write that artifact to disk and verify the file.
 
-A MiniMax stall is empty output before `SHIM-DONE exit=<n>`. Retry the same model up to 3 times. Do not silently reroute.
+A MiniMax stall is empty output before `SHIM-DONE exit=<n>`. Retry the same model up to 3 times. Do not reroute without reporting it.
 
 ## Picking the model per node
 
@@ -470,7 +470,7 @@ A MiniMax stall is empty output before `SHIM-DONE exit=<n>`. Retry the same mode
 | Deep one-off reasoning or critical verification | `codex` through `subagent-model-routing-claude:codex-shim` |
 | Throughput or bulk classification | `minimax` through `subagent-model-routing-claude:opencode-shim`, pilot first |
 | Balanced extraction/structured tasks | `glm` through `subagent-model-routing-claude:opencode-shim` |
-| Adversarial code review | `codex` or `glm`, both through agentic shims |
+| Skeptical code review | `codex` or `glm`, both through agentic shims |
 | Cross-node synthesis | Not a node; stays inline |
 
 For diversity at a judgment edge, fan out to different routes.
@@ -515,7 +515,7 @@ A shim-routed DAG is wall-clock expensive: each node is both a Workflow agent an
 - A single node already authors and verifies; do not add reflexive per-unit review/fix stages.
 - One unit of work per node; split multi-unit prompts.
 - A node needing more than the configured ceiling should be split, or the operator should deliberately raise `SHIM_TIMEOUT_SECS` and `BASH_MAX_TIMEOUT_MS`.
-- Suppression-cheat risk survives into artifacts; inspect authored files.
+- Suppression-shortcut risk survives into artifacts; inspect authored files.
 
 ## The boundary -- what stays inline with Opus
 
@@ -537,7 +537,7 @@ printf 'Reply with exactly: pong\n' > /tmp/dag-pilot/pong.md
 S=/tmp/dag-pilot/pilot.mjs
 total=$(grep -cE '\bagent\(' "$S")
 defs=$(grep -cE '^\s*const (codex|grok|kimi|glm|minimax) *=.*\bagent\(' "$S")
-[ "$total" -eq "$defs" ] && echo "audit OK" || echo "LEAK"
+[ "$total" -eq "$defs" ] && echo "audit OK" || echo "MISROUTE"
 
 python3 - "$S" <<'PY'
 import sys, subprocess, tempfile, os
@@ -554,7 +554,7 @@ PY
 ## Provenance -- what's been verified
 
 - **2026-06-15, run `wf_aefe2be3-052`**: a 2-node DAG (`codex` spec -> `kimi` implementation, filesystem handoff) executed via the Workflow tool. Verified end-to-end: `agentType` routed Workflow nodes to shim agents, transcripts showed `codex-shim.sh` and `opencode-shim.sh` invocations with `subagent-model-routing-claude:codex-shim` and `subagent-model-routing-claude:opencode-shim`, filesystem handoff worked, and mechanical ordering held.
-- Static: embedded helper patterns pass the transform-then-`node --check` syntax gate and the leak audit.
+- Static: embedded helper patterns pass the transform-then-`node --check` syntax gate and the misroute audit.
 
 ## See also -- DAG layer
 
@@ -656,7 +656,7 @@ Refresh the opencode catalog with `opencode models`, Grok Build models with `gro
 | Deep one-off reasoning / autonomous verification | `subagent-model-routing-claude:codex-shim` |
 | Independent coding / agentic candidate | `subagent-model-routing-claude:grok-shim`, provisional until local evidence ranks it |
 | Local/self-hosted model experiment | `subagent-model-routing-claude:opencode-shim` with the custom provider/model |
-| Adversarial code review | `subagent-model-routing-claude:codex-shim` or GLM through `subagent-model-routing-claude:opencode-shim` |
+| Skeptical code review | `subagent-model-routing-claude:codex-shim` or GLM through `subagent-model-routing-claude:opencode-shim` |
 | Claude-only work | regular Claude `Agent`, not a shim |
 
 ## MCP tools in dispatched CLIs
@@ -673,7 +673,7 @@ Policy:
 
 - A stall is empty text before the sentinel.
 - Re-dispatch the same MiniMax route up to 3 times.
-- If it still stalls, report the failure and stop; do not silently reroute to GLM or Kimi.
+- If it still stalls, report the failure and stop; do not reroute without reporting it to GLM or Kimi.
 
 Check opencode's log directory only when you need provider diagnostics. The operational signal for dispatch is the text before `SHIM-DONE exit=<n>` plus the artifact on disk.
 
@@ -798,7 +798,7 @@ For code, run the project gate. Missing, empty, or wrong-shape files are failure
 When dispatched, opencode, codex, and Grok Build can read the tree, write files, run commands, fix errors, and report completion.
 
 - "Dispatch -> stage -> synthesize -> integrate" is often wrong: one agentic dispatch can author and verify.
-- Suppression-cheat risk remains. Prompt against suppression directives and inspect artifacts.
+- Suppression-shortcut risk remains. Prompt against suppression directives and inspect artifacts.
 - One unit of work per call.
 - If a unit exceeds the ceiling, split it or deliberately raise `SHIM_TIMEOUT_SECS` and `BASH_MAX_TIMEOUT_MS`.
 

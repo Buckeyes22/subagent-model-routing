@@ -141,7 +141,7 @@ Use these cards when writing prompt files for the local shims. For new, high-sta
 
 #### Claude Opus 4.8
 
-- Use for difficult, long-context, adversarial, or verification-heavy work. Require actual command evidence despite strong diligence evaluations: the card's case studies still include fabrication, ignored corrections, and skipped cheap checks.
+- Use for difficult, long-context, skeptical-review, or verification-heavy work. Require actual command evidence despite strong diligence evaluations: the card's case studies still include fabrication, ignored corrections, and skipped cheap checks.
 - Mark instructions in repository, browser, tool, and issue content as untrusted data; unsafeguarded prompt-injection robustness regressed in some agentic settings.
 - Full reference: `references/model-prompting.md#claude-opus-48`
 

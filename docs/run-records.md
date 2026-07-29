@@ -38,7 +38,7 @@ model-routing runs cleanup --older-than 30
 model-routing runs cleanup --all
 ```
 
-Cleanup is explicit and skips a run while its owned isolated worktree still exists. A missing or ambiguous UUID prefix returns nonzero rather than choosing a run silently.
+Cleanup is explicit and skips a run while its owned isolated worktree still exists. A missing or ambiguous UUID prefix returns nonzero rather than choosing a run quietly.
 
 ## State and ledger relationship
 
