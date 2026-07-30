@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 from typing import Any
 
@@ -40,7 +41,8 @@ class ShimSandbox:
         for command in SUPPORT_COMMANDS:
             self._link_system_command(command)
         if include_timeout:
-            self._link_system_command("timeout")
+            self._link_timeout()
+        self._link_interpreter()
 
     def cleanup(self) -> None:
         self._temp.cleanup()
@@ -50,6 +52,32 @@ class ShimSandbox:
         if not source:
             raise RuntimeError(f"required test command not found: {command}")
         (self.bin / command).symlink_to(source)
+
+    def _link_timeout(self) -> None:
+        # The shims accept either GNU name, so the sandbox must too. Stock
+        # macOS ships neither, and Homebrew coreutils can expose only the
+        # g-prefixed one; requiring bare `timeout` failed the harness on hosts
+        # where the shim itself would have worked.
+        for candidate in ("timeout", "gtimeout"):
+            source = shutil.which(candidate)
+            if source:
+                (self.bin / "timeout").symlink_to(source)
+                return
+        raise RuntimeError(
+            "required test command not found: timeout or gtimeout "
+            "(brew install coreutils provides gtimeout)"
+        )
+
+    def _link_interpreter(self) -> None:
+        # The shims exec a python3 to reach the shared runtime, so the sandbox
+        # has to supply one exactly as it supplies timeout(1). Link the
+        # interpreter running the suite rather than resolving python3 from the
+        # host: `command -v python3` finds nothing on this PATH, so the shim
+        # would fall back to /usr/bin/python3, which is 3.12 on the Linux
+        # runners but 3.9.6 on every macOS. That difference decided whether
+        # these tests exercised the shim contract or the runtime's version
+        # guard, purely by host.
+        (self.bin / "python3").symlink_to(sys.executable)
 
     def install_provider(self, provider: str) -> Path:
         target = self.bin / provider

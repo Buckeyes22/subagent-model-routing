@@ -63,6 +63,20 @@ class OpenCodeAdapter(ProviderAdapter):
             return {"permissionFlag": "--auto"}
         return {}
 
+    def policy_profile(
+        self,
+        env: Mapping[str, str],
+        preflight_data: Mapping[str, str] | None = None,
+    ) -> str:
+        # Asking for unrestricted is not the same as getting it: the bypass
+        # only applies if the installed opencode advertises a permission flag.
+        # Without one the CLI keeps prompting, so report what actually ran.
+        if not self.unrestricted(env):
+            return "cli-policy"
+        if preflight_data is None:
+            return "unrestricted"
+        return "unrestricted" if preflight_data.get("permissionFlag") else "cli-policy"
+
     def prepare(
         self,
         request: ParsedRequest,

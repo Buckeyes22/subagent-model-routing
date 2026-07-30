@@ -26,7 +26,8 @@
     "docs/worktree-dispatch.md",
     "references/README.md",
     "requirements-dev.lock",
-    "requirements-dev.txt"
+    "requirements-dev.txt",
+    "ruff.toml"
   ],
   "directories": [
     "config",

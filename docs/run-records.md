@@ -38,11 +38,15 @@ model-routing runs cleanup --older-than 30
 model-routing runs cleanup --all
 ```
 
-Cleanup is explicit and skips a run while its owned isolated worktree still exists. A missing or ambiguous UUID prefix returns nonzero rather than choosing a run silently.
+Cleanup is explicit and skips a run while its owned isolated worktree still exists. A missing or ambiguous UUID prefix returns nonzero rather than choosing a run quietly.
 
 ## State and ledger relationship
 
-The structured run store is additive. The existing observations ledger remains at `~/.claude/subagent-model-routing/ledger/observations.jsonl` unless `SUBAGENT_MODEL_ROUTING_LEDGER` overrides it. Extended ledger rows include `dispatch_id`, schema version, attempt, and workspace.
+The structured run store is additive. The existing observations ledger remains at `~/.claude/subagent-model-routing/ledger/observations.jsonl` unless `SUBAGENT_MODEL_ROUTING_LEDGER` overrides it. Extended ledger rows include `dispatch_id`, schema version, attempt, workspace, and `profile`.
+
+`profile` records the execution policy the child CLI actually ran under: `unrestricted` when the shim suppressed the CLI's own sandbox/approval prompting, `cli-policy` when the CLI kept enforcing it. Requesting a bypass is not the same as getting one — OpenCode only accepts a bypass flag its installed build advertises, so an adapter whose bypass depends on preflight discovery reports the effective profile rather than the requested one.
+
+Setting `SHIM_RESULT=1` also writes the `finished` row to stdout as `SHIM-RESULT <json>` immediately before the sentinel; see the README quickstart for the parsing contract.
 
 Workflow attempts additionally carry `workflowId`, `taskId`, effort, and attempt number in run state/results/events, plus `workflow_id`, `task_id`, and `attempt` in ledger rows. The scheduler assigns the dispatch UUID before launch, so these identifiers remain stable through preflight, retries, cancellation, and resume. Workflow state itself lives under `workflows/<workflow-id>/`; see [host-neutral workflows](workflows.md).
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from dataclasses import dataclass
 import hashlib
+import json
 import os
 from pathlib import Path
 import shutil
@@ -65,20 +66,23 @@ def _ledger_record(
     outcome: str | None = None,
     supervisor_timeout: bool | None = None,
     workspace: str = "shared",
-) -> None:
+    profile: str | None = None,
+) -> dict[str, Any]:
     record: dict[str, Any] = {
         "ts": _legacy_timestamp(),
         "shim": provider,
         "model": model,
         "event": event,
         "source": "shim",
-        "schema_version": 2,
+        "schema_version": 3,
         "dispatch_id": dispatch_id,
         "workflow_id": env.get("SUBAGENT_MODEL_ROUTING_WORKFLOW_ID") or None,
         "task_id": env.get("SUBAGENT_MODEL_ROUTING_TASK_ID") or None,
         "attempt": int(env.get("SUBAGENT_MODEL_ROUTING_ATTEMPT", "1")),
         "workspace": workspace,
     }
+    if profile is not None:
+        record["profile"] = profile
     if exit_code is not None:
         record["exit"] = exit_code
     if wall_seconds is not None:
@@ -91,11 +95,27 @@ def _ledger_record(
         append_jsonl(_ledger_path(env), record)
     except OSError:
         pass
+    # Returned even when the append fails: the receipt describes the transport,
+    # not the ledger write.
+    return record
 
 
-def _emit_sentinel(exit_code: int, *, leading_newline: bool) -> None:
-    prefix = b"\n" if leading_newline else b""
-    sys.stdout.buffer.write(prefix + f"SHIM-DONE exit={exit_code}\n".encode("ascii"))
+def _receipts_enabled(env: Mapping[str, str]) -> bool:
+    return env.get("SHIM_RESULT", "0") == "1"
+
+
+def _emit_sentinel(
+    exit_code: int,
+    *,
+    leading_newline: bool,
+    receipt: dict[str, Any] | None = None,
+) -> None:
+    payload = b"\n" if leading_newline else b""
+    if receipt is not None:
+        encoded = json.dumps(receipt, ensure_ascii=False, separators=(",", ":"))
+        payload += f"SHIM-RESULT {encoded}\n".encode("utf-8")
+    payload += f"SHIM-DONE exit={exit_code}\n".encode("ascii")
+    sys.stdout.buffer.write(payload)
     sys.stdout.buffer.flush()
 
 
@@ -325,6 +345,7 @@ def _finish_early(
     started_at: str | None = None,
     arguments: list[str] | None = None,
     workspace: dict[str, Any] | None = None,
+    receipt: dict[str, Any] | None = None,
 ) -> int:
     try:
         lifecycle.transition(state)
@@ -347,7 +368,7 @@ def _finish_early(
     except (OSError, RuntimeError, TypeError, ValueError) as exc:
         print(f"{lifecycle.provider}-shim: cannot finalize run metadata: {exc}", file=sys.stderr)
     finally:
-        _emit_sentinel(exit_code, leading_newline=leading_newline)
+        _emit_sentinel(exit_code, leading_newline=leading_newline, receipt=receipt)
     return exit_code
 
 
@@ -355,6 +376,7 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
     env = dict(os.environ if environ is None else environ)
     adapter = get_adapter(provider_id)
     home = Path(env.get("HOME", "~")).expanduser()
+    receipts = _receipts_enabled(env)
     try:
         context = _dispatch_context(env)
         forwarded, routing = _strip_routing_args(argv)
@@ -389,8 +411,9 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
     binary = adapter.resolve_binary(env, home)
     if adapter.preflight_binary and binary is None:
         print(adapter.missing_binary_message(), file=sys.stderr)
+        terminal_record = None
         if adapter.missing_binary_ledger == "finished":
-            _ledger_record(
+            terminal_record = _ledger_record(
                 env,
                 dispatch_id=dispatch_id,
                 provider=provider_id,
@@ -400,6 +423,7 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
                 wall_seconds=0,
                 outcome="error",
                 workspace=routing.workspace,
+                profile=adapter.policy_profile(env),
             )
         store.record_request(request.source, None, retain_prompt=False, error="provider binary unavailable")
         return _finish_early(
@@ -418,6 +442,7 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
                 "baseSha": None,
                 "finalSha": None,
             },
+            receipt=terminal_record if receipts else None,
         )
 
     if not _gnu_timeout_available(env):
@@ -437,6 +462,7 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
 
     assert binary is not None
     preflight_data = adapter.preflight(request, binary, env)
+    profile = adapter.policy_profile(env, preflight_data)
     lifecycle.transition("ready")
     emitter.emit("dispatch.preflight_succeeded")
 
@@ -450,6 +476,7 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
             model=request.model,
             event="started",
             workspace=routing.workspace,
+            profile=profile,
         )
         ledger_started = True
 
@@ -458,7 +485,7 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
     except OSError:
         print(f"{provider_id}-shim: cannot read {request.source}", file=sys.stderr)
         store.record_request(request.source, None, retain_prompt=False, error="unreadable prompt source")
-        _ledger_record(
+        terminal_record = _ledger_record(
             env,
             dispatch_id=dispatch_id,
             provider=provider_id,
@@ -468,6 +495,7 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
             wall_seconds=0,
             outcome="error",
             workspace=routing.workspace,
+            profile=profile,
         )
         return _finish_early(
             store=store,
@@ -479,6 +507,7 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
             exit_code=66,
             outcome="error",
             leading_newline=False,
+            receipt=terminal_record if receipts else None,
         )
 
     store.record_request(request.source, prompt, retain_prompt=routing.retain_prompt)
@@ -491,6 +520,7 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
             model=request.model,
             event="started",
             workspace=routing.workspace,
+            profile=profile,
         )
 
     lifecycle.transition("workspace_preparing")
@@ -522,7 +552,7 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
         emitter.emit("dispatch.workspace_ready", {"mode": routing.workspace, "path": str(workspace_path)})
     except WorkspaceError as exc:
         print(f"{provider_id}-shim: workspace preflight failed: {exc}", file=sys.stderr)
-        _ledger_record(
+        terminal_record = _ledger_record(
             env,
             dispatch_id=dispatch_id,
             provider=provider_id,
@@ -532,6 +562,7 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
             wall_seconds=0,
             outcome="error",
             workspace=routing.workspace,
+            profile=profile,
         )
         return _finish_early(
             store=store,
@@ -549,6 +580,7 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
                 "baseSha": None,
                 "finalSha": None,
             },
+            receipt=terminal_record if receipts else None,
         )
 
     prepared = adapter.prepare(request, binary, prompt, env, preflight_data)
@@ -596,8 +628,9 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
         state, outcome, terminal_event = "succeeded", "ok", "dispatch.succeeded"
     else:
         state, outcome, terminal_event = "failed", "error", "dispatch.failed"
+    terminal_record = None
     try:
-        _ledger_record(
+        terminal_record = _ledger_record(
             env,
             dispatch_id=dispatch_id,
             provider=provider_id,
@@ -608,6 +641,7 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
             outcome="timeout" if process_result.exit_code == 124 else "ok" if process_result.exit_code == 0 else "error",
             supervisor_timeout=process_result.timed_out,
             workspace=routing.workspace,
+            profile=profile,
         )
         lifecycle.transition(state)
         if worktree_metadata is not None:
@@ -636,5 +670,9 @@ def dispatch_legacy(provider_id: str, argv: list[str], *, environ: Mapping[str, 
     except (OSError, RuntimeError, TypeError, ValueError) as exc:
         print(f"{provider_id}-shim: cannot finalize run metadata: {exc}", file=sys.stderr)
     finally:
-        _emit_sentinel(process_result.exit_code, leading_newline=True)
+        _emit_sentinel(
+            process_result.exit_code,
+            leading_newline=True,
+            receipt=terminal_record if receipts else None,
+        )
     return process_result.exit_code

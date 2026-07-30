@@ -27,7 +27,7 @@ The card's standard evaluation configuration used adaptive thinking at maximum e
 
 ## Routing guidance derived from the card
 
-Use Opus 4.8 for difficult general software-engineering work, deep repository analysis, long-context investigations, adversarial review, or independent verification when quality matters more than route cost or latency. Keep final cross-model synthesis and irreversible decisions in the host orchestrator.
+Use Opus 4.8 for difficult general software-engineering work, deep repository analysis, long-context investigations, skeptical review, or independent verification when quality matters more than route cost or latency. Keep final cross-model synthesis and irreversible decisions in the host orchestrator.
 
 Prefer a prompt contract with:
 

@@ -1,5 +1,5 @@
 {
-  "fileCount": 157,
+  "fileCount": 161,
   "files": [
     {
       "bytes": 433,
@@ -14,10 +14,10 @@
       "sha256": "1910d2ed27e8ec337817f5910d9b3d2f3979e52d25579700975fcbb8d6671df0"
     },
     {
-      "bytes": 193,
+      "bytes": 1007,
       "executable": false,
       "path": ".github/dependabot.yml",
-      "sha256": "408abbeb3fb78cce167b200431268e3cc47b40b7b6ba0f158c9a819a571bde99"
+      "sha256": "3a5eab01ed0a701c9a229737856b241cf1c95091c16378b504c2e7595c7ab277"
     },
     {
       "bytes": 880,
@@ -26,10 +26,10 @@
       "sha256": "0aac5a754b71f532cde1fd0d0c5501c012015e0849b8187f9a4a2eedd394d380"
     },
     {
-      "bytes": 28503,
+      "bytes": 28780,
       "executable": false,
       "path": ".github/workflows/ci.yml",
-      "sha256": "c20396984161b6049b96af9f56090ae09b3a4964599f11cd75e693aa90740009"
+      "sha256": "75350bfc690846882e52ab0716e7f6c4821928c329ce7779009c40d5492f79c0"
     },
     {
       "bytes": 776,
@@ -38,16 +38,16 @@
       "sha256": "65b61abcf8de34ac1b16debf8957f62940c6384d5b6cb3e1baef52a14054d264"
     },
     {
-      "bytes": 8178,
+      "bytes": 9300,
       "executable": false,
       "path": "CHANGELOG.md",
-      "sha256": "fc210b60ddd73f14b58bc8a9513d823753327ae4df10bb034fe07f889c06fcee"
+      "sha256": "cefbb54756d2d6160c4554d0cf491af1d93cd6038894a49dce5da0f7486c5174"
     },
     {
-      "bytes": 3724,
+      "bytes": 4609,
       "executable": false,
       "path": "CONTRIBUTING.md",
-      "sha256": "7dc9d33c33c99206d596c5ff3a80fb51b9a9993463bfc03770d1eb5ad3835294"
+      "sha256": "9c57536682955216d75a14fb01028bc48c658deba897723b4795f3453d4c800d"
     },
     {
       "bytes": 1067,
@@ -56,16 +56,16 @@
       "sha256": "6dbcffa626ac1a9f885fa1b022690d2632c6727ec87bc417486d665011a57ce9"
     },
     {
-      "bytes": 32776,
+      "bytes": 34423,
       "executable": false,
       "path": "README.md",
-      "sha256": "470e921243b07e07148d09682b35050e676f59a4bddb42c8e45fe06d5bdcc6f0"
+      "sha256": "10b41ede69748d99772fa9179c4d25c9b2cfcc38c55ec60c87ef841e1748c1ac"
     },
     {
-      "bytes": 8174,
+      "bytes": 8173,
       "executable": false,
       "path": "SECURITY.md",
-      "sha256": "658c3eb74023430c3d4a5d37273190d82661791db9e9958e7919f3d6ddc741d7"
+      "sha256": "2ca3b1a0f843bee104c07d2c0431030501bd71cfa03173b6ce35fd033958812b"
     },
     {
       "bytes": 3373,
@@ -80,16 +80,16 @@
       "sha256": "2978724a88194e2cf60e1855064f7671a755e7ed823ca34a48b36be6184a8799"
     },
     {
-      "bytes": 1004,
+      "bytes": 1021,
       "executable": false,
       "path": "config/public-release-files.json",
-      "sha256": "a67d112e267a20465cbd20382145d5e8dc92b797c2a4691211a3ea00df2ae12e"
+      "sha256": "d12a54cb31a42a8efb6372b8f01bd2ebc7151f5641f9fe0d33b596802df77f82"
     },
     {
-      "bytes": 5595,
+      "bytes": 5599,
       "executable": false,
       "path": "docs/architecture.md",
-      "sha256": "05969532c91f9aea66cb9d81c158e440b176591290c2d7d016f76b31956e67c7"
+      "sha256": "8b914c25a31a8f20272022c1598431b4404ed26e79faff5a0f399cf96f5aa252"
     },
     {
       "bytes": 3802,
@@ -140,10 +140,10 @@
       "sha256": "6ce4cb7d0b835f859998ff1582a7eeb8449574f2a509c40860d21fdf64ce2426"
     },
     {
-      "bytes": 3378,
+      "bytes": 4006,
       "executable": false,
       "path": "docs/run-records.md",
-      "sha256": "36ab78c7ae18912452922908a52264cce096600a333cdb2ed81db05142d14786"
+      "sha256": "07dba45b1eaf6ad80dbf73d49fcd143051f852726731fdc3cf935df32be2b0ca"
     },
     {
       "bytes": 5489,
@@ -242,10 +242,10 @@
       "sha256": "eb73461551134de144376350e884bdb881832d01f1534cde69bcd7a58b6c9af7"
     },
     {
-      "bytes": 5417,
+      "bytes": 5420,
       "executable": false,
       "path": "plugins/subagent-model-routing-claude/README.md",
-      "sha256": "217885f32889391e1d8b8f8ca05ab61ad2ab40acac7ec7680b6f5f84f82f8e1a"
+      "sha256": "8bff207cc6e9cf51c1b1dd965d42bd6fa3d6edf11c92ae182467a1f01f0bea11"
     },
     {
       "bytes": 5017,
@@ -272,22 +272,22 @@
       "sha256": "e17bd773cc184b2cb75ec6595728b905db12685afc1a72c1ed03c84087a770b2"
     },
     {
-      "bytes": 1371,
+      "bytes": 1379,
       "executable": false,
       "path": "plugins/subagent-model-routing-claude/commands/dag-routing.md",
-      "sha256": "077f0ea1117b292facdd7c27825b211f91d992dcd001dc746d42151851403aad"
+      "sha256": "b189901c4a9f78dd3c319bc869642de4cd7a20689c4adbeaf4ef21164ff83d7a"
     },
     {
-      "bytes": 4131,
+      "bytes": 4130,
       "executable": false,
       "path": "plugins/subagent-model-routing-claude/commands/distill.md",
-      "sha256": "ba2a411bb56f1a21746f87b5280962c184f1aa9b6835c3c45d09daf319579e63"
+      "sha256": "7f890fa158a2c4466cf5e115ffd2105452d2558dc6d5401698e0098b30e8f1ad"
     },
     {
-      "bytes": 11586,
+      "bytes": 11606,
       "executable": true,
       "path": "plugins/subagent-model-routing-claude/hooks/dag-tripwire.py",
-      "sha256": "b7759ad29847eb697c5ba5741d8a8a01393b0eb2aeca5393fc471de94d1bbbe0"
+      "sha256": "34ae63283b574b5b34be4380f0699d5d6762f8e0a57a21bb50848ca8e67571d3"
     },
     {
       "bytes": 531,
@@ -302,22 +302,22 @@
       "sha256": "32a4c231c91cbdcb0376e878e3d227488d9b71ca3377d00cda929b6ddd8d6e90"
     },
     {
-      "bytes": 17006,
+      "bytes": 17027,
       "executable": false,
       "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ARCHITECTURE.md",
-      "sha256": "33cfe0423a6238f603a68a09e8d1a7cea496385c5168a92d0b93d58c622c0664"
+      "sha256": "0d3846adaa09cc56c3b9f27902f62034dfe279c40574bcc22100fb32e9d9eb50"
     },
     {
-      "bytes": 56282,
+      "bytes": 56658,
       "executable": false,
       "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/SKILL.md",
-      "sha256": "d676bc72b522f3276e12a2876e217ece597f05ea6b91e9e39913099e062fbae7"
+      "sha256": "3f1468f142c4d932f70d151ce13c1da48701f77a5ae5b9875d2488a9c9b5fd3f"
     },
     {
-      "bytes": 1448,
+      "bytes": 1468,
       "executable": false,
       "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/claude-fable-5.md",
-      "sha256": "78b9e583647c01b3f1766ae3a1f2b936f7b77d45405b6ea482548ce876bbbc79"
+      "sha256": "412a8975194928a303488ed44f1566a7b1f784d5607ca70f6c34154d1c7f0fd3"
     },
     {
       "bytes": 1441,
@@ -368,10 +368,10 @@
       "sha256": "860dc0a6923617ca04f0d26d982b87b4d833adbcc689715c22f323686d20248f"
     },
     {
-      "bytes": 12206,
+      "bytes": 12222,
       "executable": false,
       "path": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/references/model-prompting.md",
-      "sha256": "8e4d1ce8590c70df842cdbdfcbe4fade2ea25a468b86d7e63b3e643d59189837"
+      "sha256": "304db4304c4897e1777e95b4d1c0e7c4b446251f5770ccea8ccd5baa94373c0b"
     },
     {
       "bytes": 7596,
@@ -398,16 +398,16 @@
       "sha256": "807014d262616cb4baecb0652f0cb4bfd1b9ba696edf819cb78e4c7c991c9a97"
     },
     {
-      "bytes": 14369,
+      "bytes": 14374,
       "executable": false,
       "path": "plugins/subagent-model-routing-codex/skills/subagent-model-routing/SKILL.md",
-      "sha256": "513fb7413fe136bfa1842f07e7c674bc85e25263536e7c0e0472ec60bd7ce953"
+      "sha256": "feedec61f66c914e857469b2bbf7780e3290224f609339765b8a7da340982cf6"
     },
     {
-      "bytes": 12206,
+      "bytes": 12222,
       "executable": false,
       "path": "plugins/subagent-model-routing-codex/skills/subagent-model-routing/references/model-prompting.md",
-      "sha256": "8e4d1ce8590c70df842cdbdfcbe4fade2ea25a468b86d7e63b3e643d59189837"
+      "sha256": "304db4304c4897e1777e95b4d1c0e7c4b446251f5770ccea8ccd5baa94373c0b"
     },
     {
       "bytes": 7500,
@@ -434,16 +434,16 @@
       "sha256": "d1e18e9d0a59da014f9d11273f2114f929d75890368cc93bfb3d97de9d429270"
     },
     {
-      "bytes": 15221,
+      "bytes": 15226,
       "executable": false,
       "path": "plugins/subagent-model-routing-copilot/skills/subagent-model-routing/SKILL.md",
-      "sha256": "c0f4754aa95a72d8018a9d98389bfc4b133265d941c6c6401f3bf1c938681f8a"
+      "sha256": "46bf47d2d052eb4327aba8109822b79bb9ff2bf3f59ca7c05afbd86a4fcfe0b0"
     },
     {
-      "bytes": 12206,
+      "bytes": 12222,
       "executable": false,
       "path": "plugins/subagent-model-routing-copilot/skills/subagent-model-routing/references/model-prompting.md",
-      "sha256": "8e4d1ce8590c70df842cdbdfcbe4fade2ea25a468b86d7e63b3e643d59189837"
+      "sha256": "304db4304c4897e1777e95b4d1c0e7c4b446251f5770ccea8ccd5baa94373c0b"
     },
     {
       "bytes": 10219,
@@ -476,10 +476,10 @@
       "sha256": "d5b560e56a241be32d91b475cffa72c04f024845ad3d0630e02c4179f35064de"
     },
     {
-      "bytes": 5164,
+      "bytes": 5162,
       "executable": false,
       "path": "prompting/anthropic-claude-opus-4.8-prompting-reference.md",
-      "sha256": "36ae120d0e73c50e61a4513c625ec34a3e4c5e0a664864c3a8d4ff398700ce53"
+      "sha256": "285ed7244234212dc38379c2dfda83f96aa2ebbf3692de366033727879dbed84"
     },
     {
       "bytes": 4936,
@@ -530,16 +530,22 @@
       "sha256": "a8521fec8842cab9c5359c50068b137336a47e058911bc41509f81e543a21da1"
     },
     {
-      "bytes": 20160,
+      "bytes": 27919,
       "executable": false,
       "path": "requirements-dev.lock",
-      "sha256": "afa6d94d5185509249ad4db27180a38c9789ae521def44ddbe03be2170159bf0"
+      "sha256": "7ac32e9da2aeac14e587e914ae2fad00f36776a264acd2fc051d435b21c21df5"
     },
     {
-      "bytes": 45,
+      "bytes": 44,
       "executable": false,
       "path": "requirements-dev.txt",
-      "sha256": "4198123e47f64c5806abaf53a88ad4bff20990479fce85084c77ece0380ea460"
+      "sha256": "7044b06b26e97daa67fe0d5a883613ff8316f4ab5006a9f22d6cf1949960823b"
+    },
+    {
+      "bytes": 235,
+      "executable": false,
+      "path": "ruff.toml",
+      "sha256": "775f6f3ac7df3c79e0abfc203bd94b75d71fc38347706d715454efd93b812cd6"
     },
     {
       "bytes": 186,
@@ -560,10 +566,10 @@
       "sha256": "6b23d799f072116affb91c26302c90b46f6ab6615aff2db1e76c7161ffa64eff"
     },
     {
-      "bytes": 22319,
+      "bytes": 23665,
       "executable": false,
       "path": "runtime/model_routing/dispatch.py",
-      "sha256": "8309a07be0f8dfde6ef486807af907f29f0f52a4f49bbd0790620e97602531cd"
+      "sha256": "02c2c34332e31ac6b8af21fac36ccc22ea32c87a8605ebd08188ebd7ae98cdc3"
     },
     {
       "bytes": 66776,
@@ -608,10 +614,10 @@
       "sha256": "f91b7d27f437f7f32740bcadaae39201db479891c610c01e0ff6ab932c95c200"
     },
     {
-      "bytes": 3178,
+      "bytes": 3709,
       "executable": false,
       "path": "runtime/model_routing/providers/base.py",
-      "sha256": "48022805dcd611facf6bfcb3291a21b14cd8a3e9164dce52e4e108421e3a6180"
+      "sha256": "b01f1942cc828849bd301ee2df1e7028259d8718cb18cd991ca2406fe4506a0f"
     },
     {
       "bytes": 2008,
@@ -638,10 +644,10 @@
       "sha256": "39ffba7f70233059ab11dfbc6a2deac0ba754cc218656c8a7c963ff103b0bfc2"
     },
     {
-      "bytes": 2980,
+      "bytes": 3581,
       "executable": false,
       "path": "runtime/model_routing/providers/opencode.py",
-      "sha256": "032cc8d5af804827d2779c9f01686998e3d97f0e1bcdb5d28c62a7f75189df32"
+      "sha256": "95e7b0ca8a8a84c3d2277becf76ebaccf3ec7046ef2757975fdc7dddb31a2084"
     },
     {
       "bytes": 13988,
@@ -764,6 +770,12 @@
       "sha256": "53334afdda2ea473ecbc4caddfd127515a232fc0d1d5c7a0055e47a02b6a23fb"
     },
     {
+      "bytes": 1727,
+      "executable": false,
+      "path": "scripts/parse-shim-result.py",
+      "sha256": "160f485ec21f6918521ef4d256f29d7b2d88dd8230e7ec6342fdde94ee915af2"
+    },
+    {
       "bytes": 47,
       "executable": false,
       "path": "tests/__init__.py",
@@ -776,10 +788,10 @@
       "sha256": "4ad4adc689c38e7b260b7abf6d4e112066a0665b582daf7f5d45160fc7ac9cf6"
     },
     {
-      "bytes": 4122,
+      "bytes": 5494,
       "executable": false,
       "path": "tests/shim_test_support.py",
-      "sha256": "a4e42d32bfb604669458f12d2e70ca460f95135e0f8037599f9895cf06d2c2d7"
+      "sha256": "2b270988bcc2284881e8678668f3fea149a63dc28bd4e8564b682ff8b2896409"
     },
     {
       "bytes": 11949,
@@ -884,6 +896,12 @@
       "sha256": "732b936e4f47295a1fc80470ecba0ebecf649ba9b6ee2149e3572bef9794fda2"
     },
     {
+      "bytes": 9928,
+      "executable": false,
+      "path": "tests/test_shim_receipt.py",
+      "sha256": "94d0f5a1a10a628ea799adcab3e9ab5ab0b25075c2864f96b892685fc62309a5"
+    },
+    {
       "bytes": 55183,
       "executable": false,
       "path": "tests/test_workflow.py",
@@ -918,6 +936,12 @@
       "executable": false,
       "path": "tools/check_markdown_links.py",
       "sha256": "06ac4e8598ad223a6b867e4e17db57f0017d57b1cb9945dbdf55ff82e7d5c392"
+    },
+    {
+      "bytes": 2127,
+      "executable": false,
+      "path": "tools/check_requirements_lock.py",
+      "sha256": "e16f86dded00b543f6e28f3e0d30813e8672a6f7ef2c5c68d1a3ba10b1c8a2b3"
     },
     {
       "bytes": 5503,

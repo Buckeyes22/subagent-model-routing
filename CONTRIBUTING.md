@@ -7,6 +7,7 @@ Issues and pull requests are welcome.
 Run the same checks CI runs before pushing:
 
 ```bash
+python3 tools/check_requirements_lock.py
 python3 -m pip install --require-hashes --requirement requirements-dev.lock
 git diff --check
 ruff check runtime tests tools scripts/model-routing
@@ -17,7 +18,7 @@ python3 tools/validate_plugins.py
 python3 tools/check_generated.py
 actionlint
 for s in scripts/*.sh; do bash -n "$s"; done
-python3 -m compileall -q runtime tests tools scripts/model-routing
+python3 -m compileall -q runtime tests tools scripts/model-routing scripts/parse-shim-result.py
 python3 -m unittest discover -s tests -v
 python3 tools/validate_registry.py
 python3 tools/sync_routes.py --check
@@ -35,13 +36,25 @@ The full matrix, including JSON manifest validation and hook pipe tests, lives i
 
 Python 3.11 is the runtime floor. CI also exercises 3.12 and 3.13; runtime code must remain standard-library-only.
 
+## Development dependencies
+
+`requirements-dev.txt` declares the direct pins; `requirements-dev.lock` is the hash-pinned resolution that CI and every documented install command actually read. Changing a pin means regenerating the lock in the same commit:
+
+```bash
+uv pip compile --universal --generate-hashes requirements-dev.txt --output-file requirements-dev.lock
+```
+
+Dependabot opens PRs against the `.txt` but cannot regenerate the lock, so those PRs are inert until the lock is rebuilt. `tools/check_requirements_lock.py` fails CI when the two disagree.
+
+Ruff's lint selection is pinned in `ruff.toml` rather than inherited from the tool's defaults, which widen between minor releases. Adopting additional rules is a deliberate change, not a side effect of upgrading ruff.
+
 Doctor tests must use temporary homes, fake executables, or subprocess mocks and must prove the default path performs no authentication or model-discovery probe. Explicit-discovery tests must bound output and prove raw output/secrets are not retained. Worktree and scheduler tests must create disposable Git repositories below `tempfile.TemporaryDirectory()`; never point them at the contributor's checkout. Cover binary/untracked paths, dirty-source refusal, apply conflicts, ownership checks, terminal-state preservation, dependency ordering, concurrency, retry classification, cancellation, verification argv, and resume invariants.
 
 Workflow schema changes must update `schemas/workflow.schema.json`, semantic validation in `runtime/model_routing/workflow.py`, scheduler tests, both workflow examples, all three host-specific skills, and `docs/workflows.md` together. Workflow tests use fake providers; CI must never spend provider quota or depend on network access.
 
 ## Conventions
 
-The `SHIM-DONE exit=<n>` contract and the namespaced Claude-package agent types (`subagent-model-routing-claude:codex-shim`, `subagent-model-routing-claude:kimi-shim`, `subagent-model-routing-claude:opencode-shim`, `subagent-model-routing-claude:grok-shim`, etc.) are part of the public contract. The direct-shell packages also expose `claude-shim`; changing a route requires updating only the client packages that actually support it.
+The `SHIM-DONE exit=<n>` contract, the opt-in `SHIM-RESULT` receipt, and the namespaced Claude-package agent types (`subagent-model-routing-claude:codex-shim`, `subagent-model-routing-claude:kimi-shim`, `subagent-model-routing-claude:opencode-shim`, `subagent-model-routing-claude:grok-shim`, etc.) are part of the public contract. The direct-shell packages also expose `claude-shim`; changing a route requires updating only the client packages that actually support it.
 
 Capability-card rankings and tier lists are seed examples that each user maintains through the `distill` command. PRs that adjust tiers based only on personal experience belong in your own fork's ledger, not here.
 
