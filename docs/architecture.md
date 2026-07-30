@@ -24,7 +24,7 @@ Client-native routing boundaries are intentional:
 - Codex keeps GPT/Codex work in the native Codex harness and exposes Claude, Kimi, Grok, and OpenCode transports.
 - GitHub Copilot may invoke all five transports.
 
-Generated route assets may share a canonical registry, but client-specific prose, commands, agents, hooks, and manifests must remain separate. Claude-only Workflow and Stop-hook instructions must never leak into the Codex or Copilot packages.
+Generated route assets may share a canonical registry, but client-specific prose, commands, agents, hooks, and manifests must remain separate. Claude-only Workflow and Stop-hook instructions must never misroute into the Codex or Copilot packages.
 
 ## Layer responsibilities
 

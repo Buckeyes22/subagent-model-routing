@@ -78,6 +78,19 @@ class ProviderAdapter:
     def unrestricted(env: Mapping[str, str]) -> bool:
         return env.get("SUBAGENT_MODEL_ROUTING_UNRESTRICTED", "1") == "1"
 
+    def policy_profile(
+        self,
+        env: Mapping[str, str],
+        preflight_data: Mapping[str, str] | None = None,
+    ) -> str:
+        """Which sandbox/approval policy the child CLI actually runs under.
+
+        `unrestricted` means the shim suppressed the CLI's own prompting;
+        `cli-policy` means the CLI keeps enforcing whatever it enforces. An
+        adapter whose bypass depends on preflight discovery overrides this.
+        """
+        return "unrestricted" if self.unrestricted(env) else "cli-policy"
+
     @staticmethod
     def prompt_text(prompt: bytes) -> str:
         # Bash command substitution strips every trailing newline. Decode with

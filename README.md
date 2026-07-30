@@ -159,6 +159,30 @@ SHIM-DONE exit=0
 
 The body before the sentinel varies by child CLI. The `SHIM-DONE exit=<n>` line is the stable tripwire: if it is missing or reports a nonzero exit, the dispatch failed and the skill will not treat the output as successful.
 
+For machine-readable transport metadata, opt in with `SHIM_RESULT=1`:
+
+```bash
+printf 'Reply with exactly: pong\n' | SHIM_RESULT=1 ~/.claude/scripts/claude-shim.sh - --model haiku
+```
+
+A completed run then ends with this pair:
+
+```
+SHIM-RESULT {"ts":"...","shim":"claude","model":"haiku","event":"finished","exit":0,"wall_s":2,"outcome":"ok","profile":"unrestricted","dispatch_id":"...","source":"shim"}
+SHIM-DONE exit=0
+```
+
+The receipt is the exact `finished` ledger record for that `dispatch_id`. Only a `SHIM-RESULT` immediately before the final `SHIM-DONE` is authoritative — the child controls its own stdout and can print lookalike lines earlier. Parse the pair with the bundled reference parser rather than grepping:
+
+```bash
+SHIM_RESULT=1 opencode-shim.sh <provider/model> prompt.md | tee /tmp/shim.out
+python3 "${SUBAGENT_MODEL_ROUTING_HOME:-$HOME/.local/share/subagent-model-routing}/scripts/parse-shim-result.py" </tmp/shim.out
+```
+
+It reads only the last two lines, cross-checks the receipt's exit against the sentinel's, and exits nonzero on any mismatch.
+
+The receipt proves transport completion and reports the policy profile the child actually ran under. It does not prove the requested files are correct or that project checks passed. Failures before dispatch begins — usage errors and a missing process supervisor — write no ledger record and so emit only `SHIM-DONE`.
+
 ### 2. First routed dispatch from Claude Code
 
 With the Claude Code plugin installed, ask in natural language:
@@ -293,6 +317,7 @@ rm -rf ~/.local/share/subagent-model-routing
 | Variable | Default | Purpose |
 |----------|---------|---------|
 | `SHIM_TIMEOUT_SECS` | `1140` (~19 min) | per-dispatch wall ceiling enforced by process-group supervision; raise deliberately for long jobs |
+| `SHIM_RESULT` | `0` | `1` emits the `finished` ledger record as `SHIM-RESULT <json>` immediately before `SHIM-DONE` |
 | `SUBAGENT_MODEL_ROUTING_UNRESTRICTED` | `1` | `1` = bypass the child CLI's sandbox/approval prompts (unattended dispatch); `0` = keep the CLI's own policy |
 | `SUBAGENT_MODEL_ROUTING_LEDGER` | `~/.claude/subagent-model-routing/ledger/observations.jsonl` | where quantitative dispatch records append |
 | `SUBAGENT_MODEL_ROUTING_HOME` | `~/.local/share/subagent-model-routing` | writable source checkout used by the Claude `distill` command when it is not run inside the checkout |
@@ -379,7 +404,7 @@ The optional provider selector is a separate explicit mutation surface. It downl
 
 ## Observability
 
-The built-in, always-on layers are the compatibility ledger JSONL (`~/.claude/subagent-model-routing/ledger/observations.jsonl`) and the structured run store. `started` records mark the beginning of dispatch and `finished` records carry `wall_s`, `exit`, and `outcome`; additive fields include the dispatch UUID and whether the Python supervisor actually fired its timeout.
+The built-in, always-on layers are the compatibility ledger JSONL (`~/.claude/subagent-model-routing/ledger/observations.jsonl`) and the structured run store. `started` records mark the beginning of dispatch and `finished` records carry `wall_s`, `exit`, and `outcome`; additive fields include the dispatch UUID, the active policy `profile`, and whether the Python supervisor actually fired its timeout. Set `SHIM_RESULT=1` when a caller needs that `finished` record on stdout instead of reading the ledger.
 
 For OpenCode spans, export `OPENCODE_OTLP_ENDPOINT` before dispatch and the shim fills the companion telemetry variables:
 
@@ -402,7 +427,7 @@ The shim logs `event: started` when dispatch begins and `event: finished` when i
 ## Documentation
 
 - **Per-client guides** — [Claude Code package](plugins/subagent-model-routing-claude/README.md), [Codex package](plugins/subagent-model-routing-codex/README.md), [GitHub Copilot CLI package](plugins/subagent-model-routing-copilot/README.md): install details, what each package contains, and client-specific usage.
-- **[The routing skill](plugins/subagent-model-routing-claude/skills/subagent-model-routing/SKILL.md)** — the full doctrine: the flat-vs-DAG decision, model picking, dispatch patterns, failure modes, and the anti-leak gates. This is what Claude loads at runtime.
+- **[The routing skill](plugins/subagent-model-routing-claude/skills/subagent-model-routing/SKILL.md)** — the full doctrine: the flat-vs-DAG decision, model picking, dispatch patterns, failure modes, and the routing gates. This is what Claude loads at runtime.
 - **[Architecture internals](plugins/subagent-model-routing-claude/skills/subagent-model-routing/ARCHITECTURE.md)** — how a Workflow DAG node actually reaches an external model, layer by layer.
 - **[Runtime architecture](docs/architecture.md)**, **[provider registry](docs/provider-registry.md)**, **[provider CLI setup](docs/provider-cli-setup.md)**, **[run records](docs/run-records.md)**, **[lifecycle hooks](docs/lifecycle-hooks.md)**, **[doctor](docs/doctor.md)**, **[isolated worktree dispatch](docs/worktree-dispatch.md)**, **[host-neutral workflows](docs/workflows.md)**, and **[public releases](docs/releasing.md)** — the execution, diagnostics, installation, state, generation, integration, and publication contracts.
 - **[v0.3 runtime migration](docs/migration-v0.3.md)**, **[v0.4 diagnostics/worktree migration](docs/migration-v0.4.md)**, and **[v0.5 discovery/workflow migration](docs/migration-v0.5.md)** — additive upgrade behavior and compatibility boundaries.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""dag-tripwire.py — Stop-hook backstop for the dag-routing TRANSPORT leak.
+"""dag-tripwire.py — Stop-hook backstop for the dag-routing TRANSPORT misroute.
 
 Fires a one-time checkpoint (decision:block) when, in the CURRENT turn:
   1. the /dag-routing slash command was invoked OR the subagent-model-routing skill is active
@@ -8,14 +8,14 @@ Fires a one-time checkpoint (decision:block) when, in the CURRENT turn:
      Agent subagent_type in the namespaced plugin shims (or legacy bare shim names), AND
   3. ZERO `Workflow` tool calls happened.
 
-That triple is the transport leak: a DAG was requested but executed as loose shells /
+That triple is the transport misroute: a DAG was requested but executed as loose shells /
 direct Agent dispatch instead of a `Workflow`. It does NOT fire on:
   - dev sessions that merely mention the skill (keys on command marker / skill attribution, not mentions),
   - mid-setup turns or clarifying pauses (requires an actual direct-shim dispatch),
   - correct runs (a Workflow call silences it).
 It DOES fire on a deliberate "not-a-DAG -> flat direct dispatch" inside the command/skill
 context; the checkpoint text lets you confirm that and continue — that's by design, since
-the leak and that legitimate case share an observable signature.
+the misroute and that legitimate case share an observable signature.
 
 Fail-safe: any parse problem -> exit 0 (never blocks spuriously).
 Loop-safe: if stop_hook_active is set, exit 0.
@@ -317,11 +317,11 @@ def main():
     if workflow_used or not direct_shim:
         return 0
 
-    # 3) Leak signature confirmed -> one-time checkpoint fed back to the model.
+    # 3) Misroute signature confirmed -> one-time checkpoint fed back to the model.
     reason = (
         "dag-routing TRIPWIRE: /dag-routing or the subagent-model-routing skill was active this turn and shims were "
         "dispatched DIRECTLY (Bash/Agent) with NO `Workflow` tool call. Per the skill's §0 this is "
-        "the TRANSPORT LEAK: a DAG must run via Workflow({scriptPath}), not loose shells / direct "
+        "the TRANSPORT MISROUTE: a DAG must run via Workflow({scriptPath}), not loose shells / direct "
         "Agent dispatch / inline Opus. ACTION: if this is a DAG, redo it via the Workflow tool. If you "
         "DELIBERATELY concluded it is NOT a DAG and used Part B flat direct dispatch on "
         "purpose, state that explicitly and continue."

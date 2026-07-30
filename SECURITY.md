@@ -24,7 +24,7 @@ Out of scope: risks from the documented opt-in unrestricted execution model; soc
 
 ## Optional provider installer boundary
 
-`model-routing setup providers` and interactive bootstrap are explicit mutation surfaces, separate from the read-only doctor and normal shim installation. Missing providers begin unchecked, installed providers are disabled, and selected first-party source domains are shown before a second `[y/N]` confirmation. Automatic bootstrap skips provider setup when `/dev/tty` is unavailable, so CI and redirected installs cannot silently install provider CLIs.
+`model-routing setup providers` and interactive bootstrap are explicit mutation surfaces, separate from the read-only doctor and normal shim installation. Missing providers begin unchecked, installed providers are disabled, and selected first-party source domains are shown before a second `[y/N]` confirmation. Automatic bootstrap skips provider setup when `/dev/tty` is unavailable, so CI and redirected installs cannot quietly install provider CLIs.
 
 Installer recipes are argv-only data in `config/provider-installers.json`. The loader requires exact provider-registry parity, HTTPS URLs, a fixed `bash`/`sh` interpreter allow-list, and provider-specific redirect hosts. Downloads have connection/read/size bounds, must begin with a shebang, and are written to mode-`0600` temporary files only after validation. Execution uses no `eval`, shell command string, or routing run record; temporary scripts are removed in cleanup paths. One provider failure does not broaden authorization to another provider.
 

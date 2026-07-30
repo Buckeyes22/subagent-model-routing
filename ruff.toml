@@ -1,0 +1,5 @@
+# Ruff's default rule selection is not a stable contract; it widens between
+# minor releases. Pin the set the repository actually gates on so a version
+# bump changes the linter, not the policy.
+[lint]
+select = ["E4", "E7", "E9", "F"]

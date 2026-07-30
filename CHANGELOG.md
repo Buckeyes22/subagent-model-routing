@@ -5,13 +5,23 @@ All notable changes to this project will be documented in this file.
 The project adheres to **semantic versioning intent** with the following public contract. The items below are considered the stable public API and will only change in a **MAJOR** release:
 
 - The `SHIM-DONE` sentinel format emitted by the transport shims.
-- The shim environment variable names: `SHIM_TIMEOUT_SECS`, `SUBAGENT_MODEL_ROUTING_UNRESTRICTED`, and `SUBAGENT_MODEL_ROUTING_LEDGER`.
+- The opt-in `SHIM-RESULT` receipt format and its position immediately before the final `SHIM-DONE`.
+- The shim environment variable names: `SHIM_TIMEOUT_SECS`, `SHIM_RESULT`, `SUBAGENT_MODEL_ROUTING_UNRESTRICTED`, and `SUBAGENT_MODEL_ROUTING_LEDGER`.
 - The namespaced agent types used for routing.
 - The versioned workflow JSON schema and persisted task-state names.
 
 New capabilities bump the **MINOR** version; fixes bump the **PATCH** version.
 
 ## [Unreleased]
+
+### Added
+- Optional `SHIM_RESULT=1` transport receipts, emitted as the exact `finished` ledger record on stdout immediately before the final `SHIM-DONE` sentinel. Failures that write no ledger record — usage errors and a missing process supervisor — continue to emit only the sentinel.
+- `scripts/parse-shim-result.py`, a reference parser that reads only the trailing receipt/sentinel pair, so receipts a dispatched child printed into its own stdout cannot be mistaken for the shim's.
+- An active execution-policy `profile` on routing-ledger records, distinguishing a genuine sandbox/approval bypass from a run where the child CLI kept its own policy.
+
+### Changed
+- Routing-ledger records advance to `schema_version` 3 for the additive `profile` field.
+- Ruff's lint selection is pinned in `ruff.toml` rather than inherited from the tool's shifting defaults, and `tools/check_requirements_lock.py` fails CI when `requirements-dev.lock` no longer matches the pins declared in `requirements-dev.txt`.
 
 ## [0.6.0] - 2026-07-17
 

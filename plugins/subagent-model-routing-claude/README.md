@@ -27,7 +27,7 @@ claude plugin validate <repo>/plugins/subagent-model-routing-claude
 - `commands/dag-routing.md` — the `/subagent-model-routing-claude:dag-routing` entry command.
 - `commands/distill.md` — the `/subagent-model-routing-claude:distill` ledger-promotion command.
 - `agents/{codex,kimi,opencode,grok}-shim.md` — the Sonnet transport agent contracts.
-- `hooks/` — the Stop-hook tripwire (flags a DAG run that leaked to direct dispatch). Disable via the plugin or `hooks/hooks.json`.
+- `hooks/` — the Stop-hook tripwire (flags a DAG run that misrouted to direct dispatch). Disable via the plugin or `hooks/hooks.json`.
 
 ## Shared runtime prerequisite
 

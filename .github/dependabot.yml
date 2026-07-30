@@ -1,10 +1,27 @@
 version: 2
 updates:
+  # One grouped PR per ecosystem per week. Ungrouped, every bump edits the same
+  # few lines of ci.yml or requirements-dev.txt, so each new PR conflicts with
+  # the ones already open and none of them can merge without a rebase.
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+  # Dependabot updates requirements-dev.txt but cannot maintain
+  # requirements-dev.lock: that file is uv output rather than pip-compile
+  # output, and dependabot only treats *.txt files as pip manifests. Every
+  # install path in this repository reads the lock, so a bump that touches only
+  # the .txt is inert. tools/check_requirements_lock.py fails CI on that drift;
+  # regenerate the lock as documented in CONTRIBUTING.md before merging.
   - package-ecosystem: pip
     directory: /
     schedule:
       interval: weekly
+    groups:
+      dev-dependencies:
+        patterns:
+          - "*"
