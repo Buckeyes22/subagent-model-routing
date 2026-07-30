@@ -175,9 +175,11 @@ SHIM-DONE exit=0
 The receipt is the exact `finished` ledger record for that `dispatch_id`. Only a `SHIM-RESULT` immediately before the final `SHIM-DONE` is authoritative — the child controls its own stdout and can print lookalike lines earlier. Parse the pair with the bundled reference parser rather than grepping:
 
 ```bash
-SHIM_RESULT=1 opencode-shim.sh <provider/model> prompt.md | tee /tmp/shim.out
-python3 "${SUBAGENT_MODEL_ROUTING_HOME:-$HOME/.local/share/subagent-model-routing}/scripts/parse-shim-result.py" </tmp/shim.out
+SHIM_RESULT=1 ~/.claude/scripts/opencode-shim.sh <provider/model> prompt.md | tee /tmp/shim.out
+python3 ~/.claude/scripts/parse-shim-result.py </tmp/shim.out
 ```
+
+`scripts/install.sh` links the parser alongside the shims, so it sits in the same directory they do. Pass a different destination to `install.sh` and both move together.
 
 It reads only the last two lines, cross-checks the receipt's exit against the sentinel's, and exits nonzero on any mismatch.
 
