@@ -56,6 +56,8 @@ The documented value of the framework is that it forces consideration of **style
 
 This is documented in the **Qwen model documentation and model cards**, not the Model Studio prompt guide, and is flagged as such. The Qwen3 generation introduced a **hybrid thinking** design: reasoning can be toggled with an `enable_thinking` parameter, and steered inline with the soft switches **`/think`** and **`/no_think`** placed in the prompt. Use thinking for complex reasoning, math, and multi-step planning; disable it for latency-sensitive or simple tasks. The dedicated **QwQ** line is reasoning-first. Per-model sampling defaults (temperature, top_p, top_k, presence penalty) are published on each model's HuggingFace / ModelScope card and should be taken from there rather than assumed.
 
+**Qwen3.8 update (per the Qwen3.8-27B model card, read 2026-08-19).** Qwen3.8 is a dense 27B causal LM with a vision encoder and a hybrid layer design (16 × (3 × (Gated DeltaNet → FFN) → 1 × (Gated Attention → FFN)), 64 layers, hidden dim 5,120). Native context is 262,144 tokens, extensible to 1,000,000. Thinking is **on by default** (`"enable_thinking": True` via `chat_template_kwargs`; set `False` to disable). Reasoning depth is now steered with a **`reasoning_effort`** parameter — `xhigh` (default) for complex tasks, `medium` balanced, `low` for speed; note that in multi-turn agentic runs, lower effort does not always reduce overall task completion time. **`preserve_thinking`** (default on) retains thinking blocks from historical messages; set `False` to drop them. Recommended sampling — thinking mode: `temperature=1.0`, `top_p=0.95`, `top_k=20`, `min_p=0.0`, `presence_penalty=0.0`, `repetition_penalty=1.0`; instruct/non-thinking: `temperature=0.7`, `top_p=0.80`, `top_k=20`, `min_p=0.0`, `presence_penalty=1.5`, `repetition_penalty=1.0`. For agentic tasks, budget up to 262,144 tokens of reasoning and up to 131,072 tokens of final response.
+
 ---
 
 ## 5. Optimization techniques (official guide)
@@ -91,8 +93,8 @@ The guide's failure modes are framed implicitly through its before/after contras
 | Consistency across generations | Provide output examples (Tip 1) |
 | Known multi-step procedure | Encode it as `#Task Steps#` (Tip 2) |
 | Complex prompt with mixed content | Delimit units with `###`, `===`, or `>>>` (Tip 3) |
-| Complex reasoning / math | Enable thinking; use `/think`; consider QwQ |
-| Latency-sensitive | `/no_think` or `enable_thinking=false` |
+| Complex reasoning / math | Enable thinking; use `/think` (Qwen3.x) or `reasoning_effort=xhigh` (Qwen3.8); consider QwQ |
+| Latency-sensitive | `/no_think` or `enable_thinking=false`; on Qwen3.8, `reasoning_effort=low` |
 | Sampling defaults | Take from the per-model HuggingFace / ModelScope card |
 | Comparing prompt variants | Use Model Studio's Prompt IDE / optimizer |
 

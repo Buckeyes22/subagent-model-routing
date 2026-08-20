@@ -1,7 +1,7 @@
 {
   "name": "subagent-model-routing-codex",
-  "version": "0.6.0",
-  "description": "Codex-native model routing workflow for flat external-model dispatch and dependency workflows over local claude/kimi/opencode/grok shims.",
+  "version": "0.7.0",
+  "description": "Codex-native model routing workflow for flat external-model dispatch and dependency workflows over local claude/kimi/opencode/grok/qwen shims.",
   "author": {
     "name": "Buckeyes22"
   },

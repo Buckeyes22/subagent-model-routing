@@ -139,9 +139,9 @@ A missing-text result before the sentinel is a known operational stall shape. Re
 
 ## Qwen
 
-Expose Qwen through an opencode custom provider and route with `opencode-shim.sh <custom-provider/model> <prompt-file> [flags]`. There is no dedicated Qwen shim.
+Route Qwen with the dedicated `qwen-shim.sh <prompt-file> [flags]` over the Qwen Code CLI; point Qwen Code at any OpenAI-compatible endpoint (local llama.cpp/llama-swap included) via `~/.qwen/.env`, or expose the model through an opencode custom provider and route with `opencode-shim.sh <custom-provider/model> <prompt-file> [flags]`.
 
-Use Qwen's six-element prompt framework: Context, Objective, Style, Tone, Audience, and Response. Add examples, explicit task steps, and recognizable separators such as `###`, `===`, or `>>>`. Qwen3 thinking can be steered with `enable_thinking`, `/think`, and `/no_think` when the selected endpoint supports them.
+Use Qwen's six-element prompt framework: Context, Objective, Style, Tone, Audience, and Response. Add examples, explicit task steps, and recognizable separators such as `###`, `===`, or `>>>`. Qwen3 thinking can be steered with `enable_thinking`, `/think`, and `/no_think` when the selected endpoint supports them. Qwen3.8 replaces the soft switches with a `reasoning_effort` parameter (`low`/`medium`/`xhigh`, default `xhigh`) plus `preserve_thinking` (on by default), keeps `enable_thinking` for on/off, extends native context to 262,144 tokens, and recommends `temperature=1.0, top_p=0.95, top_k=20, presence_penalty=0.0` for thinking mode and `temperature=0.7, top_p=0.80, top_k=20, presence_penalty=1.5` for instruct mode.
 
 For small-context local models, omit unnecessary tool schemas so context remains available for source and task instructions.
 

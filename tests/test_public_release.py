@@ -21,6 +21,7 @@ class PublicReleaseTests(unittest.TestCase):
             files = build_public_release.build_release(ROOT, destination)
             self.assertTrue((destination / "runtime/model_routing/provider_setup.py").is_file())
             self.assertTrue((destination / "scripts/kimi-shim.sh").is_file())
+            self.assertTrue((destination / "scripts/qwen-shim.sh").is_file())
             self.assertTrue((destination / "references/README.md").is_file())
             self.assertFalse((destination / "PROJECT-CONTEXT.md").exists())
             self.assertFalse((destination / "DESIGN.md").exists())

@@ -4,12 +4,16 @@
     "claude": {
       "displayName": "Claude Code",
       "packagePath": "plugins/subagent-model-routing-claude",
-      "nativeProviders": ["claude"]
+      "nativeProviders": [
+        "claude"
+      ]
     },
     "codex": {
       "displayName": "Codex",
       "packagePath": "plugins/subagent-model-routing-codex",
-      "nativeProviders": ["codex"]
+      "nativeProviders": [
+        "codex"
+      ]
     },
     "copilot": {
       "displayName": "GitHub Copilot CLI",
@@ -21,20 +25,34 @@
     "codex": {
       "displayName": "OpenAI Codex",
       "shim": "codex-shim.sh",
-      "binaryCandidates": ["codex"],
+      "binaryCandidates": [
+        "codex"
+      ],
       "binaryOverrideEnv": "CODEX_BIN",
-      "nativeHosts": ["codex"],
+      "nativeHosts": [
+        "codex"
+      ],
       "promptDelivery": "stdin",
       "allowUnknownModels": true,
       "defaultModel": {
         "source": "codex-config",
         "fallback": "codex-default"
       },
-      "modelSelectors": ["-m", "--model", "model="],
+      "modelSelectors": [
+        "-m",
+        "--model",
+        "model="
+      ],
       "effort": {
         "kind": "config",
         "key": "model_reasoning_effort",
-        "values": ["minimal", "low", "medium", "high", "xhigh"]
+        "values": [
+          "minimal",
+          "low",
+          "medium",
+          "high",
+          "xhigh"
+        ]
       },
       "capabilities": {
         "authProbe": true,
@@ -46,7 +64,13 @@
         "gpt-5.6-sol": {
           "displayName": "GPT-5.6 Sol",
           "aliases": [],
-          "effortValues": ["minimal", "low", "medium", "high", "xhigh"],
+          "effortValues": [
+            "minimal",
+            "low",
+            "medium",
+            "high",
+            "xhigh"
+          ],
           "promptReference": "prompting/openai-codex-gpt-prompting-reference.md",
           "runtimeReference": "references/model-prompting.md#openai-gpt-56-through-codex",
           "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/codex.md",
@@ -55,7 +79,13 @@
         "gpt-5.6-terra": {
           "displayName": "GPT-5.6 Terra",
           "aliases": [],
-          "effortValues": ["minimal", "low", "medium", "high", "xhigh"],
+          "effortValues": [
+            "minimal",
+            "low",
+            "medium",
+            "high",
+            "xhigh"
+          ],
           "promptReference": "prompting/openai-codex-gpt-prompting-reference.md",
           "runtimeReference": "references/model-prompting.md#openai-gpt-56-through-codex",
           "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/codex.md",
@@ -64,7 +94,13 @@
         "gpt-5.6-luna": {
           "displayName": "GPT-5.6 Luna",
           "aliases": [],
-          "effortValues": ["minimal", "low", "medium", "high", "xhigh"],
+          "effortValues": [
+            "minimal",
+            "low",
+            "medium",
+            "high",
+            "xhigh"
+          ],
           "promptReference": "prompting/openai-codex-gpt-prompting-reference.md",
           "runtimeReference": "references/model-prompting.md#openai-gpt-56-through-codex",
           "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/codex.md",
@@ -76,20 +112,32 @@
     "claude": {
       "displayName": "Anthropic Claude Code",
       "shim": "claude-shim.sh",
-      "binaryCandidates": ["claude"],
+      "binaryCandidates": [
+        "claude"
+      ],
       "binaryOverrideEnv": "CLAUDE_BIN",
-      "nativeHosts": ["claude"],
+      "nativeHosts": [
+        "claude"
+      ],
       "promptDelivery": "argv",
       "allowUnknownModels": true,
       "defaultModel": {
         "source": "registry",
         "fallback": "sonnet"
       },
-      "modelSelectors": ["--model"],
+      "modelSelectors": [
+        "--model"
+      ],
       "effort": {
         "kind": "provider-flag",
         "key": "--effort",
-        "values": ["low", "medium", "high", "xhigh", "max"]
+        "values": [
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "max"
+        ]
       },
       "capabilities": {
         "authProbe": true,
@@ -101,7 +149,13 @@
         "sonnet": {
           "displayName": "Claude Sonnet 5",
           "aliases": [],
-          "effortValues": ["low", "medium", "high", "xhigh", "max"],
+          "effortValues": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
           "promptReference": "prompting/anthropic-claude-sonnet-5-prompting-reference.md",
           "runtimeReference": "references/model-prompting.md#claude-sonnet-5",
           "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/claude-sonnet-5.md",
@@ -110,7 +164,13 @@
         "opus": {
           "displayName": "Claude Opus 4.8",
           "aliases": [],
-          "effortValues": ["low", "medium", "high", "xhigh", "max"],
+          "effortValues": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
           "promptReference": "prompting/anthropic-claude-opus-4.8-prompting-reference.md",
           "runtimeReference": "references/model-prompting.md#claude-opus-48",
           "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/claude-opus-4.8.md",
@@ -119,7 +179,13 @@
         "fable": {
           "displayName": "Claude Fable 5",
           "aliases": [],
-          "effortValues": ["low", "medium", "high", "xhigh", "max"],
+          "effortValues": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
           "promptReference": "prompting/anthropic-claude-fable-5-prompting-reference.md",
           "runtimeReference": "references/model-prompting.md#claude-fable-5",
           "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/claude-fable-5.md",
@@ -131,7 +197,9 @@
     "grok": {
       "displayName": "xAI Grok Build",
       "shim": "grok-shim.sh",
-      "binaryCandidates": ["grok"],
+      "binaryCandidates": [
+        "grok"
+      ],
       "binaryOverrideEnv": "GROK_BIN",
       "nativeHosts": [],
       "promptDelivery": "argv",
@@ -140,11 +208,18 @@
         "source": "registry",
         "fallback": "grok-4.5"
       },
-      "modelSelectors": ["-m", "--model"],
+      "modelSelectors": [
+        "-m",
+        "--model"
+      ],
       "effort": {
         "kind": "provider-flag",
         "key": "--effort",
-        "values": ["low", "medium", "high"]
+        "values": [
+          "low",
+          "medium",
+          "high"
+        ]
       },
       "capabilities": {
         "authProbe": true,
@@ -156,7 +231,11 @@
         "grok-4.5": {
           "displayName": "Grok 4.5",
           "aliases": [],
-          "effortValues": ["low", "medium", "high"],
+          "effortValues": [
+            "low",
+            "medium",
+            "high"
+          ],
           "promptReference": "prompting/xai-grok-prompting-reference.md",
           "runtimeReference": "references/model-prompting.md#xai-grok-45-through-grok-build",
           "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/grok.md",
@@ -168,7 +247,9 @@
     "kimi": {
       "displayName": "Moonshot Kimi Code",
       "shim": "kimi-shim.sh",
-      "binaryCandidates": ["kimi"],
+      "binaryCandidates": [
+        "kimi"
+      ],
       "binaryOverrideEnv": "KIMI_BIN",
       "nativeHosts": [],
       "promptDelivery": "argv",
@@ -177,7 +258,10 @@
         "source": "kimi-config",
         "fallback": "kimi-default"
       },
-      "modelSelectors": ["-m", "--model"],
+      "modelSelectors": [
+        "-m",
+        "--model"
+      ],
       "effort": {
         "kind": "none",
         "key": null,
@@ -205,7 +289,10 @@
     "opencode": {
       "displayName": "OpenCode",
       "shim": "opencode-shim.sh",
-      "binaryCandidates": ["opencode", "$HOME/.opencode/bin/opencode"],
+      "binaryCandidates": [
+        "opencode",
+        "$HOME/.opencode/bin/opencode"
+      ],
       "binaryOverrideEnv": "OPENCODE_BIN",
       "nativeHosts": [],
       "promptDelivery": "stdin",
@@ -231,7 +318,11 @@
         {
           "id": "glm",
           "displayName": "GLM",
-          "patterns": ["glm-*", "zai-*", "zai-coding-plan/*"],
+          "patterns": [
+            "glm-*",
+            "zai-*",
+            "zai-coding-plan/*"
+          ],
           "example": "zai-coding-plan/glm-5.2",
           "promptReference": "prompting/glm-zhipu-prompting-reference.md",
           "runtimeReference": "references/model-prompting.md#glm",
@@ -240,17 +331,56 @@
         {
           "id": "minimax",
           "displayName": "MiniMax",
-          "patterns": ["minimax*", "minimax/*"],
+          "patterns": [
+            "minimax*",
+            "minimax/*"
+          ],
           "example": "minimax/MiniMax-M3",
           "promptReference": "prompting/minimax-prompting-reference.md",
           "runtimeReference": "references/model-prompting.md#minimax",
           "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/minimax.md"
-        },
+        }
+      ]
+    },
+    "qwen": {
+      "displayName": "Qwen Code",
+      "shim": "qwen-shim.sh",
+      "binaryCandidates": [
+        "qwen"
+      ],
+      "binaryOverrideEnv": "QWEN_BIN",
+      "nativeHosts": [],
+      "promptDelivery": "argv",
+      "allowUnknownModels": true,
+      "defaultModel": {
+        "source": "qwen-config",
+        "fallback": "qwen-default"
+      },
+      "modelSelectors": [
+        "-m",
+        "--model"
+      ],
+      "effort": {
+        "kind": "none",
+        "key": null,
+        "values": []
+      },
+      "capabilities": {
+        "authProbe": false,
+        "configProbe": false,
+        "worktreeDispatch": true,
+        "structuredOutput": false
+      },
+      "models": {},
+      "routeFamilies": [
         {
           "id": "qwen",
           "displayName": "Qwen",
-          "patterns": ["qwen*", "*/qwen*"],
-          "example": "custom-provider/qwen-model",
+          "patterns": [
+            "qwen*",
+            "*/qwen*"
+          ],
+          "example": "qwen3-coder",
           "promptReference": "prompting/qwen-alibaba-prompting-reference.md",
           "runtimeReference": "references/model-prompting.md#qwen",
           "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/qwen.md"

@@ -67,7 +67,7 @@
       "additionalProperties": false,
       "required": ["source", "fallback"],
       "properties": {
-        "source": { "enum": ["registry", "codex-config", "kimi-config", "positional"] },
+        "source": { "enum": ["registry", "codex-config", "kimi-config", "qwen-config", "positional"] },
         "fallback": { "type": ["string", "null"] }
       },
       "allOf": [

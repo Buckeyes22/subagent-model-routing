@@ -4,19 +4,19 @@ You probably pay for more than one AI coding subscription. Delegating a task bet
 
 **subagent-model-routing** makes that handoff explicit with three pieces:
 
-- **Five thin CLI shims** (`codex-shim.sh`, `claude-shim.sh`, `kimi-shim.sh`, `opencode-shim.sh`, and `grok-shim.sh`) backed by a shared local Python runtime. They dispatch a prompt to another agentic CLI and return the answer with a `SHIM-DONE exit=<n>` sentinel, while retaining private run records for inspection and recovery.
+- **Six thin CLI shims** (`codex-shim.sh`, `claude-shim.sh`, `kimi-shim.sh`, `opencode-shim.sh`, `grok-shim.sh`, and `qwen-shim.sh`) backed by a shared local Python runtime. They dispatch a prompt to another agentic CLI and return the answer with a `SHIM-DONE exit=<n>` sentinel, while retaining private run records for inspection and recovery.
 - **A routing skill** that defines when to delegate, which model to use, and how to phrase the dispatch, plus **tripwire guardrails** that catch silent delegation failures (missing sentinel, nonzero exit, truncated output) before they enter your context as usable results.
 - **A model ledger** that records every dispatch's wall time, exit code, and outcome, so routing decisions improve from your own observations rather than someone else's defaults.
 
 It's built for **Claude Code, Codex, and GitHub Copilot CLI users** who want to route work through the other installed agentic CLIs. Each host stays native for its own model family: Claude Code uses native Claude agents, Codex keeps Codex work inline, and shims handle cross-harness delegation.
 
-The shared installer provides `~/.claude/scripts/model-routing` plus `codex-shim.sh` (GPT models via Codex), `claude-shim.sh` (Claude models via Claude Code), `kimi-shim.sh` (Kimi models via Kimi Code), `grok-shim.sh` (Grok 4.5 via Grok Build), and `opencode-shim.sh` (GLM, MiniMax, Qwen, local models, and any OpenCode provider). The Claude Code package targets codex, kimi, grok, and opencode; the Codex package targets claude, kimi, grok, and opencode; Copilot can target all five. Routed models can edit files and run commands in your workspace, then report completion with a `SHIM-DONE exit=<n>` sentinel.
+The shared installer provides `~/.claude/scripts/model-routing` plus `codex-shim.sh` (GPT models via Codex), `claude-shim.sh` (Claude models via Claude Code), `kimi-shim.sh` (Kimi models via Kimi Code), `grok-shim.sh` (Grok 4.5 via Grok Build), `qwen-shim.sh` (Qwen and any OpenAI-compatible endpoint via Qwen Code, local llama.cpp included), and `opencode-shim.sh` (GLM, MiniMax, local models, and any OpenCode provider). The Claude Code package targets codex, kimi, grok, qwen, and opencode; the Codex package targets claude, kimi, grok, qwen, and opencode; Copilot can target all six. Routed models can edit files and run commands in your workspace, then report completion with a `SHIM-DONE exit=<n>` sentinel.
 
 ## How this compares
 
 **Isn't this just an LLM router?** No. Routers like LiteLLM or OpenRouter multiplex API requests to a single endpoint — you send a completion request, they pick a backend and proxy it. subagent-model-routing operates a layer above that: it delegates whole units of agentic work to full CLI harnesses, each with its own tools, workspace access, and subscription auth, then verifies the work actually finished. Nothing here proxies API calls.
 
-**Why not just use OpenCode directly?** You can — and this project composes with OpenCode rather than replacing it. OpenCode remains the generic harness for GLM, MiniMax, Qwen, and local/custom providers, while Kimi can use its dedicated Kimi Code harness. What subagent-model-routing adds on top is the delegation doctrine, completion verification through the sentinel contract, guardrails against silent delegation failure, and a ledger that learns which model to trust for what from your own outcomes.
+**Why not just use OpenCode directly?** You can — and this project composes with OpenCode rather than replacing it. OpenCode remains the generic harness for GLM, MiniMax, and local/custom providers, while Kimi and Qwen can use their dedicated Kimi Code and Qwen Code harnesses. What subagent-model-routing adds on top is the delegation doctrine, completion verification through the sentinel contract, guardrails against silent delegation failure, and a ledger that learns which model to trust for what from your own outcomes.
 
 **Why not do everything in Claude Code?** If one subscription covers all your usage, you don't need this. It exists for people who hold several model subscriptions and want their orchestrator to spend each one where it is strongest — without copy-pasting prompts between terminals by hand.
 
@@ -147,6 +147,7 @@ Confirm a shim can reach a model and return the sentinel (substitute any configu
 printf 'Reply with exactly: pong\n' | ~/.claude/scripts/opencode-shim.sh <provider/model> -
 printf 'Reply with exactly: pong\n' | ~/.claude/scripts/kimi-shim.sh -
 printf 'Reply with exactly: pong\n' | ~/.claude/scripts/grok-shim.sh - --effort low
+printf 'Reply with exactly: pong\n' | ~/.claude/scripts/qwen-shim.sh -
 printf 'Reply with exactly: pong\n' | ~/.claude/scripts/claude-shim.sh - --model haiku
 ```
 
@@ -209,10 +210,11 @@ Write a prompt to a file and dispatch it:
 opencode-shim.sh <provider/model> prompt.md
 kimi-shim.sh prompt.md --model kimi-code/kimi-for-coding
 grok-shim.sh prompt.md --effort medium
+qwen-shim.sh prompt.md
 claude-shim.sh prompt.md --model opus
 ```
 
-Each shim prints the model's answer followed by `SHIM-DONE exit=<n>`. Use `codex-shim.sh` for GPT models, `claude-shim.sh` for Claude models, `kimi-shim.sh` for Kimi Code, and `grok-shim.sh` for Grok 4.5.
+Each shim prints the model's answer followed by `SHIM-DONE exit=<n>`. Use `codex-shim.sh` for GPT models, `claude-shim.sh` for Claude models, `kimi-shim.sh` for Kimi Code, `grok-shim.sh` for Grok 4.5, and `qwen-shim.sh` for Qwen Code against any OpenAI-compatible endpoint.
 
 Direct shim calls use the current directory by default. For an implementation that must not touch the caller's worktree, opt into an isolated Git worktree and declare that the task writes:
 
@@ -299,7 +301,7 @@ Remove the plugin from each client you installed it into, then drop the shims an
 claude plugin uninstall subagent-model-routing-claude@subagent-model-routing --scope user
 codex plugin remove subagent-model-routing-codex
 copilot plugin uninstall subagent-model-routing-copilot
-rm ~/.claude/scripts/model-routing ~/.claude/scripts/codex-shim.sh ~/.claude/scripts/claude-shim.sh ~/.claude/scripts/kimi-shim.sh ~/.claude/scripts/opencode-shim.sh ~/.claude/scripts/grok-shim.sh
+rm ~/.claude/scripts/model-routing ~/.claude/scripts/codex-shim.sh ~/.claude/scripts/claude-shim.sh ~/.claude/scripts/kimi-shim.sh ~/.claude/scripts/opencode-shim.sh ~/.claude/scripts/grok-shim.sh ~/.claude/scripts/qwen-shim.sh
 rm -rf ~/.local/share/subagent-model-routing
 ```
 

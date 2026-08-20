@@ -35,7 +35,7 @@ class RegistryTests(unittest.TestCase):
         self.assertNotIn("claude", payloads["claude"]["providers"])
         self.assertNotIn("codex", payloads["codex"]["providers"])
         self.assertEqual(
-            {"codex", "claude", "grok", "kimi", "opencode"},
+            {"codex", "claude", "grok", "kimi", "opencode", "qwen"},
             set(payloads["copilot"]["providers"]),
         )
 
@@ -56,6 +56,13 @@ class RegistryTests(unittest.TestCase):
 
     def test_registry_adapter_contracts_are_aligned(self) -> None:
         validate_registry(json.loads(json.dumps(self.registry)), repo_root=ROOT)
+
+    def test_qwen_declares_qwen_config_source_and_no_effort_control(self) -> None:
+        qwen = self.registry["providers"]["qwen"]
+        self.assertEqual("qwen-config", qwen["defaultModel"]["source"])
+        self.assertEqual("qwen-default", qwen["defaultModel"]["fallback"])
+        self.assertEqual({"kind": "none", "key": None, "values": []}, qwen["effort"])
+        self.assertTrue(qwen["allowUnknownModels"])
 
     def test_kimi_declares_config_probe_and_no_effort_control(self) -> None:
         kimi = self.registry["providers"]["kimi"]

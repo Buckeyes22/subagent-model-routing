@@ -318,11 +318,44 @@
           ],
           "promptReference": "prompting/minimax-prompting-reference.md",
           "runtimeReference": "references/model-prompting.md#minimax"
-        },
+        }
+      ],
+      "shim": "opencode-shim.sh"
+    },
+    "qwen": {
+      "allowUnknownModels": true,
+      "binaryCandidates": [
+        "qwen"
+      ],
+      "binaryOverrideEnv": "QWEN_BIN",
+      "capabilities": {
+        "authProbe": false,
+        "configProbe": false,
+        "structuredOutput": false,
+        "worktreeDispatch": true
+      },
+      "defaultModel": {
+        "fallback": "qwen-default",
+        "source": "qwen-config"
+      },
+      "displayName": "Qwen Code",
+      "effort": {
+        "key": null,
+        "kind": "none",
+        "values": []
+      },
+      "modelSelectors": [
+        "-m",
+        "--model"
+      ],
+      "models": {},
+      "nativeHosts": [],
+      "promptDelivery": "argv",
+      "routeFamilies": [
         {
           "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/qwen.md",
           "displayName": "Qwen",
-          "example": "custom-provider/qwen-model",
+          "example": "qwen3-coder",
           "id": "qwen",
           "patterns": [
             "qwen*",
@@ -332,7 +365,7 @@
           "runtimeReference": "references/model-prompting.md#qwen"
         }
       ],
-      "shim": "opencode-shim.sh"
+      "shim": "qwen-shim.sh"
     }
   },
   "schemaVersion": 1

@@ -958,7 +958,7 @@ def run_provider_setup(
     specs = load_install_specs(repo_root)
     rows = detect_provider_rows(specs, env)
     if all(row.installed for row in rows):
-        print("All five provider CLIs are already detected; nothing to install.", file=destination)
+        print("All six provider CLIs are already detected; nothing to install.", file=destination)
         return 0
 
     try:

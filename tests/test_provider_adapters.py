@@ -17,7 +17,7 @@ from model_routing.errors import UsageError  # noqa: E402
 
 class ProviderAdapterTests(unittest.TestCase):
     def test_registry_and_adapter_ids_match(self) -> None:
-        self.assertEqual({"codex", "claude", "grok", "kimi", "opencode"}, adapter_ids())
+        self.assertEqual({"codex", "claude", "grok", "kimi", "opencode", "qwen"}, adapter_ids())
 
     def test_codex_model_and_environment(self) -> None:
         adapter = get_adapter("codex")
@@ -107,19 +107,103 @@ class ProviderAdapterTests(unittest.TestCase):
             with self.subTest(flag=flag), self.assertRaises(UsageError):
                 adapter.parse(["prompt.md", flag], {}, Path("/tmp"))
 
+    def test_qwen_uses_settings_model_and_noninteractive_prompt_mode(self) -> None:
+        adapter = get_adapter("qwen")
+        with tempfile.TemporaryDirectory() as directory:
+            home = Path(directory)
+            config = home / ".qwen"
+            config.mkdir()
+            (config / "settings.json").write_text(
+                '{"model": {"name": "settings-model"}}', encoding="utf-8"
+            )
+            request = adapter.parse(["prompt.md"], {}, home)
+            prepared = adapter.prepare(
+                request,
+                "/bin/qwen",
+                b"prompt\n\n",
+                {},
+                {},
+            )
+        self.assertEqual("settings-model", request.model)
+        self.assertIsNone(prepared.stdin)
+        self.assertEqual("prompt", prepared.argv[prepared.argv.index("--prompt") + 1])
+        self.assertEqual("text", prepared.argv[prepared.argv.index("--output-format") + 1])
+        self.assertIn("--yolo", prepared.argv)
+
+    def test_qwen_settings_string_model_form_is_accepted(self) -> None:
+        adapter = get_adapter("qwen")
+        with tempfile.TemporaryDirectory() as directory:
+            home = Path(directory)
+            config = home / ".qwen"
+            config.mkdir()
+            (config / "settings.json").write_text('{"model": "plain-model"}', encoding="utf-8")
+            request = adapter.parse(["prompt.md"], {}, home)
+        self.assertEqual("plain-model", request.model)
+
+    def test_qwen_dotenv_model_attribution_between_settings_and_fallback(self) -> None:
+        adapter = get_adapter("qwen")
+        with tempfile.TemporaryDirectory() as directory:
+            home = Path(directory)
+            config = home / ".qwen"
+            config.mkdir()
+            (config / ".env").write_text(
+                "OPENAI_API_KEY=k\nOPENAI_BASE_URL=http://localhost/v1\nQWEN_MODEL=dotenv-model\n",
+                encoding="utf-8",
+            )
+            from_dotenv = adapter.parse(["prompt.md"], {}, home)
+            (config / "settings.json").write_text(
+                '{"model": {"name": "settings-model"}}', encoding="utf-8"
+            )
+            settings_wins = adapter.parse(["prompt.md"], {}, home)
+        self.assertEqual("dotenv-model", from_dotenv.model)
+        self.assertEqual("settings-model", settings_wins.model)
+
+    def test_qwen_environment_model_precedes_settings_and_cli_override_precedes_both(self) -> None:
+        adapter = get_adapter("qwen")
+        with tempfile.TemporaryDirectory() as directory:
+            home = Path(directory)
+            config = home / ".qwen"
+            config.mkdir()
+            (config / "settings.json").write_text(
+                '{"model": {"name": "settings-model"}}', encoding="utf-8"
+            )
+            environment = {"QWEN_MODEL": "environment-model"}
+            from_environment = adapter.parse(["prompt.md"], environment, home)
+            from_cli = adapter.parse(["prompt.md", "--model", "explicit-model"], environment, home)
+            bare = adapter.parse(["prompt.md"], {}, Path(directory) / "empty-home")
+        self.assertEqual("environment-model", from_environment.model)
+        self.assertEqual("explicit-model", from_cli.model)
+        self.assertEqual("qwen-default", bare.model)
+
+    def test_qwen_rejects_prompt_mode_conflicts_and_shim_owned_flags(self) -> None:
+        adapter = get_adapter("qwen")
+        for flag in (
+            "-y",
+            "--yolo",
+            "--approval-mode",
+            "--approval-mode=yolo",
+            "-p",
+            "--prompt=other",
+            "--output-format",
+            "--output-format=stream-json",
+        ):
+            with self.subTest(flag=flag), self.assertRaises(UsageError):
+                adapter.parse(["prompt.md", flag], {}, Path("/tmp"))
+
     def test_restricted_provider_flags(self) -> None:
         env = {"SUBAGENT_MODEL_ROUTING_UNRESTRICTED": "0"}
         codex = get_adapter("codex")
         request = codex.parse(["prompt.md"], env, Path("/tmp"))
         prepared = codex.prepare(request, "codex", b"prompt", env, {})
         self.assertEqual("workspace-write", prepared.argv[prepared.argv.index("--sandbox") + 1])
-        for provider in ("claude", "grok", "kimi", "opencode"):
+        for provider in ("claude", "grok", "kimi", "opencode", "qwen"):
             adapter = get_adapter(provider)
             argv = ["provider/model", "prompt.md"] if provider == "opencode" else ["prompt.md"]
             request = adapter.parse(argv, env, Path("/tmp"))
             prepared = adapter.prepare(request, provider, b"prompt", env, {})
             self.assertNotIn("--dangerously-skip-permissions", prepared.argv)
             self.assertNotIn("--always-approve", prepared.argv)
+            self.assertNotIn("--yolo", prepared.argv)
 
     def test_binary_overrides_are_additive(self) -> None:
         expected = {
@@ -128,6 +212,7 @@ class ProviderAdapterTests(unittest.TestCase):
             "grok": ("GROK_BIN", "/custom/grok"),
             "kimi": ("KIMI_BIN", "/custom/kimi"),
             "opencode": ("OPENCODE_BIN", "/custom/opencode"),
+            "qwen": ("QWEN_BIN", "/custom/qwen"),
         }
         for provider, (variable, path) in expected.items():
             with self.subTest(provider=provider):

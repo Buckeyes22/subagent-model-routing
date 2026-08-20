@@ -152,7 +152,7 @@ def validate_registry(data: Any, *, repo_root: Path) -> None:
         _require(isinstance(default_model, dict), f"provider {provider_id} defaultModel must be an object")
         _require_keys(default_model, f"providers.{provider_id}.defaultModel", {"source", "fallback"})
         _require(
-            default_model.get("source") in {"registry", "codex-config", "kimi-config", "positional"},
+            default_model.get("source") in {"registry", "codex-config", "kimi-config", "qwen-config", "positional"},
             f"provider {provider_id} has invalid default model source",
         )
         fallback = default_model.get("fallback")

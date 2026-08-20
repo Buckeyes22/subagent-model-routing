@@ -8,6 +8,7 @@ from .codex import CodexAdapter
 from .grok import GrokAdapter
 from .kimi import KimiAdapter
 from .opencode import OpenCodeAdapter
+from .qwen import QwenAdapter
 
 
 _ADAPTERS: dict[str, type[ProviderAdapter]] = {
@@ -16,6 +17,7 @@ _ADAPTERS: dict[str, type[ProviderAdapter]] = {
     "grok": GrokAdapter,
     "kimi": KimiAdapter,
     "opencode": OpenCodeAdapter,
+    "qwen": QwenAdapter,
 }
 
 

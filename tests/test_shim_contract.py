@@ -17,6 +17,7 @@ PROVIDER_ARGS = {
     "claude": lambda prompt: [str(prompt)],
     "grok": lambda prompt: [str(prompt)],
     "kimi": lambda prompt: [str(prompt)],
+    "qwen": lambda prompt: [str(prompt)],
     "opencode": lambda prompt: ["test-provider/test-model", str(prompt)],
 }
 
@@ -39,6 +40,17 @@ class ShimContractTests(unittest.TestCase):
             with self.subTest(shim=shim):
                 sandbox = self.sandbox()
                 result = sandbox.run(shim, [])
+                self.assertEqual(64, result.returncode)
+                self.assertEqual(b"SHIM-DONE exit=64\n", result.stdout)
+                self.assertEqual([], sandbox.ledger_records())
+
+    def test_qwen_prompt_mode_conflicts_are_usage_errors_before_provider_start(self) -> None:
+        for flag in ("-y", "--yolo", "--approval-mode", "-p", "--prompt=other", "--output-format"):
+            with self.subTest(flag=flag):
+                sandbox = self.sandbox()
+                sandbox.install_provider("qwen")
+                prompt = sandbox.prompt()
+                result = sandbox.run("qwen", [str(prompt), flag])
                 self.assertEqual(64, result.returncode)
                 self.assertEqual(b"SHIM-DONE exit=64\n", result.stdout)
                 self.assertEqual([], sandbox.ledger_records())
@@ -90,6 +102,7 @@ class ShimContractTests(unittest.TestCase):
             "claude": [],
             "grok": [],
             "kimi": [],
+            "qwen": [],
             "opencode": ["finished"],
         }
         for shim in SHIMS:
@@ -114,6 +127,7 @@ class ShimContractTests(unittest.TestCase):
             "claude": ["finished"],
             "grok": ["finished"],
             "kimi": ["finished"],
+            "qwen": ["finished"],
             "opencode": ["started", "finished"],
         }
         for shim in SHIMS:
@@ -164,7 +178,7 @@ class ShimContractTests(unittest.TestCase):
                 elif shim == "claude":
                     self.assertEqual([], sandbox.captured_stdin().splitlines())
                     self.assertEqual(["--", prompt_text.rstrip("\n")], args[-2:])
-                elif shim == "kimi":
+                elif shim in {"kimi", "qwen"}:
                     self.assertEqual([], sandbox.captured_stdin().splitlines())
                     self.assertEqual(prompt_text.rstrip("\n"), args[args.index("--prompt") + 1])
                 else:
@@ -185,7 +199,7 @@ class ShimContractTests(unittest.TestCase):
                     self.assertEqual(prompt, sandbox.captured_stdin())
                 elif shim == "claude":
                     self.assertEqual(prompt.decode().rstrip("\n"), captured_args[-1])
-                elif shim == "kimi":
+                elif shim in {"kimi", "qwen"}:
                     self.assertEqual(prompt.decode().rstrip("\n"), captured_args[captured_args.index("--prompt") + 1])
                 else:
                     self.assertEqual(prompt.decode().rstrip("\n"), captured_args[captured_args.index("-p") + 1])
@@ -215,6 +229,12 @@ class ShimContractTests(unittest.TestCase):
                 (["-m=kimi-c"], "kimi-c"),
                 (["--model=kimi-d"], "kimi-d"),
             ],
+            "qwen": [
+                (["-m", "qwen-a"], "qwen-a"),
+                (["--model", "qwen-b"], "qwen-b"),
+                (["-m=qwen-c"], "qwen-c"),
+                (["--model=qwen-d"], "qwen-d"),
+            ],
         }
         for shim, forms in cases.items():
             for forwarded, expected in forms:
@@ -239,6 +259,7 @@ class ShimContractTests(unittest.TestCase):
             "claude": None,
             "grok": None,
             "kimi": None,
+            "qwen": None,
             "opencode": None,
         }
         forbidden = {
@@ -246,6 +267,7 @@ class ShimContractTests(unittest.TestCase):
             "claude": "--dangerously-skip-permissions",
             "grok": "--always-approve",
             "kimi": "--yolo",
+            "qwen": "--yolo",
             "opencode": "--dangerously-skip-permissions",
         }
         for shim in SHIMS:

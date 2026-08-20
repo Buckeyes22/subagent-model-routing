@@ -19,6 +19,7 @@ SHIMS = {
     "grok": ROOT / "scripts" / "grok-shim.sh",
     "kimi": ROOT / "scripts" / "kimi-shim.sh",
     "opencode": ROOT / "scripts" / "opencode-shim.sh",
+    "qwen": ROOT / "scripts" / "qwen-shim.sh",
 }
 
 SUPPORT_COMMANDS = ("cat", "date", "dirname", "git", "head", "mkdir", "sed")
