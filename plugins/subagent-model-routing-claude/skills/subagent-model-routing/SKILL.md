@@ -8,7 +8,7 @@ description: Route work to non-Claude models (codex/GPT-5.x, Kimi, xAI Grok 4.5,
 
 You are the orchestrator. This one skill covers both ways to delegate work to non-Claude models; section 0 picks the mechanism, and Picking the model picks the model. Both paths use the same standalone shim substrate and the same public ledger contract.
 
-- **Flat dispatch**: independent, one-shot units, no dependency edges. Fire `Agent({subagent_type:'subagent-model-routing-claude:codex-shim'|'subagent-model-routing-claude:kimi-shim'|'subagent-model-routing-claude:opencode-shim'|'subagent-model-routing-claude:grok-shim'})` calls directly. See Part B.
+- **Flat dispatch**: independent, one-shot units, no dependency edges. Fire `Agent({subagent_type:'subagent-model-routing-claude:codex-shim'|'subagent-model-routing-claude:kimi-shim'|'subagent-model-routing-claude:opencode-shim'|'subagent-model-routing-claude:grok-shim'|'subagent-model-routing-claude:qwen-shim'})` calls directly. See Part B.
 - **DAG orchestration**: dependency edges such as A->B, fan-out that is ordered/collected, or staged processing. Use the Workflow tool, with each node routed through `agentType`. See Part A.
 
 ## Picking the model (shared -- both mechanisms)
@@ -98,10 +98,10 @@ If your CLI has MCP tools configured, prompts may direct their use.
 ### Qwen / Alibaba
 
 - **Route status:** routes through opencode as a custom provider (see README: routing a local model).
-- **Use for:** Qwen-specific prompt experiments and independent candidate/review passes when your opencode installation exposes a Qwen-compatible route.
+- **Use for:** Qwen-specific prompt experiments and independent candidate/review passes; local/self-hosted Qwen endpoints via the dedicated `qwen-shim` route.
 - **Prompt shape:** Qwen's official guide centers Context, Objective, Style, Tone, Audience, and Response. Add output examples, explicit steps, and high-recognizability separators for complex prompts.
-- **Thinking control:** Qwen3 supports thinking controls; use thinking for complex reasoning and disable it for latency-sensitive work.
-- **Gotcha:** this package has no dedicated Qwen transport. Expose the model through opencode and route it with `opencode-shim`.
+- **Thinking control:** Qwen3 supports `enable_thinking` plus `/think`//`no_think` soft switches; Qwen3.8 replaces the soft switches with `reasoning_effort` (`low`/`medium`/`xhigh`, default `xhigh`). Use thinking for complex reasoning and drop the effort for latency-sensitive work.
+- **Transport:** dedicated `qwen-shim` agent over the Qwen Code CLI. Point Qwen Code at any OpenAI-compatible endpoint (local llama.cpp/llama-swap included) via `~/.qwen/.env`; the shim never injects `-m`, so Qwen Code's own config picks the model unless you pass `--model`.
 - Full reference: `references/model-prompting.md#qwen`
 
 ---
@@ -146,7 +146,7 @@ Two misroutes must be prevented:
 **Step 0: is this actually a DAG?** A DAG has dependency edges: A->B, staged/ordered processing, a mechanical reduce that needs upstream outputs, a resume boundary, or a point where the orchestrator must judge/synthesize before downstream work.
 
 - **No edges:** flat, independent, one-shot dispatch. Do not build a Workflow. Use Part B.
-- **Has edges:** use `Workflow({ scriptPath })`. Do not run a DAG as direct `Agent({subagent_type:'subagent-model-routing-claude:codex-shim'|'subagent-model-routing-claude:kimi-shim'|'subagent-model-routing-claude:opencode-shim'|'subagent-model-routing-claude:grok-shim'})` calls, direct shell invocations, or inline work.
+- **Has edges:** use `Workflow({ scriptPath })`. Do not run a DAG as direct `Agent({subagent_type:'subagent-model-routing-claude:codex-shim'|'subagent-model-routing-claude:kimi-shim'|'subagent-model-routing-claude:opencode-shim'|'subagent-model-routing-claude:grok-shim'|'subagent-model-routing-claude:qwen-shim'})` calls, direct shell invocations, or inline work.
 
 Fan-out alone is width, not depth. If each unit has an internal `spec -> build` edge, the whole thing is a DAG even when units are independent. Conversely, do not invent stages: a single agentic shim node already authors, verifies, and fixes within its own loop.
 

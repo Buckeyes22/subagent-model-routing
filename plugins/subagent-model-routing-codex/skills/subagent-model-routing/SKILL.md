@@ -3,7 +3,7 @@ name: subagent-model-routing
 description: >-
   Codex-native workflow for routing work to local external-model shims:
   Claude models through claude-shim.sh, Kimi through kimi-shim.sh, Grok 4.5 through grok-shim.sh,
-  and GLM/MiniMax through opencode-shim.sh. Local/self-hosted models (including Qwen) route through
+  GLM/MiniMax through opencode-shim.sh, and Qwen through qwen-shim.sh. Other local/self-hosted models route through
   opencode-shim.sh as a custom provider. Use when the user asks Codex to
   dispatch, compare, review, fan out, or sequence work across those local shims.
   This port avoids Claude Code orchestration surfaces and uses the shared
@@ -21,7 +21,7 @@ Use it when the user wants Codex to route work to non-Codex external model harne
 - `~/.claude/scripts/grok-shim.sh` for Grok 4.5 via the local Grok Build CLI.
 - `~/.claude/scripts/opencode-shim.sh` for GLM, MiniMax, or local/self-hosted models via the local opencode wrapper.
 
-Local/self-hosted models (including Qwen) are routed as custom providers through `opencode-shim.sh`; see the root README for an example.
+Qwen (including local llama.cpp endpoints configured in `~/.qwen/.env`) routes through `qwen-shim.sh`; other local/self-hosted models are routed as custom providers through `opencode-shim.sh` — see the root README for an example.
 
 Do not route Codex back through `codex-shim.sh` from this package. The current Codex thread is already the native Codex harness; keep Codex implementation, synthesis, and verification inline, and use shims only for genuinely external model harnesses.
 
@@ -180,7 +180,7 @@ Use these cards when writing prompt files for the local shims. For new, high-sta
 - Route status: any OpenAI-compatible endpoint (local or hosted) via an opencode custom provider — route through `~/.claude/scripts/opencode-shim.sh` with your custom-provider entry; see the root README for an example.
 - Use the six-element framework for prompt work: Context, Objective, Style, Tone, Audience, Response.
 - Add examples, explicit task steps, and separators such as `###`, `===`, or `>>>`.
-- Qwen3 thinking can be steered with `enable_thinking`, `/think`, and `/no_think`.
-- Do not route local Qwen work through the native Codex harness; use the `opencode-shim` custom-provider route.
+- Qwen3 thinking can be steered with `enable_thinking`, `/think`, and `/no_think`; Qwen3.8 replaces the soft switches with `reasoning_effort` (`low`/`medium`/`xhigh`, default `xhigh`).
+- Do not route local Qwen work through the native Codex harness; use `qwen-shim.sh` (Qwen Code CLI, endpoint configured in `~/.qwen/.env`).
 - Tools: MCP tool availability follows your opencode configuration; for small-context local models, consider skipping heavy tool schemas — context is better spent on prompt and source.
 - Full reference: `references/model-prompting.md#qwen`

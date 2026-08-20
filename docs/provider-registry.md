@@ -20,7 +20,7 @@ Semantic validation supplements `schemas/provider-registry.schema.json`. It chec
 - `references/routes.generated.md`
 - `references/provider-registry.generated.json`
 
-Claude's generated catalog omits the native Claude provider, Codex's omits native Codex, and Copilot's includes all five transports. Unknown provider-supported model IDs remain pass-through; the catalog is guidance, not a live availability claim.
+Claude's generated catalog omits the native Claude provider, Codex's omits native Codex, and Copilot's includes all six transports. Unknown provider-supported model IDs remain pass-through; the catalog is guidance, not a live availability claim.
 
 ## Adding a fixed model
 

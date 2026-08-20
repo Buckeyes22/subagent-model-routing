@@ -18,6 +18,7 @@ PROVIDER_ARGS = {
     "claude": lambda prompt: [str(prompt)],
     "grok": lambda prompt: [str(prompt)],
     "kimi": lambda prompt: [str(prompt)],
+    "qwen": lambda prompt: [str(prompt)],
     "opencode": lambda prompt: ["test-provider/test-model", str(prompt)],
 }
 

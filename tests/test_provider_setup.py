@@ -106,7 +106,7 @@ class ManifestTests(unittest.TestCase):
 
     def test_manifest_covers_registry_with_first_party_https_recipes(self) -> None:
         specs = provider_setup.load_install_specs(ROOT, system_name="Linux")
-        self.assertEqual(("codex", "claude", "grok", "kimi", "opencode"), tuple(spec.provider_id for spec in specs))
+        self.assertEqual(("codex", "claude", "grok", "kimi", "opencode", "qwen"), tuple(spec.provider_id for spec in specs))
         for spec in specs:
             with self.subTest(provider=spec.provider_id):
                 self.assertTrue(spec.recipe.installer_url.startswith("https://"))
@@ -540,7 +540,7 @@ class SetupOrchestrationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             binary_dir = root / "bin"
-            for name in ("codex", "claude", "grok", "kimi", "opencode"):
+            for name in ("codex", "claude", "grok", "kimi", "opencode", "qwen"):
                 executable(binary_dir / name)
             output = io.StringIO()
             result = provider_setup.run_provider_setup(
@@ -550,7 +550,7 @@ class SetupOrchestrationTests(unittest.TestCase):
                 output=output,
             )
         self.assertEqual(0, result)
-        self.assertIn("All five provider CLIs", output.getvalue())
+        self.assertIn("All six provider CLIs", output.getvalue())
 
     def test_missing_providers_without_tty_is_an_invocation_error(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

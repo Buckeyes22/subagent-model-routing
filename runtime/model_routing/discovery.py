@@ -122,7 +122,7 @@ def _discover_for_provider(
         return _discover_codex(env, configured)
     if provider_id == "kimi":
         return _discover_kimi(env, configured)
-    if provider_id in {"claude", "grok"}:
+    if provider_id in {"claude", "grok", "qwen"}:
         return _build_check(
             provider_id=provider_id,
             status="SKIP",

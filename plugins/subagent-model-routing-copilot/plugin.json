@@ -1,7 +1,7 @@
 {
   "name": "subagent-model-routing-copilot",
-  "version": "0.6.0",
-  "description": "Copilot-compatible model routing workflow for flat external-model dispatch and dependency workflows over local codex/claude/kimi/opencode/grok shims.",
+  "version": "0.7.0",
+  "description": "Copilot-compatible model routing workflow for flat external-model dispatch and dependency workflows over local codex/claude/kimi/opencode/grok/qwen shims.",
   "author": {
     "name": "Buckeyes22"
   },

@@ -31,6 +31,7 @@ class InstallerTests(unittest.TestCase):
                 "grok-shim.sh",
                 "kimi-shim.sh",
                 "opencode-shim.sh",
+                "qwen-shim.sh",
             ):
                 with self.subTest(name=name):
                     link = destination / name

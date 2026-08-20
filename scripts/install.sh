@@ -19,7 +19,7 @@ if ! "$PYTHON_BIN" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3,
 fi
 
 mkdir -p "$DEST"
-for s in model-routing codex-shim.sh opencode-shim.sh grok-shim.sh claude-shim.sh kimi-shim.sh parse-shim-result.py; do
+for s in model-routing codex-shim.sh opencode-shim.sh grok-shim.sh claude-shim.sh kimi-shim.sh qwen-shim.sh parse-shim-result.py; do
   chmod +x "$HERE/$s"
   if [ -L "$DEST/$s" ]; then
     old_target="$(readlink "$DEST/$s")"
@@ -46,3 +46,4 @@ echo "  printf 'Reply with exactly: pong\n' | $DEST/opencode-shim.sh <provider/m
 echo "  printf 'Reply with exactly: pong\n' | $DEST/kimi-shim.sh -"
 echo "  printf 'Reply with exactly: pong\n' | $DEST/grok-shim.sh - --effort low"
 echo "  printf 'Reply with exactly: pong\n' | $DEST/claude-shim.sh - --model haiku"
+echo "  printf 'Reply with exactly: pong\n' | $DEST/qwen-shim.sh -"

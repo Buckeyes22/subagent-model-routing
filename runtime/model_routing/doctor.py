@@ -50,6 +50,7 @@ PROVIDER_HELP: dict[str, tuple[tuple[str, ...], tuple[str, ...]]] = {
     "grok": (("--help",), ("--no-auto-update", "--output-format")),
     "kimi": (("--help",), ("--prompt", "--output-format", "doctor", "provider")),
     "opencode": (("run", "--help"), ("--format",)),
+    "qwen": (("--help",), ("--prompt", "--output-format")),
 }
 
 
