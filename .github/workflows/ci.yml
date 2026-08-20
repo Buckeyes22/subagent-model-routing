@@ -409,13 +409,13 @@ jobs:
           with open(".claude-plugin/marketplace.json", encoding="utf-8") as f:
               claude_marketplace = json.load(f)
           versions = {claude["version"], codex["version"], copilot["version"]}
-          assert versions == {"0.6.0"}, versions
+          assert versions == {"0.7.0"}, versions
           entry = copilot_marketplace["plugins"][0]
           assert entry["version"] == copilot["version"]
-          assert all(name in entry["description"].lower() for name in ("codex", "claude", "kimi", "opencode", "grok"))
-          assert all(name in claude_marketplace["plugins"][0]["description"].lower() for name in ("codex", "kimi", "opencode", "grok"))
-          assert "v0.6.0" in open("README.md", encoding="utf-8").read()
-          assert "## [0.6.0] - 2026-07-17" in open("CHANGELOG.md", encoding="utf-8").read()
+          assert all(name in entry["description"].lower() for name in ("codex", "claude", "kimi", "opencode", "grok", "qwen"))
+          assert all(name in claude_marketplace["plugins"][0]["description"].lower() for name in ("codex", "kimi", "opencode", "grok", "qwen"))
+          assert "v0.7.0" in open("README.md", encoding="utf-8").read()
+          assert "## [0.7.0] - 2026-08-20" in open("CHANGELOG.md", encoding="utf-8").read()
           print(f"all {len(manifests)} manifests valid")
           PY
 

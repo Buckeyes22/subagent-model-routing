@@ -28,7 +28,7 @@ def main() -> int:
         "copilot": PACKAGES["copilot"] / "plugin.json",
     }
     documents = {host: json.loads(path.read_text(encoding="utf-8")) for host, path in manifests.items()}
-    require({document["version"] for document in documents.values()} == {"0.6.0"}, "plugin versions drifted")
+    require({document["version"] for document in documents.values()} == {"0.7.0"}, "plugin versions drifted")
 
     for host, package in PACKAGES.items():
         skill = package / "skills" / "subagent-model-routing" / "SKILL.md"

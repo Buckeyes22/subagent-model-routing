@@ -35,11 +35,11 @@ Before piping the installer to your shell, review `scripts/bootstrap.sh`. By def
 1. Run the clone-optional bootstrap installer:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Buckeyes22/subagent-model-routing/v0.6.0/scripts/bootstrap.sh | bash
-curl -fsSL https://raw.githubusercontent.com/Buckeyes22/subagent-model-routing/v0.6.0/scripts/bootstrap.sh | bash -s -- --register
+curl -fsSL https://raw.githubusercontent.com/Buckeyes22/subagent-model-routing/v0.7.0/scripts/bootstrap.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Buckeyes22/subagent-model-routing/v0.7.0/scripts/bootstrap.sh | bash -s -- --register
 ```
 
-The recommended command pins both the fetched bootstrap script and cloned checkout to release `v0.6.0`. It clones to `~/.local/share/subagent-model-routing` (override with `SUBAGENT_MODEL_ROUTING_HOME`), installs the shims to `~/.claude/scripts/`, offers an optional checkbox screen for missing provider CLIs, and prints (or runs, with `--register`) each detected client's plugin-install commands. Missing providers start unchecked, installed providers cannot be selected, and a second confirmation shows the first-party source domains and checksum status before download.
+The recommended command pins both the fetched bootstrap script and cloned checkout to release `v0.7.0`. It clones to `~/.local/share/subagent-model-routing` (override with `SUBAGENT_MODEL_ROUTING_HOME`), installs the shims to `~/.claude/scripts/`, offers an optional checkbox screen for missing provider CLIs, and prints (or runs, with `--register`) each detected client's plugin-install commands. Missing providers start unchecked, installed providers cannot be selected, and a second confirmation shows the first-party source domains and checksum status before download.
 
 To deliberately track the mutable development branch instead, fetch the `main` script and request that ref explicitly:
 
@@ -284,7 +284,7 @@ The shim will dispatch the prompt file to `local/my-model` and return the result
 Run the bootstrap command for the release you want. It verifies the existing clone's origin, fetches the requested tag or branch, and checks out that exact fetched commit before running the installer:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Buckeyes22/subagent-model-routing/v0.6.0/scripts/bootstrap.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Buckeyes22/subagent-model-routing/v0.7.0/scripts/bootstrap.sh | bash
 ```
 
 Then refresh the Claude Code marketplace so the plugin picks up the new version:
@@ -461,7 +461,7 @@ prompting/                              # model-specific prompt guidance
 
 ## Project status
 
-This is an early-stage project at v0.6.0, built and maintained by a single maintainer. Issues and pull requests are welcome, with best-effort response times. The public contract — the `SHIM-DONE` sentinel, the shim environment-variable names, the namespaced agent types, and the versioned workflow schema — is stable and versioned per [CHANGELOG.md](CHANGELOG.md). Expect the rough edges of a young project, and please report them.
+This is an early-stage project at v0.7.0, built and maintained by a single maintainer. Issues and pull requests are welcome, with best-effort response times. The public contract — the `SHIM-DONE` sentinel, the shim environment-variable names, the namespaced agent types, and the versioned workflow schema — is stable and versioned per [CHANGELOG.md](CHANGELOG.md). Expect the rough edges of a young project, and please report them.
 
 ## License
 

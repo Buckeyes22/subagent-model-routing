@@ -14,6 +14,10 @@ New capabilities bump the **MINOR** version; fixes bump the **PATCH** version.
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [0.7.0] - 2026-08-20
+
 ### Added
 - Qwen as a first-class provider: `qwen-shim.sh` over the Qwen Code CLI, a `QwenAdapter` with `qwen-config` model attribution (env `QWEN_MODEL`, `~/.qwen/settings.json`, `~/.qwen/.env`), registry/doctor/discovery/installer coverage, a dedicated `qwen-shim` Claude Code agent, and Qwen3.8 model-card prompting guidance (`reasoning_effort`, `preserve_thinking`, updated sampling defaults). The qwen route family moves off OpenCode; package versions bump to 0.7.0.
 - Optional `SHIM_RESULT=1` transport receipts, emitted as the exact `finished` ledger record on stdout immediately before the final `SHIM-DONE` sentinel. Failures that write no ledger record — usage errors and a missing process supervisor — continue to emit only the sentinel.

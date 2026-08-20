@@ -179,7 +179,7 @@ class BootstrapTests(unittest.TestCase):
         self.assertIn("--provider-menu", output)
         self.assertIn("--no-provider-menu", output)
         self.assertIn("--ref", output)
-        self.assertIn("v0.6.0", output)
+        self.assertIn("v0.7.0", output)
 
     def test_default_release_ref_is_fetched_before_install(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -187,7 +187,7 @@ class BootstrapTests(unittest.TestCase):
             result = sandbox.run_non_tty()
             calls = sandbox.calls()
         self.assertEqual(0, result.returncode, result.stderr.decode())
-        self.assertIn("fetch --depth 1 origin v0.6.0", calls)
+        self.assertIn("fetch --depth 1 origin v0.7.0", calls)
         self.assertIn("checkout --detach FETCH_HEAD", calls)
         self.assertLess(calls.index("checkout --detach"), calls.index("installer "))
 

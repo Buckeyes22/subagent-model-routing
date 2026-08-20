@@ -4,7 +4,7 @@
 # Env overrides:
 #   SUBAGENT_MODEL_ROUTING_HOME        clone location (default: "$HOME/.local/share/subagent-model-routing")
 #   SUBAGENT_MODEL_ROUTING_REPO_URL    git source (default: "https://github.com/Buckeyes22/subagent-model-routing")
-#   SUBAGENT_MODEL_ROUTING_REF         release tag/branch (default: "v0.6.0")
+#   SUBAGENT_MODEL_ROUTING_REF         release tag/branch (default: "v0.7.0")
 #   SUBAGENT_MODEL_ROUTING_SCRIPTS_DIR shim install dir passed to install.sh; when unset,
 #                             install.sh uses its default "$HOME/.claude/scripts"
 set -euo pipefail
@@ -13,7 +13,7 @@ REGISTER=0
 PROVIDER_MENU=auto
 PROVIDER_MENU_REQUESTED=0
 PROVIDER_MENU_SKIPPED=0
-SUBAGENT_MODEL_ROUTING_REF="${SUBAGENT_MODEL_ROUTING_REF:-v0.6.0}"
+SUBAGENT_MODEL_ROUTING_REF="${SUBAGENT_MODEL_ROUTING_REF:-v0.7.0}"
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --register) REGISTER=1 ;;
@@ -30,7 +30,7 @@ while [ "$#" -gt 0 ]; do
       echo "Usage: bootstrap.sh [--register] [--provider-menu|--no-provider-menu] [--ref <tag-or-branch>]"
       echo "  --provider-menu     require the optional provider CLI checkbox screen"
       echo "  --no-provider-menu  skip optional provider CLI setup"
-      echo "  --ref                install a specific release tag or branch (default: v0.6.0)"
+      echo "  --ref                install a specific release tag or branch (default: v0.7.0)"
       exit 0 ;;
     *) echo "error: unknown argument: $1" >&2; exit 2 ;;
   esac
