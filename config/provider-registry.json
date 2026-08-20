@@ -274,8 +274,8 @@
         "structuredOutput": false
       },
       "models": {
-        "kimi-code/kimi-for-coding": {
-          "displayName": "Kimi for Coding",
+        "kimi-code/k3": {
+          "displayName": "Kimi K3",
           "aliases": [],
           "effortValues": [],
           "promptReference": "prompting/kimi-moonshot-prompting-reference.md",
@@ -323,7 +323,7 @@
             "zai-*",
             "zai-coding-plan/*"
           ],
-          "example": "zai-coding-plan/glm-5.2",
+          "example": "zai-coding-plan/glm-5.3",
           "promptReference": "prompting/glm-zhipu-prompting-reference.md",
           "runtimeReference": "references/model-prompting.md#glm",
           "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/glm.md"

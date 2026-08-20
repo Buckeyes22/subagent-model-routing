@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Vendor | Zhipu AI — international brand **Z.ai**, domestic platform **bigmodel.cn** |
-| Models in scope | GLM-5.x text series (GLM-5.2, GLM-5.1, GLM-5, GLM-5-Turbo, GLM-4.7, GLM-4.6, GLM-4.5), GLM-V vision series, CogView image |
+| Models in scope | GLM-5.x text series (GLM-5.3, GLM-5.2, GLM-5.1, GLM-5, GLM-5-Turbo, GLM-4.7, GLM-4.6, GLM-4.5), GLM-V vision series, CogView image |
 | Primary access | Z.ai API / bigmodel.cn API (OpenAI-compatible and Anthropic-compatible), GLM Coding Plan, open weights (MIT / Modified-MIT) |
 | Official guidance | A dedicated prompt-engineering guide exists, but **only on the Chinese platform** (`docs.bigmodel.cn`). The international `docs.z.ai` has no standalone prompt page. |
 | Compiled | June 2026 |
@@ -144,3 +144,14 @@ Flagged explicitly as **not** from Zhipu's official documentation, but widely re
 - Z.ai docs home: https://docs.z.ai/guides/overview/quick-start
 - bigmodel.cn docs home: https://docs.bigmodel.cn/
 - GitHub org (READMEs, cookbook, Skills): https://github.com/zai-org
+
+## GLM-5.3 update (release notes and docs read 2026-08-20)
+
+GLM-5.3 (released 2026-08-14) keeps GLM-5.2's 744B-A40B MoE base — "scaling post-training is all we did" —
+with a 1M-token context window and a 128K-token maximum output. Z.ai reports ~50% improvement over GLM-5.2 on
+its private Code Bench plus a token-efficiency gain, with post-training expanded into long-horizon task
+environments. Reasoning is now mandatory: `thinking.type` accepts only `enabled`, and depth is steered with
+`reasoning_effort` (`low`/`high`/`max`, default `max`; Z.ai recommends `max` for coding). Inputs are
+text-only — GLM-5.2's multimodal support was dropped. Migration: callers sending `thinking.type: "disabled"`
+must switch to `enabled` with `reasoning_effort: "low"` or requests fail. Docs examples use `temperature 1.0`;
+no explicit `top_p` guidance is published.

@@ -32,7 +32,7 @@ Shim layer  ── runs the CLI in plain-text mode (+ permission/sandbox bypass 
   ▼
 codex / kimi / opencode / grok CLI  ── full agent loop: read source · write files · run gates (tsc/lint/test) · iterate
   ▼
-EXTERNAL MODEL  (GPT-5.x · Grok 4.5 · Kimi K2.7 · GLM-5.2 · MiniMax-M3 · local/self-hosted via opencode custom provider)  ── external auth/local endpoint, OFF the token meter
+EXTERNAL MODEL  (GPT-5.x · Grok 4.5 · Kimi K3 · GLM-5.3 · MiniMax-M3 · local/self-hosted via opencode custom provider)  ── external auth/local endpoint, OFF the token meter
   │
    └── stdout (the CLI's plain-text output, `SHIM-DONE exit=<n>` last) ─┐
                                                                      │ returned VERBATIM up the chain

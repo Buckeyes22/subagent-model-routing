@@ -48,7 +48,7 @@ Claude's native Workflow remains the default for Claude-hosted dependency graphs
 Model discovery is explicit with `model-routing doctor --discover-models`; the default doctor and dispatch preflight never run it.
 
 **Tier example (seed — maintain via `/subagent-model-routing-claude:distill` and your own ledger):**
-codex GPT-5.6 Sol (provisional flagship seat) ≥ GLM-5.2 (Opus peer, default author) > Kimi K2.7 > MiniMax-M3 (Sonnet peer); Grok 4.5, GPT-5.6 Terra/Luna, and local/self-hosted models remain unranked pending local evidence.
+codex GPT-5.6 Sol (provisional flagship seat) ≥ GLM-5.3 (Opus peer, default author) > Kimi K3 > MiniMax-M3 (Sonnet peer); Grok 4.5, GPT-5.6 Terra/Luna, and local/self-hosted models remain unranked pending local evidence.
 
 ## Prompt references
 

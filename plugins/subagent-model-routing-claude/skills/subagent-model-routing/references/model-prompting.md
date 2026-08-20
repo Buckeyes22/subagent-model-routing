@@ -115,6 +115,8 @@ Sources: xAI's Grok 4.5, Grok Build CLI, and headless-operation documentation un
 
 Route through `kimi-shim.sh <prompt-file> [Kimi args]`. Model precedence is explicit `-m`/`--model`, then `KIMI_MODEL_NAME`, then the Kimi Code CLI's configured default. The shim owns prompt/output flags and rejects `-y`/`--yolo`/`--auto`, which cannot be combined with prompt mode.
 
+Kimi K3 (current default `kimi-code/k3`) is a 2.8T-parameter MoE with 104B active parameters (16-of-896 experts) built on Kimi Delta Attention plus Attention Residuals, with a 1M-token context window. Thinking is always on and returns `reasoning_content`; steer depth with the top-level `reasoning_effort` field (`low`/`high`/`max`, default `max`). Multi-turn and agentic flows must pass complete assistant messages — including `reasoning_content` and `tool_calls` — back to the model (preserved thinking). Card sampling: `temperature 1.0` with `top_p 0.95` for single-step tasks and `top_p 1.0` for agentic tasks.
+
 Use clear, detailed instructions; delimit instruction, context, and reference text; provide explicit steps and examples when output shape is hard to describe. Keep the shim prompt focused on task and output contract because Kimi Code owns the tool harness. Grounded review requires the harness to read the real files.
 
 Pilot new templates before broad fan-out. Local operating policy limits sustained concurrency to three Kimi shim calls to reduce provider pressure.
@@ -123,7 +125,9 @@ Kimi Code prompt mode applies the `auto` permission policy while retaining stati
 
 ## GLM
 
-Route through `opencode-shim.sh zai-coding-plan/glm-5.2 <prompt-file>`.
+Route through `opencode-shim.sh zai-coding-plan/glm-5.3 <prompt-file>`.
+
+GLM-5.3 keeps GLM-5.2's 744B-A40B MoE base and 1M-token context (max output 128K tokens); the gains are post-training scale. Reasoning is mandatory: `thinking.type` accepts only `enabled`, and depth is steered with `reasoning_effort` (`low`/`high`/`max`, default `max` — Z.ai recommends `max` for coding). Inputs are text-only (5.2's multimodal support was dropped). Callers that previously sent `thinking.type: "disabled"` must switch to `enabled` with `reasoning_effort: "low"`.
 
 Define the role and task, use delimiters, demand an exact output format, and decompose complex work into explicit subtasks. Prefer supported thinking controls over vague requests to “think harder.” When JSON is required, demand parseable JSON and validate it after return.
 

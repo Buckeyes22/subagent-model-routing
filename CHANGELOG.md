@@ -16,6 +16,11 @@ New capabilities bump the **MINOR** version; fixes bump the **PATCH** version.
 
 _Nothing yet._
 
+## [0.7.1] - 2026-08-20
+
+### Changed
+- Roster refresh from the current model cards: Kimi's registry model is now `kimi-code/k3` (Kimi K3 — 2.8T MoE/104B active, 1M context, always-on thinking steered by `reasoning_effort`, preserved-thinking multi-turn contract) and the GLM route example moves to `zai-coding-plan/glm-5.3` (same 744B-A40B base post-trained, 1M context/128K output, mandatory reasoning with `reasoning_effort`, text-only). Rankings blocks, prompt cards, capability-card seeds, and the canonical Kimi/GLM prompting references carry the new model-card facts.
+
 ## [0.7.0] - 2026-08-20
 
 ### Added

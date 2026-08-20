@@ -1,6 +1,6 @@
 {
   "name": "subagent-model-routing-claude",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "author": { "name": "Buckeyes22" },
   "description": "Claude Code package for routing work to non-Claude models: flat one-shot dispatch and dependency-ordered Workflow DAGs over repo-installed codex/kimi/opencode/grok/qwen transport shims",
   "keywords": ["subagent-model-routing","claude","subagents","workflow","dag","codex","kimi","moonshot","opencode","grok","xai","qwen","shim"]

@@ -168,10 +168,10 @@
         "--model"
       ],
       "models": {
-        "kimi-code/kimi-for-coding": {
+        "kimi-code/k3": {
           "aliases": [],
           "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/kimi.md",
-          "displayName": "Kimi for Coding",
+          "displayName": "Kimi K3",
           "effortValues": [],
           "promptReference": "prompting/kimi-moonshot-prompting-reference.md",
           "provenance": "official-kimi-code-cli-documentation",
@@ -214,7 +214,7 @@
         {
           "capabilityCard": "plugins/subagent-model-routing-claude/skills/subagent-model-routing/ledger/glm.md",
           "displayName": "GLM",
-          "example": "zai-coding-plan/glm-5.2",
+          "example": "zai-coding-plan/glm-5.3",
           "id": "glm",
           "patterns": [
             "glm-*",

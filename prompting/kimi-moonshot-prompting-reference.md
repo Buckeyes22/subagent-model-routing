@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Vendor | Moonshot AI |
-| Models in scope | Kimi K2.x series (K2, K2-Instruct, K2.5, K2.6, K2.7, K2.7-Code) — MoE, ~1T total / ~32B active params |
+| Models in scope | Kimi K2.x/K3 series (K2, K2-Instruct, K2.5, K2.6, K2.7, K2.7-Code, K3) — MoE, ~1T total / ~32B active params |
 | Primary access | Kimi Open Platform API (OpenAI-compatible), Kimi.com / Kimi app, Kimi Code CLI, open weights (Modified MIT) |
 | Official guidance | A dedicated **Best Practices for Prompts** page exists and is reasonably complete |
 | Canonical doc host | `platform.moonshot.ai` and `platform.kimi.ai` (mirror); `platform.kimi.com` for China |
@@ -136,3 +136,14 @@ Moonshot's benchmarking best-practices page is worth following whenever output s
 - Model card (params + system prompt): https://huggingface.co/moonshotai/Kimi-K2-Instruct
 - GitHub (tool-calling guide, deployment): https://github.com/MoonshotAI/Kimi-K2
 - China platform: https://platform.kimi.com
+
+## K3 update (model card read 2026-08-20)
+
+Kimi K3 (released 2026-07, weights on Hugging Face `moonshotai/Kimi-K3`) moves the line to a 2.8T-parameter
+MoE with 104B active parameters (Stable LatentMoE, 16-of-896 experts) on Kimi Delta Attention plus Attention
+Residuals (69 KDA + 24 Gated MLA layers), with MoonViT-V2 vision and a 1M-token context window (~2.5x scaling
+efficiency vs K2). Thinking is always on and cannot be disabled; `reasoning_content` is returned
+unconditionally and depth is steered with the top-level `reasoning_effort` field (`low`/`high`/`max`,
+default `max`). Preserved thinking is required: multi-turn and agentic flows must pass complete assistant
+messages — including `reasoning_content` and `tool_calls` — back to the model. Evaluation-methodology
+sampling: `temperature 1.0`; `top_p 0.95` for single-step tasks, `top_p 1.0` for agentic tasks.

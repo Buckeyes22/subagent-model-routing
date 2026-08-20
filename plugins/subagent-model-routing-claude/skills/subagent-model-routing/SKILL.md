@@ -16,7 +16,7 @@ You are the orchestrator. This one skill covers both ways to delegate work to no
 **Seed rankings** -- an example roster; maintain yours via `/subagent-model-routing-claude:distill`.
 
 <!-- LEDGER:RANKINGS START (maintained by /subagent-model-routing-claude:distill -- edit via distill, not by hand) -->
-**Current tiers (seed example -- maintain via `/subagent-model-routing-claude:distill` and your own ledger; last distilled 2026-07-09 (seed)):** codex GPT-5.6 Sol (provisional flagship seat) >= GLM-5.2 > Kimi K2.7 > MiniMax-M3. Seats: GLM = default author; GPT-5.6 Sol = hardest/critical + deepest review; Kimi = mid-tier/burst; MiniMax = throughput. Grok 4.5, GPT-5.6 Terra, and GPT-5.6 Luna remain unranked pending local evidence. Per-model detail: `ledger/*.md`.
+**Current tiers (seed example -- maintain via `/subagent-model-routing-claude:distill` and your own ledger; last distilled 2026-07-09 (seed)):** codex GPT-5.6 Sol (provisional flagship seat) >= GLM-5.3 > Kimi K3 > MiniMax-M3. Seats: GLM = default author; GPT-5.6 Sol = hardest/critical + deepest review; Kimi = mid-tier/burst; MiniMax = throughput. Grok 4.5, GPT-5.6 Terra, and GPT-5.6 Luna remain unranked pending local evidence. Per-model detail: `ledger/*.md`.
 <!-- LEDGER:RANKINGS END -->
 
 **The test:** use the cheapest model/effort that can notice when it is wrong. A model running inside an agentic shim can read files, write files, run checks, and iterate. A plain completion cannot, so it needs either a trivially verifiable task or a stronger model plus an explicit verify step.
@@ -26,7 +26,7 @@ You are the orchestrator. This one skill covers both ways to delegate work to no
 **The flow:**
 
 1. Mechanically checkable work (format, rename, extract, classify) goes to the cheapest reliable route or to a script/template.
-2. Work that reads several files and changes code defaults to GLM-5.2 through opencode; use Grok 4.5 or Kimi K2.7 for independent candidates until local evidence earns Grok a fixed seat.
+2. Work that reads several files and changes code defaults to GLM-5.3 through opencode; use Grok 4.5 or Kimi K3 for independent candidates until local evidence earns Grok a fixed seat.
 3. User-visible breakage risk escalates to codex and must include a deterministic gate.
 4. Auth, money, data loss, security, migrations, concurrency, and production infrastructure stay high-effort and high-gate; the critical synthesis stays inline.
 5. Broad discovery fans out across cheaper routes, then the orchestrator synthesizes.
@@ -72,7 +72,8 @@ If your CLI has MCP tools configured, prompts may direct their use.
 
 - **Use for:** mid-tier authoring, parallel candidates, subscription-friendly burst work.
 - **Prompt shape:** be explicit and detailed; use delimiters for source/context; define steps; provide complete examples for style or output shape.
-- **Tool-use caveat:** in this repo's shim path, opencode owns tool exposure. Keep the task prompt focused on the work and output contract.
+- **Thinking control:** K3 thinking is always on (`reasoning_content` returned unconditionally); steer with top-level `reasoning_effort` (`low`/`high`/`max`, default `max`). Preserved thinking: multi-turn flows must pass full assistant messages back.
+- **Tool-use caveat:** Kimi Code owns the tool harness. Keep the task prompt focused on the work and output contract.
 - **Reliability:** pilot new templates before fan-out.
 - **Gotcha:** grounded review depends on the agentic harness reading real files. Do not use a non-tool completion route for review.
 - Full reference: `references/model-prompting.md#kimi`
@@ -81,7 +82,7 @@ If your CLI has MCP tools configured, prompts may direct their use.
 
 - **Use for:** default routed authoring and review; balanced throughput and structured tasks.
 - **Prompt shape:** define role/system behavior, use delimiters, specify output format, and split complex tasks into simple subtasks.
-- **Reasoning control:** use explicit thinking controls when available instead of relying on phrasing.
+- **Reasoning control:** GLM-5.3 reasoning is mandatory (`thinking.type` accepts only `enabled`); steer with `reasoning_effort` (`low`/`high`/`max`, default `max`; use `max` for coding).
 - **Structured output:** through the shim, still demand parseable JSON when needed and validate it after return.
 - **Gotcha:** coding-plan traffic uses the provider/model selected in the opencode command; do not duplicate endpoint details in prompts.
 - Full reference: `references/model-prompting.md#glm`
@@ -187,7 +188,7 @@ When it completes, confirm the nodes routed to the shims by inspecting the run t
 TD=<transcript-dir-from-the-Workflow-launch-result>
 grep -rhoE '~?/[^ "]*(codex|kimi|opencode|grok)-shim\.sh[^"\\]*' "$TD" | sort -u
 grep -rhoE '"agentType":"[^"]*"' "$TD" | sort | uniq -c
-grep -rhoE '(gpt-5|grok-4\.5|kimi-for-coding)' "$TD" | sort | uniq -c
+grep -rhoE '(gpt-5|grok-4\.5|kimi-)' "$TD" | sort | uniq -c
 ```
 
 Rows showing `subagent-model-routing-claude:codex-shim`, `subagent-model-routing-claude:kimi-shim`, `subagent-model-routing-claude:grok-shim`, and `subagent-model-routing-claude:opencode-shim`, plus the shim commands in transcripts, prove routing end-to-end. If routing is broken, stop and fix it before fan-out. A direct Part B dispatch is only an acknowledged stopgap for a flat task or for auth probing.
@@ -221,7 +222,7 @@ const DIR = '/tmp/dag-task'
 const codex   = (file, o = {}) => agent(`Run verbatim: ~/.claude/scripts/codex-shim.sh ${file}`, { agentType: 'subagent-model-routing-claude:codex-shim', model: 'sonnet', ...o })
 const grok    = (file, o = {}) => agent(`Run verbatim: ~/.claude/scripts/grok-shim.sh ${file}`, { agentType: 'subagent-model-routing-claude:grok-shim', model: 'sonnet', ...o })
 const kimi    = (file, o = {}) => agent(`Run verbatim: ~/.claude/scripts/kimi-shim.sh ${file}`, { agentType: 'subagent-model-routing-claude:kimi-shim', model: 'sonnet', ...o })
-const glm     = (file, o = {}) => agent(`Run verbatim: ~/.claude/scripts/opencode-shim.sh zai-coding-plan/glm-5.2 ${file}`, { agentType: 'subagent-model-routing-claude:opencode-shim', model: 'sonnet', ...o })
+const glm     = (file, o = {}) => agent(`Run verbatim: ~/.claude/scripts/opencode-shim.sh zai-coding-plan/glm-5.3 ${file}`, { agentType: 'subagent-model-routing-claude:opencode-shim', model: 'sonnet', ...o })
 const minimax = (file, o = {}) => agent(`Run verbatim: ~/.claude/scripts/opencode-shim.sh minimax/MiniMax-M3 ${file}`, { agentType: 'subagent-model-routing-claude:opencode-shim', model: 'sonnet', ...o })
 
 phase('Spec')
@@ -636,7 +637,7 @@ For a Codex, Kimi, Grok, or OpenCode write task that must not touch Claude's cal
 | Shim | Default route | Alternates |
 |---|---|---|
 | `subagent-model-routing-claude:kimi-shim` -> Kimi | configured Kimi default | override with `-m`/`--model` |
-| `subagent-model-routing-claude:opencode-shim` -> GLM | `zai-coding-plan/glm-5.2` | routes listed by `opencode models` |
+| `subagent-model-routing-claude:opencode-shim` -> GLM | `zai-coding-plan/glm-5.3` | routes listed by `opencode models` |
 | `subagent-model-routing-claude:opencode-shim` -> MiniMax | `minimax/MiniMax-M3` | routes listed by `opencode models`; stall policy applies |
 | `subagent-model-routing-claude:codex-shim` -> GPT | Codex CLI default | GPT-5.6 Sol: `gpt-5.6-sol`; Terra: `gpt-5.6-terra`; Luna: `gpt-5.6-luna` |
 | `subagent-model-routing-claude:grok-shim` -> Grok | `grok-4.5` | override with `-m`/`--model`; effort is `low`, `medium`, or `high` |
@@ -650,9 +651,9 @@ Refresh the opencode catalog with `opencode models`, Grok Build models with `gro
 
 | Task shape | Route |
 |---|---|
-| Authoring narrative / first-draft TypeScript or frontend work | `subagent-model-routing-claude:opencode-shim` with GLM-5.2; `subagent-model-routing-claude:kimi-shim` as parallel candidate |
+| Authoring narrative / first-draft TypeScript or frontend work | `subagent-model-routing-claude:opencode-shim` with GLM-5.3; `subagent-model-routing-claude:kimi-shim` as parallel candidate |
 | Throughput / bulk classification | `subagent-model-routing-claude:opencode-shim` with MiniMax-M3, pilot first |
-| Balanced extraction / structured tasks | `subagent-model-routing-claude:opencode-shim` with GLM-5.2 |
+| Balanced extraction / structured tasks | `subagent-model-routing-claude:opencode-shim` with GLM-5.3 |
 | Deep one-off reasoning / autonomous verification | `subagent-model-routing-claude:codex-shim` |
 | Independent coding / agentic candidate | `subagent-model-routing-claude:grok-shim`, provisional until local evidence ranks it |
 | Local/self-hosted model experiment | `subagent-model-routing-claude:opencode-shim` with the custom provider/model |
@@ -710,7 +711,7 @@ Opencode:
 Agent({
   subagent_type: "subagent-model-routing-claude:opencode-shim",
   description: "review forecast module via GLM",
-  prompt: "Run this exact command, return stdout verbatim, no summary, no interpretation:\n\n~/.claude/scripts/opencode-shim.sh zai-coding-plan/glm-5.2 /tmp/review-forecast.md"
+  prompt: "Run this exact command, return stdout verbatim, no summary, no interpretation:\n\n~/.claude/scripts/opencode-shim.sh zai-coding-plan/glm-5.3 /tmp/review-forecast.md"
 })
 ```
 
@@ -738,8 +739,8 @@ Notes:
 
 - The `subagent_type` selects the transport.
 - The `description` labels the row/notification.
-- Extra Kimi Code flags forward after the prompt file: `~/.claude/scripts/kimi-shim.sh /tmp/p.md --model kimi-code/kimi-for-coding`.
-- Extra opencode flags forward after the prompt file: `~/.claude/scripts/opencode-shim.sh zai-coding-plan/glm-5.2 /tmp/p.md --variant high --agent plan`.
+- Extra Kimi Code flags forward after the prompt file: `~/.claude/scripts/kimi-shim.sh /tmp/p.md --model kimi-code/k3`.
+- Extra opencode flags forward after the prompt file: `~/.claude/scripts/opencode-shim.sh zai-coding-plan/glm-5.3 /tmp/p.md --variant high --agent plan`.
 - Extra codex flags forward after the prompt file: `~/.claude/scripts/codex-shim.sh /tmp/p.md -m gpt-5.6-sol -c model_reasoning_effort=low`.
 - Extra Grok Build flags forward after the prompt file: `~/.claude/scripts/grok-shim.sh /tmp/p.md --effort medium --sandbox workspace`.
 
@@ -753,9 +754,9 @@ Example:
 
 ```text
 Agent({subagent_type: "subagent-model-routing-claude:opencode-shim", description: "extract 01",
-       prompt: "Run verbatim: ~/.claude/scripts/opencode-shim.sh zai-coding-plan/glm-5.2 /tmp/extract-01.md"})
+       prompt: "Run verbatim: ~/.claude/scripts/opencode-shim.sh zai-coding-plan/glm-5.3 /tmp/extract-01.md"})
 Agent({subagent_type: "subagent-model-routing-claude:opencode-shim", description: "extract 02",
-       prompt: "Run verbatim: ~/.claude/scripts/opencode-shim.sh zai-coding-plan/glm-5.2 /tmp/extract-02.md"})
+       prompt: "Run verbatim: ~/.claude/scripts/opencode-shim.sh zai-coding-plan/glm-5.3 /tmp/extract-02.md"})
 ```
 
 Partial failure:
@@ -863,7 +864,7 @@ opencode exposes provider/model routes via `opencode models`. It may also expose
 Pass flags through after the prompt file:
 
 ```bash
-~/.claude/scripts/opencode-shim.sh zai-coding-plan/glm-5.2 /tmp/p.md --variant high --agent plan
+~/.claude/scripts/opencode-shim.sh zai-coding-plan/glm-5.3 /tmp/p.md --variant high --agent plan
 ```
 
 ## MiniMax M3 thinking toggle
